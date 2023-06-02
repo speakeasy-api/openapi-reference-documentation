@@ -12,9 +12,33 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: https://speakeasy.bar/terms
+externalDocs:
+  url: https://docs.speakeasy.bar
+  description: The Speakeasy Bar Documentation
 servers:
   - url: https://speakeasy.bar
     description: The production server
+  - url: https://staging.speakeasy.bar
+    description: The staging server
+  - url: https://{organization}.speakeasy.bar
+    description: A per-organization API
+    variables:
+      organization:
+        description: The organization name. Defaults to a generic organization.
+        default: api
+  - url: https://{organization}.{environment}.speakeasy.bar
+    description: A per-organization and per-environment API
+    variables:
+      organization:
+        description: The organization name. Defaults to a generic organization.
+        default: api
+      environment:
+        description: The environment name. Defaults to the production environment.
+        default: prod
+        enum:
+          - prod
+          - staging
+          - dev
 security:
   - apiKey: []
 paths:
