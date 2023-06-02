@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: The Speakeasy Bar
+  version: 1.0.0
+  summary: A bar that serves drinks
+  description: A secret underground bar that serves drinks to those in the know.
+  contact:
+    name: Speakeasy Support
+    url: https://support.speakeasy.bar
+    email: support@speakeasy.bar
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://speakeasy.bar/terms
+servers:
+  - url: https://speakeasy.bar
+    description: The production server
+security:
+  - apiKey: []
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks
+      responses:
+        "200":
+          description: A list of drinks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+components:
+  schemas:
+    Drink:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: Authorization
+      in: header
