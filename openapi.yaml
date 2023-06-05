@@ -20,12 +20,6 @@ servers:
     description: The production server
   - url: https://staging.speakeasy.bar
     description: The staging server
-  - url: https://{organization}.speakeasy.bar
-    description: A per-organization API
-    variables:
-      organization:
-        description: The organization name. Defaults to a generic organization.
-        default: api
   - url: https://{organization}.{environment}.speakeasy.bar
     description: A per-organization and per-environment API
     variables:
@@ -55,6 +49,26 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Drink"
+  /drink:
+    servers:
+      - url: https://api.speakeasy.bar
+        description: The production server
+    get:
+      operationId: getDrink
+      summary: Get a drink by name
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A drink
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Drink"
 components:
   schemas:
     Drink:
@@ -69,3 +83,11 @@ components:
       type: apiKey
       name: Authorization
       in: header
+    oauth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://speakeasy.bar/oauth2/authorize
+          scopes:
+            read: Read access to the API
+            write: Write access to the API
