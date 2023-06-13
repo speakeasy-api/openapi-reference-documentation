@@ -2,34 +2,49 @@
 
 - [openapi-reference-documentation](#openapi-reference-documentation)
   - [DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)](#development-notes-remove-before-publishing)
+    - [TODOs](#todos)
+  - [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
   - [Introduction](#introduction)
     - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
     - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
     - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
-  - [The Document](#the-document)
-    - [Structure](#structure)
-    - [Format \& File Structure](#format--file-structure)
-    - [Schema](#schema)
-      - [Info Object](#info-object)
-        - [Contact Object](#contact-object)
-        - [License Object](#license-object)
-        - [SDK Generation](#sdk-generation)
-      - [External Documentation Object](#external-documentation-object)
-        - [SDK Generation](#sdk-generation-1)
-      - [Servers](#servers)
-        - [Server Object](#server-object)
-        - [Server Variables \& Templating](#server-variables--templating)
-        - [Server Variable Object](#server-variable-object)
-        - [SDK Generation](#sdk-generation-2)
-      - [Security](#security)
-        - [Security Requirement Object](#security-requirement-object)
-        - [SDK Generation](#sdk-generation-3)
-      - [Tags](#tags)
-      - [Paths Object](#paths-object)
-      - [Webhooks](#webhooks)
-      - [Components Object](#components-object)
-        - [Security Schemes](#security-schemes)
-  - [Schemas](#schemas)
+  - [Document Structure](#document-structure)
+  - [Format \& File Structure](#format--file-structure)
+  - [Document Schema](#document-schema)
+    - [Info Object](#info-object)
+      - [Contact Object](#contact-object)
+      - [License Object](#license-object)
+      - [SDK Generation](#sdk-generation)
+    - [External Documentation Object](#external-documentation-object)
+      - [SDK Generation](#sdk-generation-1)
+    - [Servers](#servers)
+      - [Server Object](#server-object)
+      - [Server Variables \& Templating](#server-variables--templating)
+      - [Server Variable Object](#server-variable-object)
+      - [SDK Generation](#sdk-generation-2)
+    - [Security](#security)
+      - [Security Requirement Object](#security-requirement-object)
+      - [SDK Generation](#sdk-generation-3)
+    - [Tags](#tags)
+      - [Tag Object](#tag-object)
+      - [SDK Generation](#sdk-generation-4)
+    - [Paths Object](#paths-object)
+      - [Path Item Object](#path-item-object)
+      - [Operation Object](#operation-object)
+      - [Parameters](#parameters)
+        - [Parameter Object](#parameter-object)
+        - [Request Body Object](#request-body-object)
+        - [Responses Object](#responses-object)
+          - [Response Object](#response-object)
+        - [Callbacks](#callbacks)
+          - [Callback Object](#callback-object)
+      - [SDK Generation](#sdk-generation-5)
+    - [Webhooks](#webhooks)
+    - [Components Object](#components-object)
+      - [Security Schemes](#security-schemes)
+      - [Path Items](#path-items)
+  - [Schema Object](#schema-object)
+    - [OneOf](#oneof)
   - [Extensions](#extensions)
   - [References](#references)
 
@@ -38,7 +53,15 @@
 - I believe this should be an open source repo that we can use to showcase the docs and example SDKs generated from our example openapi document. This will allow things to be co-located (we can locate them separately but I think we will lose some coherency with that approach), benefit from community updates and improvements.
 - I am building a `speakeasy` example openapi document as an example document similar to the petstore from swagger. The speakeasy it refers to is a bar, so everything is themed around that. I think this will be a good way to showcase the documentation and SDKs.
 - I imagine the `SDK Generation` sections to actually be some sort of expandable section that can be toggled open and closed. This would allow the user to see the docs related to SDK Generation without it taking up too much space on the page. I also imagine we will potentially show examples in all the supported languages, via tabs or something similar.
+
+### TODOs
+
 - TODO: Go through and update all examples of yaml and generated code once full documentation and example spec is complete.
+- TODO: Ensure we refer to API, Endpoint, etc consistently throughout the documentation.
+
+## OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)
+
+- Do we want to be able to link to rows in the tables? If so we can add ids for each field name like so: <https://stackoverflow.com/questions/68983152/how-do-i-create-a-link-to-a-certain-word-in-markdown>
 
 ## Introduction
 
@@ -54,9 +77,7 @@ This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specif
 
 `TODO`
 
-## The Document
-
-### Structure
+## Document Structure
 
 An OpenAPI document is made up of a number of different sections, each of which is described in detail below.
 
@@ -106,20 +127,20 @@ components:
 | Field               |                              Type                               |      Required      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------- | :-------------------------------------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `openapi`           |                            *string*                             | :heavy_check_mark: | The version of the OpenAPI specification that the document conforms to, this should be one of the [Supported Versions](https://github.com/OAI/OpenAPI-Specification/tree/main/versions) of the OpenAPI specification.<br /><br />*Note:* Speakeasy tooling currently only supports versions `3.0.X` and `3.1.X` of the OpenAPI specification.                                                                                                                                                                         |
-| `jsonSchemaDialect` |                            *string*                             | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br />The version of the JSON Schema specification that the document conforms to (if not provided by the `$schema` field within a [Schema Object]() <`TODO:Link`>), this is a URI to one of the [Supported Versions](https://json-schema.org/specification-links.html#published-drafts) of the JSON Schema specification.<br /><br />*Note:* Currently **not** supported by Speakeasy tooling.                                                                                   |
+| `jsonSchemaDialect` |                            *string*                             | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br />The version of the JSON Schema specification that the document conforms to (if not provided by the `$schema` field within a [Schema Object](#schema-object)), this is a URI to one of the [Supported Versions](https://json-schema.org/specification-links.html#published-drafts) of the JSON Schema specification.<br /><br />*Note:* Currently **not** supported by Speakeasy tooling.                                                                                   |
 | `info`              |                   [Info Object](#info-object)                   | :heavy_check_mark: | Contains information about the document including fields like `title`, `version`, `description` that help to identify the purpose and owner of the document.                                                                                                                                                                                                                                                                                                                                                          |
 | `externalDocs`      | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Optional documentation available externally about the API.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `x-*`               |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the document (for example: [`x-speakeasy-name-overrides`](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/methods/#change-method-names) that allows the default generated method names of operations to be overridden) that can be used by tooling and vendors to add additional metadata and functionality to the OpenAPI Specification. When provide at the global level here the extensions generally apply to the entire document. |
 | `servers`           |                       [Servers](#servers)                       | :heavy_minus_sign: | Contains an optional list of servers the API is available on, if not provided the default URL is assumed to be `/` a path relative to where the OpenAPI document is hosted.                                                                                                                                                                                                                                                                                                                                           |
 | `security`          |                      [Security](#security)                      | :heavy_minus_sign: | Contains an optional list of security requirements that apply to all operations in the API. If not provided, the default security requirements are assumed to be `[]` an empty array.                                                                                                                                                                                                                                                                                                                                 |
-| `tags`              |                          [Tags](#tags)                          | :heavy_minus_sign: | Contains an optional list of tags that are generally used to group or categorize a set of [Operations]()<`TODO:Link`>.                                                                                                                                                                                                                                                                                                                                                                                                |
+| `tags`              |                          [Tags](#tags)                          | :heavy_minus_sign: | Contains an optional list of tags that are generally used to group or categorize a set of [Operations](#operation-object).                                                                                                                                                                                                                                                                                                                                                                                            |
 | `paths`             |                  [Paths Object](#paths-object)                  | :heavy_minus_sign: | Contains the paths and operations available within the API.                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `webhooks`          |                      [Webhooks](#webhooks)                      | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br />Contains an optional list of incoming webhooks that the API consumer can subscribe to.                                                                                                                                                                                                                                                                                                                                                                                     |
 | `components`        |             [Components Object](#components-object)             | :heavy_minus_sign: | Contains an optional list of reusable components that can be referenced from other parts of the document.                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The above order of fields is recommended (but is not required by the OpenAPI specification), as it allows the stage to be set in terms of calling out key information like details about the API, where it is available, what security is required to access it, and then flows into defining the available endpoints before getting into the details of the components that make up the API.
 
-### Format & File Structure
+## Format & File Structure
 
 An OpenAPI document is either a JSON or YAML file that contains either an entire API definition or a partial definition of an API and/or its components. All fields names in the specification are case sensitive unless otherwise specified.
 
@@ -135,9 +156,9 @@ Some common organizational patterns for OpenAPI documents are:
 - A collection of files that contain partial definitions of the API and its components.
   - Some tools support this pattern by allowing multiple files to be provided others such as the Speakeasy Generator require the individual files to be merged into a single file before being passed to the tool, which can be achieved using Speakeasy's CLI tool. [Click here for more information on Speakeasy's CLI merge tool.](https://speakeasyapi.dev/docs/speakeasy-cli/merge/)
 
-### Schema
+## Document Schema
 
-#### Info Object
+### Info Object
 
 The document's `info` object contains information about the document including fields like `title`, `version`, `description` that help to identify the purpose and owner of the document.
 
@@ -175,7 +196,7 @@ info:
 
 The above order of fields is recommended (but is not required by the OpenAPI specification) as it puts the most important information first and allows the reader to get a quick overview of the document and API.
 
-##### Contact Object
+#### Contact Object
 
 Contact information for the maintainer of the API.
 
@@ -186,7 +207,7 @@ Contact information for the maintainer of the API.
 | `email` |         *string*          | :heavy_minus_sign: | An email address for the contact.                                                                          |
 | `x-*`   | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the contact object that can be used by tooling and vendors. |
 
-##### License Object
+#### License Object
 
 The license the API is made available under.
 
@@ -197,7 +218,7 @@ The license the API is made available under.
 | `url`        |         *string*          | :heavy_minus_sign: | A URL to the license information. Provided only if identifier isn't set.                                                                    |
 | `x-*`        | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the license object that can be used by tooling and vendors.                                  |
 
-##### SDK Generation
+#### SDK Generation
 
 Speakeasy's SDK Generator will use the `info` object to produce code comments and documentation for the generated SDKs. If [External Documentation](#external-documentation-object) is also provided at the document level, this will be included in the generated comments as well.
 
@@ -209,7 +230,7 @@ For example:
 type Speakeasy struct {
 ```
 
-#### External Documentation Object
+### External Documentation Object
 
 Allows for providing information about external documentation available for the API, Operation, Tag, or Schema.
 
@@ -219,9 +240,9 @@ Allows for providing information about external documentation available for the 
 | `description` |         *string*          | :heavy_minus_sign: | A description of the external documentation. [CommonMark syntax](https://spec.commonmark.org/) can be used to provide a rich description. |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the external documentation object that can be used by tooling and vendors.                 |
 
-##### SDK Generation
+#### SDK Generation
 
-Speakeasy's SDK Generator will use the `externalDocs` object to produce code comments and documentation for the generated SDKs. This will be included alongside comments for any of the Methods ([Operations]()<`TODO:Link`>), Classes/Enums ([Object Schemas]()<`TODO:Link`>) or SDKs ([Tags](#tags)) that reference the `externalDocs` object.
+Speakeasy's SDK Generator will use the `externalDocs` object to produce code comments and documentation for the generated SDKs. This will be included alongside comments for any of the Methods ([Operations](#operation-object)), Classes/Enums ([Object Schemas](#schema-object)) or SDKs ([Tags](#tags)) that reference the `externalDocs` object.
 
 For example:
 
@@ -232,9 +253,9 @@ For example:
 type Speakeasy struct {
 ```
 
-#### Servers
+### Servers
 
-A list of [Server Objects](#server-object) either the entire API or a specific path or operation is available on. Server's can be defined at the [Document](#document-structure) level, the [Path](#paths-object) level, or the [Operation]()<`TODO:Link`> level.
+A list of [Server Objects](#server-object) either the entire API or a specific path or operation is available on. Server's can be defined at the [Document](#document-structure) level, the [Path](#paths-object) level, or the [Operation](#operation-object) level.
 
 Servers are optional in the OpenAPI specification, if not provided the default URL is assumed to be `/` a path relative to where the OpenAPI document is hosted.
 
@@ -252,7 +273,7 @@ servers:
 
 If a list of servers is provided at the `paths` level, the servers will override any servers provided at the document level. If a list of servers is provided at the `operation` level, the servers will override any servers provided at the `paths` & document levels.
 
-##### Server Object
+#### Server Object
 
 A Server Object describes a single server that is available for the API.
 
@@ -357,9 +378,9 @@ paths:
                   $ref: "#/components/schemas/Mocktail"
 ```
 
-*Note:* the above API can also be achieved using [`oneOf`]()<`TODO:Link`> in a single operation definition, but depending on the use case this may not be desirable.
+*Note:* the above API can also be achieved using [`oneOf`](#oneof) in a single operation definition, but depending on the use case this may not be desirable.
 
-##### Server Variables & Templating
+#### Server Variables & Templating
 
 Server variables are a map of variable names (*string*) to [Server Variable Objects](#server-variable-object) that can be used for variable substitution via Templating.
 
@@ -384,7 +405,7 @@ servers:
 
 Any variable delimited by `{}` in the `url` field declares a part of the URL that must be replaced with a value and references a variable that must be defined in the `variables` map. It is the API consumer's responsibility to replace these variables (including the delimiters) with values to create a valid URL before making a request to the API. The defined `default` should be used if no other value is provided.
 
-##### Server Variable Object
+#### Server Variable Object
 
 A Server Variable Object describes a single variable that is optionally part of the URL in a [Server Object](#server-object). The value of a variable can be any arbitrary *string* value unless a list of allowed values is provided via the `enum` field.
 
@@ -395,7 +416,7 @@ A Server Variable Object describes a single variable that is optionally part of 
 | `enum`        |     *list\<string\>*      | :heavy_minus_sign: | A list of allowed *string* values for the variable.                                                                                                |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the server variable object that can be used by tooling and vendors.                                 |
 
-##### SDK Generation
+#### SDK Generation
 
 The Speakeasy SDK Generator generally requires at least one absolute URL to be provided to ensure the out of the box experience is as smooth as possible for developers using the generated SDKs. If not present in the OpenAPI document this can be provided via configuration. [Click here for more details](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/servers/#declare-base-server-url).
 
@@ -624,9 +645,9 @@ s := speakeasy.New(
 )
 ```
 
-#### Security
+### Security
 
-`security` is a list of [Security Requirement Objects](#security-requirement-object) that apply to either all operations in the API if defined at the [document](#document-structure) level or to a specific operation if defined at the [Operation]()<`TODO:Link`> level.
+`security` is a list of [Security Requirement Objects](#security-requirement-object) that apply to either all operations in the API if defined at the [document](#document-structure) level or to a specific operation if defined at the [Operation](#operation-object) level.
 
 Operation level security requirements override any security requirements defined at the document level.
 
@@ -645,7 +666,7 @@ components:
       in: header
 ```
 
-The named security schemes referenced must be defined in the [Components Object](#components-object) under the [`securitySchemes`]()<`TODO:Link`> field.
+The named security schemes referenced must be defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
 
 Security can also be made optional by providing an empty object (`{}`) in the list of security requirements. For example:
 
@@ -755,7 +776,7 @@ The above example requires both an API Key **AND** Basic Auth to be provided.
 
 This **AND**/**OR** logic along with optional (`{}`) security can be used in any combination to express complex authorization scenarios.
 
-##### Security Requirement Object
+#### Security Requirement Object
 
 A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names must match the names defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
 
@@ -763,7 +784,7 @@ A Security Requirement Object defines a map of security schemes names to scopes 
 | ---------------------- | :--------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{securitySchemeName}` | *list\<string\>* | :heavy_minus_sign: | A list of scopes/roles required for the security scheme. If the security scheme type is `oauth2` or `openIdConnect`, this is a list of scopes names required by the API consumer to be able to access/use the API, for any other types this could contain a list of roles or similar required for the API consumer to obtain to authenticate with the API. |
 
-##### SDK Generation
+#### SDK Generation
 
 Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
 
@@ -854,27 +875,255 @@ s := speakeasy.New()
 res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice Tea"}, operations.GetDrinkSecurity{APIKey: "YOUR_API_KEY_HERE"})
 ```
 
-#### Tags
+`TODO: once we support optional method level security add an example for that here as well`
+
+### Tags
+
+The document level `tags` field contains a list of [tag](#tag-object) definitions that may be used to categorize or group operations in the API. Tags can be referenced by [Operations](#operation-object) via the operations level `tags` field.
+
+Tag definitions at the document level are completely optional even if a undefined tag is referenced within an [Operation](#operation-object). Though it is recommended that all tags used to be defined here to provide useful documentation and intent for the tags.
+
+Tag names ***must*** be unique within the document.
+
+Example:
+
+```yaml
+tags:
+  - name: drinks
+    description: The drinks endpoints.
+  - name: authentication
+    description: The authentication endpoints.
+```
+
+#### Tag Object
+
+A Tag Object defines a single tag that can be used to categorize or group operations in the API.
+
+| Field          |                              Type                               |      Required      | Description                                                                                                                 |
+| -------------- | :-------------------------------------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------- |
+| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***Must*** be unique within the document.                                                              |
+| `description`  |                            *string*                             | :heavy_minus_sign: | A description of the tag. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
+| `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
+
+#### SDK Generation
 
 `TODO`
 
-#### Paths Object
+### Paths Object
+
+The `paths` object is a map of [Path Item Objects](#path-item-object) that describe the available paths and operations for the API.
+
+Each path is a relative path to the servers defined in the [Servers](#servers) object, either at the document level, path or operation level. For example if a server is defined as `https://speakeasy.bar/api` and a path is defined as `/drinks` the full URL to the path would be `https://speakeasy.bar/api/drinks`, where the path is appended to the server URL.
+
+Example:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      ... # operation definition
+  /drink:
+    get:
+      ... # operation definition
+    put: 
+      ... # operation definition
+    post: 
+      ... # operation definition
+    delete:
+      ... # operation definition
+```
+
+| Field     |                 Type                  |      Required      | Description                                                                                              |
+| --------- | :-----------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------- |
+| `/{path}` | [Path Item Object](#path-item-object) | :heavy_minus_sign: | A relative path to an individual endpoint, where the path ***Must*** begin with a `/`                    |
+| `x-*`     |       [Extensions](#extensions)       | :heavy_minus_sign: | Any number of extension fields can be added to the paths object that can be used by tooling and vendors. |
+
+#### Path Item Object
+
+A Path Item Object describes the operations available on a single path, this is generally a map of HTTP methods to [Operation Objects](#operation-object) that describe the operations available.
+
+It is also possible to override the [Servers](#servers) defined at the document level for a specific path by providing a list of [Server Objects](#server-object) at the path level.
+
+And to provide a list of [Parameters](#parameters) that are common to all operations defined on the path.
+
+Example:
+
+```yaml
+paths:
+  /drinks:
+    summary: Various operations for browsing and searching drinks
+    description: 
+    servers: # Override the servers defined at the document level and apply to all operations defined on this path
+      - url: https://drinks.speakeasy.bar
+        description: The drinks server
+    parameters: # Define a list of parameters that are common to all operations defined on this path
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+            - cocktail
+            - mocktail
+            - spirit
+            - beer
+            - wine
+            - cider
+    get:
+      ... # operation definition
+```
+
+or
+
+```yaml
+paths:
+  /drinks:
+    $ref: "#/components/pathItems/drinks" # Reference a Path Item Object defined in the Components Object allowing for reuse in different paths
+components:
+  pathItems:
+    drinks:
+      servers:
+        - url: https://drinks.speakeasy.bar
+          description: The drinks server
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - cocktail
+              - mocktail
+              - spirit
+              - beer
+              - wine
+              - cider
+      get:
+        ... # operation definition
+```
+
+| Field         |                 Type                  |      Required      | Description                                                                                                                                                                                                   |
+| ------------- | :-----------------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$ref`        |               *string*                | :heavy_minus_sign: | Allows for referencing a [Path Item Object](#path-item-object) defined in the [Components Object](#components-object) under the [`pathItems`](#path-items) field. If used then no other fields should be set. |
+| `summary`     |               *string*                | :heavy_minus_sign: | A short summary of what the path item represents. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                           |
+| `description` |               *string*                | :heavy_minus_sign: | A description of the path item. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                             |
+| `servers`     |          [Servers](#servers)          | :heavy_minus_sign: | A list of [Server Objects](#server-object) that override the servers defined at the document level, and applies to all operations defined on this path.                                                       |
+| `parameters`  |       [Parameters](#parameters)       | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are common to all operations defined on this path.                                                                                                      |
+| `get`         | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`GET` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET)                                                                                           |
+| `put`         | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`PUT` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT)                                                                                           |
+| `post`        | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`POST` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)                                                                                         |
+| `delete`      | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`DELETE` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE)                                                                                     |
+| `options`     | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`OPTIONS` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS)                                                                                   |
+| `head`        | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`HEAD` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD)                                                                                         |
+| `patch`       | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`PATCH` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH)                                                                                       |
+| `trace`       | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`TRACE` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE)                                                                                       |
+| `x-*`         |       [Extensions](#extensions)       | :heavy_minus_sign: | Any number of extension fields can be added to the path item object that can be used by tooling and vendors.                                                                                                  |
+
+The above order is a recommendation for how the fields should be ordered, but is not significant to the order in which the endpoints should be used.
+
+#### Operation Object
+
+An Operation describes a single endpoint within the API, including all its possible inputs/outputs and configuration required to make a successful request.
+
+Example:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks.
+      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      security:
+        - {}
+      tags:
+        - drinks
+      parameters:
+        - name: type
+          in: query
+          description: The type of drink to filter by. If not provided all drinks will be returned.
+          required: false
+          schema:
+            $ref: "#/components/schemas/DrinkType"
+      responses:
+        "200":
+          description: A list of drinks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+```
+
+| Field         |                    Type                     |      Required      | Description                                                                                                                                                                                        |
+| ------------- | :-----------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `operationId` |                  *string*                   | :heavy_minus_sign: | A unique identifier for the operation, this ***must*** be unique within the document, and is ***case sensitive***. It is ***recommended*** to always define an `operationId`, but is not required. |
+| `deprecated`  |                  *boolean*                  | :heavy_minus_sign: | Whether the operation is deprecated or not. Defaults to `false`.                                                                                                                                   |
+| `summary`     |                  *string*                   | :heavy_minus_sign: | A short summary of what the operation does. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                      |
+| `description` |                  *string*                   | :heavy_minus_sign: | A details description of the operation, what it does and how to use it. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                          |
+| `servers`     |             [Servers](#servers)             | :heavy_minus_sign: | A list of [Server Objects](#server-object) that override the servers defined at the document and path level, and apply to this operation.                                                          |
+| `security`    |            [Security](#security)            | :heavy_minus_sign: | A list of [Security Requirement Objects](#security-requirement-object) that override the security requirements defined at the document and path levels, and apply to this operation.               |
+| `x-*`         |          [Extensions](#extensions)          | :heavy_minus_sign: | Any number of extension fields can be added to the operation object that can be used by tooling and vendors.                                                                                       |
+| `parameters`  |          [Parameters](#parameters)          | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are available to this operation. The parameters defined here merge with any defined at the path level, overriding any duplicates.            |
+| `requestBody` | [Request Body Object](#request-body-object) | :heavy_minus_sign: | The request body for this operation, where the [HTTP Method supports](https://httpwg.org/specs/rfc7231.html) a request body otherwise this field is ignored.                                       |
+| `responses`   |    [Responses Object](#responses-object)    | :heavy_check_mark: | A map of [Response Objects](#response-object) that define the possible responses from executing this operation.                                                                                    |
+| `callbacks`   |           [Callbacks](#callbacks)           | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that define possible callbacks that may be executed as a result of this operation.                                                                   |
+
+The above order of fields is a recommendation for how the fields should be defined in the document, and help to set the stage for the operation, and provide a clear understanding of what the operation does.
+
+#### Parameters
 
 `TODO`
 
-#### Webhooks
+##### Parameter Object
 
 `TODO`
 
-#### Components Object
+##### Request Body Object
 
 `TODO`
 
-##### Security Schemes
+##### Responses Object
 
 `TODO`
 
-## Schemas
+###### Response Object
+
+`TODO`
+
+##### Callbacks
+
+`TODO`
+
+###### Callback Object
+
+`TODO`
+
+#### SDK Generation
+
+`TODO`
+
+### Webhooks
+
+`TODO`
+
+### Components Object
+
+`TODO`
+
+#### Security Schemes
+
+`TODO`
+
+#### Path Items
+
+`TODO`
+
+## Schema Object
+
+`TODO`
+
+### OneOf
 
 `TODO`
 

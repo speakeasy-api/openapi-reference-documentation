@@ -80,6 +80,13 @@ paths:
         - {}
       tags:
         - drinks
+      parameters:
+        - name: type
+          in: query
+          description: The type of drink to filter by. If not provided all drinks will be returned.
+          required: false
+          schema:
+            $ref: "#/components/schemas/DrinkType"
       responses:
         "200":
           description: A list of drinks.
@@ -93,8 +100,6 @@ paths:
     get:
       operationId: getDrink
       summary: Get a drink by name.
-      security:
-        - apiKey: []
       tags:
         - drinks
       parameters:
@@ -129,6 +134,8 @@ components:
             - price: 1000 # $10.00
             - price: 1200 # $12.00
             - price: 1500 # $15.00
+        type:
+          $ref: "#/components/schemas/DrinkType"
         stock:
           description: The number of units of the drink in stock, only available when authenticated.
           type: integer
@@ -146,6 +153,16 @@ components:
       required:
         - name
         - price
+    DrinkType:
+      description: The type of drink.
+      type: string
+      enum:
+        - cocktail
+        - non-alcoholic
+        - beer
+        - wine
+        - spirit
+        - other
   securitySchemes:
     apiKey:
       type: apiKey
