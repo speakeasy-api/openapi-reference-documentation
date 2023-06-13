@@ -267,7 +267,97 @@ A Server Object describes a single server that is available for the API.
 
 The URL must conform to [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) ie `schema://host{:port}{/path}` not include the query string and must be URL encoded (except for the templating delimiters `{}` if not part of the URL).
 
-The URL can contain fragments ie `https://speakeasy.bar#mocktails` and can be used to allow repeated URLs with different fragments to be defined in the same document, allowing the definition of multiple operations with the same URL and HTTP method but different operation definitions.
+The URL can contain fragments ie `https://speakeasy.bar/drinks#mocktails` and can be used to allow repeated URLs with different fragments to be defined in the same document, allowing the definition of multiple operations with the same URL and HTTP method but different operation definitions.
+
+For example the below document is not valid as it defines two operations with the same URL and HTTP method:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listCocktails
+      summary: Get a list of cocktails
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            const: cocktail
+      responses:
+        "200":
+          description: A list of cocktails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cocktail"
+  /drinks:
+    get:
+      operationId: listMocktails
+      summary: Get a list of mocktails
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            const: mocktail
+      responses:
+        "200":
+          description: A list of mocktails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Mocktail"
+```
+
+However the below document is valid as it defines two operations with the same URL and HTTP method but different fragments making the paths unique:
+
+```yaml
+paths:
+  /drinks#cocktails:
+    get:
+      operationId: listCocktails
+      summary: Get a list of cocktails
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            const: cocktail
+      responses:
+        "200":
+          description: A list of cocktails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cocktail"
+  /drinks#mocktails:
+    get:
+      operationId: listMocktails
+      summary: Get a list of mocktails
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            const: mocktail
+      responses:
+        "200":
+          description: A list of mocktails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Mocktail"
+```
+
+*Note:* the above API can also be achieved using [`oneOf`]()<`TODO:Link`> in a single operation definition, but depending on the use case this may not be desirable.
 
 #### Server Variables & Templating
 
