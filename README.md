@@ -265,9 +265,11 @@ A Server Object describes a single server that is available for the API.
 | `variables`   | [Server Variables](#server-variables--templating) | :heavy_minus_sign: | A map of variable names to [Server Variable Objects](#server-variable-object) that can be used for variable substitution via [Templating](#server-variables--templating).                                                                                                                                                  |
 | `x-*`         |             [Extensions](#extensions)             | :heavy_minus_sign: | Any number of extension fields can be added to the server object (for example: [`x-speakeasy-server-id`](https://speakeasyapi.dev/docs/archive/server-urls/#speakeasy-server-extensions) that allows IDs to be assigned to each server for easier selection via Speakeasy's SDKs) that can be used by tooling and vendors. |
 
-The URL must conform to [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) ie `schema://host{:port}{/path}` not include the query string and must be URL encoded (except for the templating delimiters `{}` if not part of the URL).
+If the URL is an absolute path it must conform to [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) ie `schema://host{:port}{/path}`, and not include the query string and must be URL encoded (except for the templating delimiters `{}` if not part of the URL).
 
-The URL can contain fragments ie `https://speakeasy.bar/drinks#mocktails` and can be used to allow repeated URLs with different fragments to be defined in the same document, allowing the definition of multiple operations with the same URL and HTTP method but different operation definitions.
+But can also just be a relative path to where the OpenAPI document is hosted ie `/api` which will for a document hosted at `https://speakeasy.bar/openapi.yaml` result in the URL being `https://speakeasy.bar/api`.
+
+The URL may also contain fragments ie `https://speakeasy.bar/drinks#mocktails` and can be used to allow repeated URLs with different fragments to be defined in the same document, allowing the definition of multiple operations with the same URL and HTTP method but different operation definitions.
 
 For example the below document is not valid as it defines two operations with the same URL and HTTP method:
 
@@ -397,7 +399,7 @@ A Server Variable Object describes a single variable that is optionally part of 
 
 #### SDK Generation
 
-The Speakeasy SDK Generator generally requires at least one absolute URL to be provided to ensure the out of the box experience is as smooth as possible for developers using the generated SDKs. If not present in the OpenAPI document this can be provided via configuration. [Click here for more details](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/servers/#declare-base-server-url)
+The Speakeasy SDK Generator generally requires at least one absolute URL to be provided to ensure the out of the box experience is as smooth as possible for developers using the generated SDKs. If not present in the OpenAPI document this can be provided via configuration. [Click here for more details](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/servers/#declare-base-server-url).
 
 The generated SDKs will contain a list of available servers that can be used with the SDK. The first server in the list is considered to be the default server to use, and will be used if no other server is provided when initializing the SDK (in the case of global servers) or when using a method (in the case of path or operation servers).
 
@@ -630,7 +632,7 @@ s := speakeasy.New(
 
 Operation level security requirements override any security requirements defined at the document level.
 
-If not provided at the document level, the default security requirements are assumed to be `[]` an empty array.
+If not provided at the document level, the default security requirements are assumed to be `[]` an empty array, meaning no security is required to access the API.
 
 Example:
 
@@ -655,10 +657,63 @@ security:
   - {}
 ```
 
+Security can also be disable for a specific operation by providing an empty array (`[]`) in the list of security requirements. For example:
+
+```yaml
+paths:
+  /auth:
+    post:
+      operationId: authenticate
+      summary: Authenticate with the API
+      security: [] # Disable security for this operation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: The api key to use for authenticated endpoints
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+```
+
+or made completely optional for a specific operation by providing an empty object (`{}`) in the list of security requirements. For example:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information
+      security:
+        - {} # Make security optional for this operation
+      responses:
+        "200":
+          description: A list of drinks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+```
+
 The combination of different security requirements can be used to express complex authorization scenarios. For example:
 
 ```yaml
-security:
+security: # apiKey OR oauth2 can be used
   - apiKey: []
   - oauth2:
       - read
@@ -684,7 +739,7 @@ The above example allows for the API to be accessed via an API Key **OR** OAuth2
 If multiple schemes are required together then the [Security Requirement Object](#security-requirement-object) can define multiple schemes. For example:
 
 ```yaml
-security:
+security: # both apiKey AND basic are required
   - apiKey: []
     basic: []
 components:
