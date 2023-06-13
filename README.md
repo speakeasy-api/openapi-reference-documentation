@@ -7,8 +7,8 @@
     - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
     - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
   - [The Document](#the-document)
-    - [Format \& File Structure](#format--file-structure)
     - [Document Structure](#document-structure)
+    - [Format \& File Structure](#format--file-structure)
   - [Schema](#schema)
     - [Info Object](#info-object)
       - [SDK Generation](#sdk-generation)
@@ -46,29 +46,13 @@
 
 ### What versions of OpenAPI does this documentation cover?
 
-This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specification. Where there is a major difference between the two versions, we will call it out specifically, otherwise the documentation will be applicable to both versions.
+This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specification. Where there is a important difference between the two versions, we will call it out specifically, otherwise the documentation will be applicable to both versions.
 
 ### How does this documentation differ from the official OpenAPI documentation?
 
 `TODO`
 
 ## The Document
-
-### Format & File Structure
-
-An OpenAPI document is either a JSON or YAML file that contains either an entire API definition or a partial definition of an API and/or its components. All fields names in the specification are case sensitive unless otherwise specified.
-
-A document can be split into multiple files, and the files can be in different formats. For example, you can have a JSON file that contains the API definition and a YAML file that contains the components, or a collection of files that contain partial definitions of the API and its components.
-
-Generally the main API definition file is called `openapi.json` or `openapi.yaml`, and the component files are called `components.json` or `components.yaml`, though this is not a requirement.
-
-Some common organizational patterns for OpenAPI documents are:
-
-- A single file that contains the entire API definition.
-- A main file that contains the API definition and a components file that contains the components.
-  - This is normally achieved by using the `$ref` keyword to reference the components file from the main file. [Click here for more information on references.](#references)
-- A collection of files that contain partial definitions of the API and its components.
-  - Some tools support this pattern by allowing multiple files to be provided others such as the Speakeasy Generator require the individual files to be merged into a single file before being passed to the tool, which can be achieved using Speakeasy's CLI tool. [Click here for more information on Speakeasy's CLI merge tool.](https://speakeasyapi.dev/docs/speakeasy-cli/merge/)
 
 ### Document Structure
 
@@ -131,7 +115,23 @@ components:
 | `webhooks`          |                      [Webhooks](#webhooks)                      | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br />Contains an optional list of incoming webhooks that the API consumer can subscribe to.                                                                                                                                                                                                                                                                                                                                                                                     |
 | `components`        |             [Components Object](#components-object)             | :heavy_minus_sign: | Contains an optional list of reusable components that can be referenced from other parts of the document.                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-The above order of fields are recommended by Speakeasy but are not required by the OpenAPI specification.
+The above order of fields is recommended (but is not required by the OpenAPI specification), as it allows the stage to be set in terms of calling out key information like details about the API, where it is available, what security is required to access it, and then flows into defining the available endpoints before getting into the details of the components that make up the API.
+
+### Format & File Structure
+
+An OpenAPI document is either a JSON or YAML file that contains either an entire API definition or a partial definition of an API and/or its components. All fields names in the specification are case sensitive unless otherwise specified.
+
+A document can be split into multiple files, and the files can be in different formats. For example, you can have a JSON file that contains the API definition and a YAML file that contains the components, or a collection of files that contain partial definitions of the API and its components.
+
+Generally the main API definition file is called `openapi.json` or `openapi.yaml`, and the component files are called `components.json` or `components.yaml`, though this is not a requirement.
+
+Some common organizational patterns for OpenAPI documents are:
+
+- A single file that contains the entire API definition.
+- A main file that contains the API definition and a components file that contains the components.
+  - This is normally achieved by using the `$ref` keyword to reference the components file from the main file. [Click here for more information on references.](#references)
+- A collection of files that contain partial definitions of the API and its components.
+  - Some tools support this pattern by allowing multiple files to be provided others such as the Speakeasy Generator require the individual files to be merged into a single file before being passed to the tool, which can be achieved using Speakeasy's CLI tool. [Click here for more information on Speakeasy's CLI merge tool.](https://speakeasyapi.dev/docs/speakeasy-cli/merge/)
 
 ## Schema
 
@@ -163,19 +163,19 @@ info:
 | Field            |               Type                |      Required      | Description                                                                                                                                                                       |
 | ---------------- | :-------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `title`          |             *string*              | :heavy_check_mark: | A name for the API contained within the document.                                                                                                                                 |
-| `version`        |             *string*              | :heavy_check_mark: | The version of this OpenAPI document. *Not* the version of the API or the OpenAPI specification used. This is recommend to be a [Semantic Version.](https://semver.org/)          |
+| `version`        |             *string*              | :heavy_check_mark: | The version of this OpenAPI document. *Not* the version of the API or the OpenAPI specification used. This is recommended to be a [Semantic Version.](https://semver.org/)        |
 | `summary`        |             *string*              | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br />A short sentence summarizing the API contained with the document.                                                                      |
-| `description`    |             *string*              | :heavy_minus_sign: | A longer description of the API contained within the document. This can contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                  |
+| `description`    |             *string*              | :heavy_minus_sign: | A longer description of the API contained within the document. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                  |
 | `contact`        | [Contact Object](#contact-object) | :heavy_minus_sign: | Contact information for the maintainer of the API.<br /><br />*Note:* Currently not supported by Speakeasy tooling.                                                               |
 | `license`        | [License Object](#license-object) | :heavy_minus_sign: | The license the API is made available under.                                                                                                                                      |
 | `termsOfService` |             *string*              | :heavy_minus_sign: | A URL to the terms of service for the API.                                                                                                                                        |
 | `x-*`            |     [Extensions](#extensions)     | :heavy_minus_sign: | Any number of extension fields can be added to the info object that can be used by tooling and vendors to add additional metadata and functionality to the OpenAPI Specification. |
 
-The above order of fields are recommended by Speakeasy but are not required by the OpenAPI specification.
+The above order of fields is recommended (but is not required by the OpenAPI specification) as it puts the most important information first and allows the reader to get a quick overview of the document and API.
 
 #### SDK Generation
 
-Speakeasy's SDK Generator will use the `info` object to produce code comments and documentation for the generated SDKs. If [External Documentation](#external-documentation-object) is also provided at the document level this will be included in the generated comments as well.
+Speakeasy's SDK Generator will use the `info` object to produce code comments and documentation for the generated SDKs. If [External Documentation](#external-documentation-object) is also provided at the document level, this will be included in the generated comments as well.
 
 For example:
 
