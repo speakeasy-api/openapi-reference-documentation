@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: The Speakeasy Bar
   version: 1.0.0
-  summary: A bar that serves drinks
+  summary: A bar that serves drinks.
   description: A secret underground bar that serves drinks to those in the know.
   contact:
     name: Speakeasy Support
@@ -14,14 +14,14 @@ info:
   termsOfService: https://speakeasy.bar/terms
 externalDocs:
   url: https://docs.speakeasy.bar
-  description: The Speakeasy Bar Documentation
+  description: The Speakeasy Bar Documentation.
 servers:
   - url: https://speakeasy.bar
-    description: The production server
+    description: The production server.
   - url: https://staging.speakeasy.bar
-    description: The staging server
+    description: The staging server.
   - url: https://{organization}.{environment}.speakeasy.bar
-    description: A per-organization and per-environment API
+    description: A per-organization and per-environment API.
     variables:
       organization:
         description: The organization name. Defaults to a generic organization.
@@ -35,12 +35,19 @@ servers:
           - dev
 security:
   - apiKey: []
+tags:
+  - name: drinks
+    description: The drinks endpoints.
+  - name: authentication
+    description: The authentication endpoints.
 paths:
   /authenticate:
     post:
       operationId: authenticate
-      summary: Authenticate with the API by providing a username and password
+      summary: Authenticate with the API by providing a username and password.
       security: []
+      tags:
+        - authentication
       requestBody:
         required: true
         content:
@@ -54,7 +61,7 @@ paths:
                   type: string
       responses:
         "200":
-          description: The api key to use for authenticated endpoints
+          description: The api key to use for authenticated endpoints.
           content:
             application/json:
               schema:
@@ -63,16 +70,19 @@ paths:
                   token:
                     type: string
         "401":
-          description: Invalid credentials provided
+          description: Invalid credentials provided.
   /drinks:
     get:
       operationId: listDrinks
-      summary: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information
+      summary: Get a list of drinks.
+      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
       security:
         - {}
+      tags:
+        - drinks
       responses:
         "200":
-          description: A list of drinks
+          description: A list of drinks.
           content:
             application/json:
               schema:
@@ -80,12 +90,13 @@ paths:
                 items:
                   $ref: "#/components/schemas/Drink"
   /drink:
-    servers:
-      - url: https://api.speakeasy.bar
-        description: The production server
     get:
       operationId: getDrink
-      summary: Get a drink by name
+      summary: Get a drink by name.
+      security:
+        - apiKey: []
+      tags:
+        - drinks
       parameters:
         - name: name
           in: query
@@ -94,7 +105,7 @@ paths:
             type: string
       responses:
         "200":
-          description: A drink
+          description: A drink.
           content:
             application/json:
               schema:
@@ -105,28 +116,28 @@ components:
       type: object
       properties:
         name:
-          description: The name of the drink
+          description: The name of the drink.
           type: string
           examples:
             - name: Old Fashioned
             - name: Manhattan
             - name: Negroni
         price:
-          description: The price of one unit of the drink in US cents
+          description: The price of one unit of the drink in US cents.
           type: number
           examples:
             - price: 1000 # $10.00
             - price: 1200 # $12.00
             - price: 1500 # $15.00
         stock:
-          description: The number of units of the drink in stock, only available when authenticated
+          description: The number of units of the drink in stock, only available when authenticated.
           type: integer
           examples:
             - stock: 10
             - stock: 5
             - stock: 0
         productCode:
-          description: The product code of the drink, only available when authenticated
+          description: The product code of the drink, only available when authenticated.
           type: string
           examples:
             - productCode: "AC-A2DF3"

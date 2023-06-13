@@ -7,28 +7,30 @@
     - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
     - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
   - [The Document](#the-document)
-    - [Document Structure](#document-structure)
+    - [Structure](#structure)
     - [Format \& File Structure](#format--file-structure)
-  - [Schema](#schema)
-    - [Info Object](#info-object)
-      - [SDK Generation](#sdk-generation)
-      - [Contact Object](#contact-object)
-      - [License Object](#license-object)
-    - [External Documentation Object](#external-documentation-object)
-      - [SDK Generation](#sdk-generation-1)
-    - [Extensions](#extensions)
-    - [Servers](#servers)
-      - [Server Object](#server-object)
-      - [Server Variables \& Templating](#server-variables--templating)
-      - [Server Variable Object](#server-variable-object)
-      - [SDK Generation](#sdk-generation-2)
-    - [Security](#security)
-      - [Security Requirement Object](#security-requirement-object)
-      - [SDK Generation](#sdk-generation-3)
-    - [Tags](#tags)
-    - [Paths Object](#paths-object)
-    - [Webhooks](#webhooks)
-    - [Components Object](#components-object)
+    - [Schema](#schema)
+      - [Info Object](#info-object)
+        - [Contact Object](#contact-object)
+        - [License Object](#license-object)
+        - [SDK Generation](#sdk-generation)
+      - [External Documentation Object](#external-documentation-object)
+        - [SDK Generation](#sdk-generation-1)
+      - [Servers](#servers)
+        - [Server Object](#server-object)
+        - [Server Variables \& Templating](#server-variables--templating)
+        - [Server Variable Object](#server-variable-object)
+        - [SDK Generation](#sdk-generation-2)
+      - [Security](#security)
+        - [Security Requirement Object](#security-requirement-object)
+        - [SDK Generation](#sdk-generation-3)
+      - [Tags](#tags)
+      - [Paths Object](#paths-object)
+      - [Webhooks](#webhooks)
+      - [Components Object](#components-object)
+        - [Security Schemes](#security-schemes)
+  - [Schemas](#schemas)
+  - [Extensions](#extensions)
   - [References](#references)
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
@@ -36,7 +38,7 @@
 - I believe this should be an open source repo that we can use to showcase the docs and example SDKs generated from our example openapi document. This will allow things to be co-located (we can locate them separately but I think we will lose some coherency with that approach), benefit from community updates and improvements.
 - I am building a `speakeasy` example openapi document as an example document similar to the petstore from swagger. The speakeasy it refers to is a bar, so everything is themed around that. I think this will be a good way to showcase the documentation and SDKs.
 - I imagine the `SDK Generation` sections to actually be some sort of expandable section that can be toggled open and closed. This would allow the user to see the docs related to SDK Generation without it taking up too much space on the page. I also imagine we will potentially show examples in all the supported languages, via tabs or something similar.
-- TODO: Go through and update all examples of yaml and generated code one full documentation and example spec is complete.
+- TODO: Go through and update all examples of yaml and generated code once full documentation and example spec is complete.
 
 ## Introduction
 
@@ -54,7 +56,7 @@ This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specif
 
 ## The Document
 
-### Document Structure
+### Structure
 
 An OpenAPI document is made up of a number of different sections, each of which is described in detail below.
 
@@ -133,9 +135,9 @@ Some common organizational patterns for OpenAPI documents are:
 - A collection of files that contain partial definitions of the API and its components.
   - Some tools support this pattern by allowing multiple files to be provided others such as the Speakeasy Generator require the individual files to be merged into a single file before being passed to the tool, which can be achieved using Speakeasy's CLI tool. [Click here for more information on Speakeasy's CLI merge tool.](https://speakeasyapi.dev/docs/speakeasy-cli/merge/)
 
-## Schema
+### Schema
 
-### Info Object
+#### Info Object
 
 The document's `info` object contains information about the document including fields like `title`, `version`, `description` that help to identify the purpose and owner of the document.
 
@@ -173,7 +175,29 @@ info:
 
 The above order of fields is recommended (but is not required by the OpenAPI specification) as it puts the most important information first and allows the reader to get a quick overview of the document and API.
 
-#### SDK Generation
+##### Contact Object
+
+Contact information for the maintainer of the API.
+
+| Field   |           Type            |      Required      | Description                                                                                                |
+| ------- | :-----------------------: | :----------------: | ---------------------------------------------------------------------------------------------------------- |
+| `name`  |         *string*          | :heavy_minus_sign: | The name of a contact that could be approached for support for example.                                    |
+| `url`   |         *string*          | :heavy_minus_sign: | A URL to a website or similar providing contact information.                                               |
+| `email` |         *string*          | :heavy_minus_sign: | An email address for the contact.                                                                          |
+| `x-*`   | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the contact object that can be used by tooling and vendors. |
+
+##### License Object
+
+The license the API is made available under.
+
+| Field        |           Type            |      Required      | Description                                                                                                                                 |
+| ------------ | :-----------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`       |         *string*          | :heavy_check_mark: | The name of the license.                                                                                                                    |
+| `identifier` |         *string*          | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br/>An [SPDX identifier](https://spdx.org/licenses/) for the license. Provided only if url isn't set. |
+| `url`        |         *string*          | :heavy_minus_sign: | A URL to the license information. Provided only if identifier isn't set.                                                                    |
+| `x-*`        | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the license object that can be used by tooling and vendors.                                  |
+
+##### SDK Generation
 
 Speakeasy's SDK Generator will use the `info` object to produce code comments and documentation for the generated SDKs. If [External Documentation](#external-documentation-object) is also provided at the document level, this will be included in the generated comments as well.
 
@@ -185,29 +209,7 @@ For example:
 type Speakeasy struct {
 ```
 
-#### Contact Object
-
-Contact information for the maintainer of the API.
-
-| Field   |           Type            |      Required      | Description                                                                                                |
-| ------- | :-----------------------: | :----------------: | ---------------------------------------------------------------------------------------------------------- |
-| `name`  |         *string*          | :heavy_minus_sign: | The name of a contact that could be approached for support for example.                                    |
-| `url`   |         *string*          | :heavy_minus_sign: | A URL to a website or similar providing contact information.                                               |
-| `email` |         *string*          | :heavy_minus_sign: | An email address for the contact.                                                                          |
-| `x-*`   | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the contact object that can be used by tooling and vendors. |
-
-#### License Object
-
-The license the API is made available under.
-
-| Field        |           Type            |      Required      | Description                                                                                                                                 |
-| ------------ | :-----------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`       |         *string*          | :heavy_check_mark: | The name of the license.                                                                                                                    |
-| `identifier` |         *string*          | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br/>An [SPDX identifier](https://spdx.org/licenses/) for the license. Provided only if url isn't set. |
-| `url`        |         *string*          | :heavy_minus_sign: | A URL to the license information. Provided only if identifier isn't set.                                                                    |
-| `x-*`        | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the license object that can be used by tooling and vendors.                                  |
-
-### External Documentation Object
+#### External Documentation Object
 
 Allows for providing information about external documentation available for the API, Operation, Tag, or Schema.
 
@@ -217,7 +219,7 @@ Allows for providing information about external documentation available for the 
 | `description` |         *string*          | :heavy_minus_sign: | A description of the external documentation. [CommonMark syntax](https://spec.commonmark.org/) can be used to provide a rich description. |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the external documentation object that can be used by tooling and vendors.                 |
 
-#### SDK Generation
+##### SDK Generation
 
 Speakeasy's SDK Generator will use the `externalDocs` object to produce code comments and documentation for the generated SDKs. This will be included alongside comments for any of the Methods ([Operations]()<`TODO:Link`>), Classes/Enums ([Object Schemas]()<`TODO:Link`>) or SDKs ([Tags](#tags)) that reference the `externalDocs` object.
 
@@ -230,11 +232,7 @@ For example:
 type Speakeasy struct {
 ```
 
-### Extensions
-
-`TODO`
-
-### Servers
+#### Servers
 
 A list of [Server Objects](#server-object) either the entire API or a specific path or operation is available on. Server's can be defined at the [Document](#document-structure) level, the [Path](#paths-object) level, or the [Operation]()<`TODO:Link`> level.
 
@@ -254,7 +252,7 @@ servers:
 
 If a list of servers is provided at the `paths` level, the servers will override any servers provided at the document level. If a list of servers is provided at the `operation` level, the servers will override any servers provided at the `paths` & document levels.
 
-#### Server Object
+##### Server Object
 
 A Server Object describes a single server that is available for the API.
 
@@ -361,7 +359,7 @@ paths:
 
 *Note:* the above API can also be achieved using [`oneOf`]()<`TODO:Link`> in a single operation definition, but depending on the use case this may not be desirable.
 
-#### Server Variables & Templating
+##### Server Variables & Templating
 
 Server variables are a map of variable names (*string*) to [Server Variable Objects](#server-variable-object) that can be used for variable substitution via Templating.
 
@@ -386,7 +384,7 @@ servers:
 
 Any variable delimited by `{}` in the `url` field declares a part of the URL that must be replaced with a value and references a variable that must be defined in the `variables` map. It is the API consumer's responsibility to replace these variables (including the delimiters) with values to create a valid URL before making a request to the API. The defined `default` should be used if no other value is provided.
 
-#### Server Variable Object
+##### Server Variable Object
 
 A Server Variable Object describes a single variable that is optionally part of the URL in a [Server Object](#server-object). The value of a variable can be any arbitrary *string* value unless a list of allowed values is provided via the `enum` field.
 
@@ -397,7 +395,7 @@ A Server Variable Object describes a single variable that is optionally part of 
 | `enum`        |     *list\<string\>*      | :heavy_minus_sign: | A list of allowed *string* values for the variable.                                                                                                |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the server variable object that can be used by tooling and vendors.                                 |
 
-#### SDK Generation
+##### SDK Generation
 
 The Speakeasy SDK Generator generally requires at least one absolute URL to be provided to ensure the out of the box experience is as smooth as possible for developers using the generated SDKs. If not present in the OpenAPI document this can be provided via configuration. [Click here for more details](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/servers/#declare-base-server-url).
 
@@ -626,7 +624,7 @@ s := speakeasy.New(
 )
 ```
 
-### Security
+#### Security
 
 `security` is a list of [Security Requirement Objects](#security-requirement-object) that apply to either all operations in the API if defined at the [document](#document-structure) level or to a specific operation if defined at the [Operation]()<`TODO:Link`> level.
 
@@ -757,31 +755,130 @@ The above example requires both an API Key **AND** Basic Auth to be provided.
 
 This **AND**/**OR** logic along with optional (`{}`) security can be used in any combination to express complex authorization scenarios.
 
-#### Security Requirement Object
+##### Security Requirement Object
 
-A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names must match the names defined in the [Components Object](#components-object) under the [`securitySchemes`]()<`TODO:Link`> field.
+A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names must match the names defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
 
 | Field                  |       Type       |      Required      | Description                                                                                                                                                                                                                                                                                                                                                |
 | ---------------------- | :--------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{securitySchemeName}` | *list\<string\>* | :heavy_minus_sign: | A list of scopes/roles required for the security scheme. If the security scheme type is `oauth2` or `openIdConnect`, this is a list of scopes names required by the API consumer to be able to access/use the API, for any other types this could contain a list of roles or similar required for the API consumer to obtain to authenticate with the API. |
 
-#### SDK Generation
+##### SDK Generation
+
+Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
+
+For global security requirements the generator may generate code like the following which is used when configuring the SDK instance:
+
+```go
+// speakeasy.go
+
+// WithSecurity configures the SDK to use the provided security details
+func WithSecurity(security shared.Security) SDKOption {
+	return func(sdk *Speakeasy) {
+		sdk.sdkConfiguration.Security = &security
+	}
+}
+
+// New creates a new instance of the SDK with the provided options
+func New(opts ...SDKOption) *Speakeasy {
+	sdk := &Speakeasy{
+		sdkConfiguration: sdkConfiguration{
+			Language:          "go",
+			OpenAPIDocVersion: "1.0.0",
+			SDKVersion:        "0.0.1",
+			GenVersion:        "internal",
+			ServerDefaults: []map[string]string{
+				{},
+				{},
+				{
+					"environment":  "prod",
+					"organization": "api",
+				},
+			},
+		},
+	}
+	for _, opt := range opts {
+		opt(sdk)
+	}
+
+	// Use WithClient to override the default client if you would like to customize the timeout
+	if sdk.sdkConfiguration.DefaultClient == nil {
+		sdk.sdkConfiguration.DefaultClient = &http.Client{Timeout: 60 * time.Second}
+	}
+	if sdk.sdkConfiguration.SecurityClient == nil {
+		if sdk.sdkConfiguration.Security != nil {
+			sdk.sdkConfiguration.SecurityClient = utils.ConfigureSecurityClient(sdk.sdkConfiguration.DefaultClient, sdk.sdkConfiguration.Security)
+		} else {
+			sdk.sdkConfiguration.SecurityClient = sdk.sdkConfiguration.DefaultClient
+		}
+	}
+
+	return sdk
+}
+
+// pkg/models/shared/security.go
+
+type Security struct {
+	APIKey string `security:"scheme,type=apiKey,subtype=header,name=Authorization"`
+}
+```
+
+and used like:
+
+```go
+// Create a new Speakeasy SDK Instance
+s := speakeasy.New(
+    speakeasy.WithSecurity(shared.Security{
+        APIKey: "YOUR_API_KEY_HERE",
+    }),
+)
+```
+
+For operation level security requirements the generator may generate code like the following which is used when calling a method:
+
+```go
+// drinks.go
+
+// GetDrink - Get a drink by name.
+func (s *drinks) GetDrink(ctx context.Context, request operations.GetDrinkRequest, security operations.GetDrinkSecurity) (*operations.GetDrinkResponse, error) {
+  // implementation...
+}
+```
+
+and used like:
+
+```go
+// Create a new Speakeasy SDK Instance
+s := speakeasy.New()
+
+res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice Tea"}, operations.GetDrinkSecurity{APIKey: "YOUR_API_KEY_HERE"})
+```
+
+#### Tags
 
 `TODO`
 
-### Tags
+#### Paths Object
 
 `TODO`
 
-### Paths Object
+#### Webhooks
 
 `TODO`
 
-### Webhooks
+#### Components Object
 
 `TODO`
 
-### Components Object
+##### Security Schemes
+
+`TODO`
+
+## Schemas
+
+`TODO`
+
+## Extensions
 
 `TODO`
 
