@@ -31,14 +31,17 @@
     - [Paths Object](#paths-object)
       - [Path Item Object](#path-item-object)
       - [Operation Object](#operation-object)
-      - [Parameters](#parameters)
-        - [Parameter Object](#parameter-object)
+        - [Parameters](#parameters)
+          - [Parameter Object](#parameter-object)
+          - [Parameter Serialization](#parameter-serialization)
         - [Request Body Object](#request-body-object)
-        - [Responses Object](#responses-object)
+        - [Responses](#responses)
           - [Response Object](#response-object)
         - [Callbacks](#callbacks)
           - [Callback Object](#callback-object)
-      - [SDK Generation](#sdk-generation-5)
+        - [Content](#content)
+          - [Media Type Object](#media-type-object)
+        - [SDK Generation](#sdk-generation-5)
     - [Webhooks](#webhooks)
     - [Components Object](#components-object)
       - [Security Schemes](#security-schemes)
@@ -47,6 +50,7 @@
     - [OneOf](#oneof)
   - [Extensions](#extensions)
   - [References](#references)
+    - [Reference Object](#reference-object)
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
 
@@ -284,7 +288,7 @@ A Server Object describes a single server that is available for the API.
 | `variables`   | [Server Variables](#server-variables--templating) | :heavy_minus_sign: | A map of variable names to [Server Variable Objects](#server-variable-object) that can be used for variable substitution via [Templating](#server-variables--templating).                                                                                                                                                  |
 | `x-*`         |             [Extensions](#extensions)             | :heavy_minus_sign: | Any number of extension fields can be added to the server object (for example: [`x-speakeasy-server-id`](https://speakeasyapi.dev/docs/archive/server-urls/#speakeasy-server-extensions) that allows IDs to be assigned to each server for easier selection via Speakeasy's SDKs) that can be used by tooling and vendors. |
 
-If the URL is an absolute path it must conform to [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) ie `schema://host{:port}{/path}`, and not include the query string and must be URL encoded (except for the templating delimiters `{}` if not part of the URL).
+If the URL is an absolute path it ***must*** conform to [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) ie `schema://host{:port}{/path}`, and not include the query string and ***must*** be URL encoded (except for the templating delimiters `{}` if not part of the URL).
 
 But can also just be a relative path to where the OpenAPI document is hosted ie `/api` which will for a document hosted at `https://speakeasy.bar/openapi.yaml` result in the URL being `https://speakeasy.bar/api`.
 
@@ -403,18 +407,18 @@ servers:
           - dev
 ```
 
-Any variable delimited by `{}` in the `url` field declares a part of the URL that must be replaced with a value and references a variable that must be defined in the `variables` map. It is the API consumer's responsibility to replace these variables (including the delimiters) with values to create a valid URL before making a request to the API. The defined `default` should be used if no other value is provided.
+Any variable delimited by `{}` in the `url` field declares a part of the URL that ***must*** be replaced with a value and references a variable that ***must*** be defined in the `variables` map. It is the API consumer's responsibility to replace these variables (including the delimiters) with values to create a valid URL before making a request to the API. The defined `default` should be used if no other value is provided.
 
 #### Server Variable Object
 
 A Server Variable Object describes a single variable that is optionally part of the URL in a [Server Object](#server-object). The value of a variable can be any arbitrary *string* value unless a list of allowed values is provided via the `enum` field.
 
-| Field         |           Type            |      Required      | Description                                                                                                                                        |
-| ------------- | :-----------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` |         *string*          | :heavy_minus_sign: | A description of the variable. [CommonMark syntax](https://spec.commonmark.org/) can be used to provide a rich description.                        |
-| `default`     |         *string*          | :heavy_check_mark: | The default value of the variable. A variable is always of type *string*. If `enum` is provided this must be one of the values in the `enum` list. |
-| `enum`        |     *list\<string\>*      | :heavy_minus_sign: | A list of allowed *string* values for the variable.                                                                                                |
-| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the server variable object that can be used by tooling and vendors.                                 |
+| Field         |           Type            |      Required      | Description                                                                                                                                              |
+| ------------- | :-----------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` |         *string*          | :heavy_minus_sign: | A description of the variable. [CommonMark syntax](https://spec.commonmark.org/) can be used to provide a rich description.                              |
+| `default`     |         *string*          | :heavy_check_mark: | The default value of the variable. A variable is always of type *string*. If `enum` is provided this ***must*** be one of the values in the `enum` list. |
+| `enum`        |     *list\<string\>*      | :heavy_minus_sign: | A list of allowed *string* values for the variable.                                                                                                      |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the server variable object that can be used by tooling and vendors.                                       |
 
 #### SDK Generation
 
@@ -666,7 +670,7 @@ components:
       in: header
 ```
 
-The named security schemes referenced must be defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
+The named security schemes referenced ***must*** be defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
 
 Security can also be made optional by providing an empty object (`{}`) in the list of security requirements. For example:
 
@@ -778,7 +782,7 @@ This **AND**/**OR** logic along with optional (`{}`) security can be used in any
 
 #### Security Requirement Object
 
-A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names must match the names defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
+A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names ***must*** match the names defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
 
 | Field                  |       Type       |      Required      | Description                                                                                                                                                                                                                                                                                                                                                |
 | ---------------------- | :--------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -901,7 +905,7 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 
 | Field          |                              Type                               |      Required      | Description                                                                                                                 |
 | -------------- | :-------------------------------------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------- |
-| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***Must*** be unique within the document.                                                              |
+| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***must*** be unique within the document.                                                              |
 | `description`  |                            *string*                             | :heavy_minus_sign: | A description of the tag. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
 | `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
 | `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
@@ -936,7 +940,7 @@ paths:
 
 | Field     |                 Type                  |      Required      | Description                                                                                              |
 | --------- | :-----------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------- |
-| `/{path}` | [Path Item Object](#path-item-object) | :heavy_minus_sign: | A relative path to an individual endpoint, where the path ***Must*** begin with a `/`                    |
+| `/{path}` | [Path Item Object](#path-item-object) | :heavy_minus_sign: | A relative path to an individual endpoint, where the path ***must*** begin with a `/`                    |
 | `x-*`     |       [Extensions](#extensions)       | :heavy_minus_sign: | Any number of extension fields can be added to the paths object that can be used by tooling and vendors. |
 
 #### Path Item Object
@@ -1066,24 +1070,118 @@ paths:
 | `x-*`         |          [Extensions](#extensions)          | :heavy_minus_sign: | Any number of extension fields can be added to the operation object that can be used by tooling and vendors.                                                                                       |
 | `parameters`  |          [Parameters](#parameters)          | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are available to this operation. The parameters defined here merge with any defined at the path level, overriding any duplicates.            |
 | `requestBody` | [Request Body Object](#request-body-object) | :heavy_minus_sign: | The request body for this operation, where the [HTTP Method supports](https://httpwg.org/specs/rfc7231.html) a request body otherwise this field is ignored.                                       |
-| `responses`   |    [Responses Object](#responses-object)    | :heavy_check_mark: | A map of [Response Objects](#response-object) that define the possible responses from executing this operation.                                                                                    |
+| `responses`   |           [Responses](#responses)           | :heavy_check_mark: | A map of [Response Objects](#response-object) that define the possible responses from executing this operation.                                                                                    |
 | `callbacks`   |           [Callbacks](#callbacks)           | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that define possible callbacks that may be executed as a result of this operation.                                                                   |
 
 The above order of fields is a recommendation for how the fields should be defined in the document, and help to set the stage for the operation, and provide a clear understanding of what the operation does.
 
-#### Parameters
+##### Parameters
 
-`TODO`
+Parameters are used to describe inputs to an operation, they can be defined at the path or operation level, and are merged together with any duplicates at the operation level overriding any defined at the path level.
 
-##### Parameter Object
+Each parameter needs to be uniquely identified by a combination of its `name` and `in` fields, within an [Operation](#operation-object).
+
+A parameter in the list can either be a [Parameter Object](#parameter-object) or a [Reference](#references) to a [Parameter Object](#parameter-object) defined in the [Components Object](#components-object) under the `parameters` field.
+
+Parameters can represent an number of different input types including:
+
+- Path Parameters
+- Query Parameters
+- Headers
+- Cookies
+
+Example:
+
+```yaml
+paths:
+  /drinks/{type}:
+    parameters:
+      - name: type
+        in: path
+        description: The type of drink to filter by.
+        required: true
+        schema:
+          $ref: "#/components/schemas/DrinkType"
+      - name: Cache-Control
+        in: header
+        description: The cache control header.
+        required: false
+        schema:
+          type: string
+          enum:
+            - no-cache
+            - no-store
+            - must-revalidate
+            - max-age=0
+            - max-age=3600
+            - max-age=86400
+            - max-age=604800
+            - max-age=2592000
+            - max-age=31536000
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks.
+      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      security:
+        - {}
+      tags:
+        - drinks
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of drinks to return.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: A list of drinks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+```
+
+###### Parameter Object
+
+| Field             |                                   Type                                   |      Required      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------- | :----------------------------------------------------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`            |                                 *string*                                 | :heavy_check_mark: | The **case sensitive** name of the parameter. This ***must*** be unique when combined with the `in` field.<br/><br/>If the `in` field is `path` then this field ***must*** be referenced in the owning path.                                                                                                                                                                                                                                           |
+| `in`              |                                 *string*                                 | :heavy_check_mark: | The type/location of the parameter. The available types are:<br/><ul><li>`path` - a templated parameter defined within the path.</li><li>`query` - a query parameter passed via the URL.</li><li>`header` - a header parameter passed via HTTP headers.</li><li>`cookie` - a cookie parameter passed via HTTP cookies.</li></ul>                                                                                                                       |
+| `description`     |                                 *string*                                 | :heavy_minus_sign: | A description of the parameter. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                                                                                                                                                      |
+| `required`        |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter is required or not. If the `in` field is `path` then this field is **always** required and ***must*** be `true`. Defaults to `false`.                                                                                                                                                                                                                                                                                            |
+| `deprecated`      |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter is deprecated or not. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                                                       |
+| `style`           |                                 *string*                                 | :heavy_minus_sign: | Describes how the parameter value will be serialized depending on the `in` field. The available styles are `matrix`, `label`, `form`, `simple`, `spaceDelimited`, `pipeDelimited`, `deepObject`.<br/><br/>The default style depends on the `in` field:<br/><ul><li>`path` - `simple`</li><li>`query` - `form`</li><li>`header` - `simple`</li><li>`cookie` - `form`</li></ul>See [Parameter Serialization](#parameter-serialization) for more details. |
+| `explode`         |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter value will be exploded or not, based on the parameter type. Defaults to `true` when `style` is `form` otherwise `false`.<br><br/>See [Parameter Serialization](#parameter-serialization) for more details.                                                                                                                                                                                                                       |
+| `schema`          | [Schema Object](#schema-object) or [Reference Object](#reference-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the parameter. This is ***required*** unless `content` is defined.                                                                                                                                                                                                                                                                                                                          |
+| `content`         |                           [Content](#content)                            | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the parameter. This is ***required*** unless `schema` is defined.                                                                                                                                                                                                                                                                          |
+| `allowEmptyValue` |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter value can be empty or not. Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                    |
+| `allowReserved`   |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter value can contain reserved characters or not as defined by [RFC3986](https://www.rfc-editor.org/rfc/rfc3986). Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                 |
+| `example`         |                                  *any*                                   | :heavy_minus_sign: | An example of the parameter's value. This is ignored if the `examples` field is defined.                                                                                                                                                                                                                                                                                                                                                               |
+| `examples`        |                          [Examples](#examples)                           | :heavy_minus_sign: | A map of [Example Objects](#example-object) and/or [Reference Objects](#reference-object) that define the possible examples of the parameter's value.                                                                                                                                                                                                                                                                                                  |
+| `x-*`             |                        [Extensions](#extensions)                         | :heavy_minus_sign: | Any number of extension fields can be added to the parameter object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                                                                                           |
+
+The above order of fields is a recommendation for how the fields should be defined in the document.
+
+###### Parameter Serialization
 
 `TODO`
 
 ##### Request Body Object
 
-`TODO`
+The request body is used to describe the body of the request for operations that support a request body.
 
-##### Responses Object
+| Field         |        Type         |      Required      | Description                                                                                                                          |
+| ------------- | :-----------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` |      *string*       | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `content`     | [Content](#content) | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the request body.        |
+| `required`    |      *boolean*      | :heavy_minus_sign: | Whether the request body is required or not. Defaults to `false`.                                                                    |
+
+##### Responses
 
 `TODO`
 
@@ -1099,7 +1197,15 @@ The above order of fields is a recommendation for how the fields should be defin
 
 `TODO`
 
-#### SDK Generation
+##### Content
+
+`TODO`
+
+###### Media Type Object
+
+`TODO`
+
+##### SDK Generation
 
 `TODO`
 
@@ -1134,3 +1240,5 @@ The above order of fields is a recommendation for how the fields should be defin
 ## References
 
 `TODO`
+
+### Reference Object
