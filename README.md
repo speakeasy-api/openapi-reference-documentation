@@ -1405,6 +1405,14 @@ Header parameters are serialized at run-time to the HTTP headers of the request,
 
 Explode defaults to `false`.
 
+There are a few reserved headers that cannot be used as parameter names and are enabled by other OpenAPI features:
+
+- `Accept` - Defining content types in the [Response Object](#response-object) `content` field, documents that available values for the `Accept` header.
+- `Authorization` - Defining security requirements in the [Security Requirement Object](#security-requirement-object) `security` field, documents that the `Authorization` header is required.
+- `Content-Type` - Defining content types in the [Request Body Object](#request-body-object) `content` field, documents that the `Content-Type` header is required and the acceptable values.
+
+If using headers for authentication, it is recommended to use the OpenAPI [`security`](#security) field to document a security scheme instead of a header parameter.
+
 ##### Primitive Types
 
 For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string, 
@@ -1469,6 +1477,8 @@ Cookie parameters are serialized at run-time to a HTTP cookie header, types are 
 Currently cookies are not well supported by OpenAPI and this may change in the future, so using the default `style: form` and `explode: true` values results in serialization incompatible with most cookie parsers.
 
 Therefore it is only really recommended to use cookies for primitive types or arrays with `explode: false` but the current serialization behaviors are included below for completeness.
+
+If using cookies for authentication, it is recommended to use the OpenAPI [`security`](#security) field to document a security scheme instead of a cookie parameter.
 
 ##### Primitive Types
 
