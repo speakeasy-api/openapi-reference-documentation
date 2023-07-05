@@ -1,56 +1,76 @@
 # openapi-reference-documentation
 
-- [openapi-reference-documentation](#openapi-reference-documentation)
-  - [DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)](#development-notes-remove-before-publishing)
-    - [TODOs](#todos)
-  - [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
-  - [Introduction](#introduction)
-    - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
-    - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
-    - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
-  - [Document Structure](#document-structure)
-  - [Format \& File Structure](#format--file-structure)
-  - [Document Schema](#document-schema)
-    - [Info Object](#info-object)
-      - [Contact Object](#contact-object)
-      - [License Object](#license-object)
-      - [SDK Generation](#sdk-generation)
-    - [External Documentation Object](#external-documentation-object)
-      - [SDK Generation](#sdk-generation-1)
-    - [Servers](#servers)
-      - [Server Object](#server-object)
-      - [Server Variables \& Templating](#server-variables--templating)
-      - [Server Variable Object](#server-variable-object)
-      - [SDK Generation](#sdk-generation-2)
-    - [Security](#security)
-      - [Security Requirement Object](#security-requirement-object)
-      - [SDK Generation](#sdk-generation-3)
-    - [Tags](#tags)
-      - [Tag Object](#tag-object)
-      - [SDK Generation](#sdk-generation-4)
-    - [Paths Object](#paths-object)
-      - [Path Item Object](#path-item-object)
-      - [Operation Object](#operation-object)
-        - [Parameters](#parameters)
-          - [Parameter Object](#parameter-object)
-          - [Parameter Serialization](#parameter-serialization)
-        - [Request Body Object](#request-body-object)
-        - [Responses](#responses)
-          - [Response Object](#response-object)
-        - [Callbacks](#callbacks)
-          - [Callback Object](#callback-object)
-        - [Content](#content)
-          - [Media Type Object](#media-type-object)
-        - [SDK Generation](#sdk-generation-5)
-    - [Webhooks](#webhooks)
-    - [Components Object](#components-object)
-      - [Security Schemes](#security-schemes)
-      - [Path Items](#path-items)
-  - [Schema Object](#schema-object)
-    - [OneOf](#oneof)
-  - [Extensions](#extensions)
-  - [References](#references)
-    - [Reference Object](#reference-object)
+- [DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)](#development-notes-remove-before-publishing)
+  - [TODOs](#todos)
+- [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
+- [Introduction](#introduction)
+  - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
+  - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
+  - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
+- [Document Structure](#document-structure)
+- [Format \& File Structure](#format--file-structure)
+- [Document Schema](#document-schema)
+  - [Info Object](#info-object)
+    - [Contact Object](#contact-object)
+    - [License Object](#license-object)
+    - [SDK Generation](#sdk-generation)
+  - [External Documentation Object](#external-documentation-object)
+    - [SDK Generation](#sdk-generation-1)
+  - [Servers](#servers)
+    - [Server Object](#server-object)
+    - [Server Variables \& Templating](#server-variables--templating)
+    - [Server Variable Object](#server-variable-object)
+    - [SDK Generation](#sdk-generation-2)
+  - [Security](#security)
+    - [Security Requirement Object](#security-requirement-object)
+    - [SDK Generation](#sdk-generation-3)
+  - [Tags](#tags)
+    - [Tag Object](#tag-object)
+    - [SDK Generation](#sdk-generation-4)
+  - [Paths Object](#paths-object)
+    - [Path Item Object](#path-item-object)
+  - [Webhooks](#webhooks)
+  - [Components Object](#components-object)
+    - [Security Schemes](#security-schemes)
+    - [Path Items](#path-items)
+- [Operation Object](#operation-object)
+  - [Request Body Object](#request-body-object)
+  - [Responses](#responses)
+  - [Response Object](#response-object)
+  - [Callbacks](#callbacks)
+    - [Callback Object](#callback-object)
+  - [Content](#content)
+    - [Media Type Object](#media-type-object)
+  - [SDK Generation](#sdk-generation-5)
+- [Parameters](#parameters)
+  - [Parameter Object](#parameter-object)
+  - [Parameter Serialization](#parameter-serialization)
+    - [Query Parameters](#query-parameters)
+      - [Primitive Types](#primitive-types)
+      - [Simple Arrays](#simple-arrays)
+      - [Simple Objects](#simple-objects)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays)
+    - [Path Parameters](#path-parameters)
+      - [Primitive Types](#primitive-types-1)
+      - [Simple Arrays](#simple-arrays-1)
+      - [Simple Objects](#simple-objects-1)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays-1)
+    - [Header Parameters](#header-parameters)
+      - [Primitive Types](#primitive-types-2)
+      - [Simple Arrays](#simple-arrays-2)
+      - [Simple Objects](#simple-objects-2)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays-2)
+    - [Cookie Parameters](#cookie-parameters)
+      - [Primitive Types](#primitive-types-3)
+      - [Simple Arrays](#simple-arrays-3)
+      - [Simple Objects](#simple-objects-3)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
+- [Schema Object](#schema-object)
+  - [OneOf](#oneof)
+- [Extensions](#extensions)
+- [References](#references)
+  - [Reference Object](#reference-object)
+
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
 
@@ -1024,7 +1044,23 @@ components:
 
 The above order is a recommendation for how the fields should be ordered, but is not significant to the order in which the endpoints should be used.
 
-#### Operation Object
+### Webhooks
+
+`TODO`
+
+### Components Object
+
+`TODO`
+
+#### Security Schemes
+
+`TODO`
+
+#### Path Items
+
+`TODO`
+
+## Operation Object
 
 An Operation describes a single endpoint within the API, including all its possible inputs/outputs and configuration required to make a successful request.
 
@@ -1075,7 +1111,45 @@ paths:
 
 The above order of fields is a recommendation for how the fields should be defined in the document, and help to set the stage for the operation, and provide a clear understanding of what the operation does.
 
-##### Parameters
+### Request Body Object
+
+The request body is used to describe the body of the request for operations that support a request body.
+
+| Field         |        Type         |      Required      | Description                                                                                                                          |
+| ------------- | :-----------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` |      *string*       | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `content`     | [Content](#content) | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the request body.        |
+| `required`    |      *boolean*      | :heavy_minus_sign: | Whether the request body is required or not. Defaults to `false`.                                                                    |
+
+### Responses
+
+`TODO`
+
+### Response Object
+
+`TODO`
+
+### Callbacks
+
+`TODO`
+
+#### Callback Object
+
+`TODO`
+
+### Content
+
+`TODO`
+
+#### Media Type Object
+
+`TODO`
+
+### SDK Generation
+
+`TODO`
+
+## Parameters
 
 Parameters are used to describe inputs to an operation, they can be defined at the path or operation level, and are merged together with any duplicates at the operation level overriding any defined at the path level.
 
@@ -1146,7 +1220,7 @@ paths:
                   $ref: "#/components/schemas/Drink"
 ```
 
-###### Parameter Object
+### Parameter Object
 
 | Field             |                                   Type                                   |      Required      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ----------------- | :----------------------------------------------------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1167,63 +1241,291 @@ paths:
 
 The above order of fields is a recommendation for how the fields should be defined in the document.
 
-###### Parameter Serialization
+### Parameter Serialization
 
-`TODO`
+Depending on the `in`, `style` and `explode` fields the parameter value will be serialized in different ways depending on its schema type. Some combinations of schema type and parameter serialization are not valid and should be avoided.
 
-##### Request Body Object
+`content` can also be used instead to define complex serialization scenarios for a parameter such as serializing an object to a JSON string for including in a query parameter in the URL.
 
-The request body is used to describe the body of the request for operations that support a request body.
+#### Query Parameters
 
-| Field         |        Type         |      Required      | Description                                                                                                                          |
-| ------------- | :-----------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `description` |      *string*       | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
-| `content`     | [Content](#content) | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the request body.        |
-| `required`    |      *boolean*      | :heavy_minus_sign: | Whether the request body is required or not. Defaults to `false`.                                                                    |
+Query parameters are serialized at run-time to the query string of the URL, this means they are generally serialized to a string representation and must adhere to the [RFC3986](https://www.rfc-editor.org/rfc/rfc3986) specification. By default reserved characters are percent encoded (for example `?` becomes `%3F`), but this can be disabled by setting `allowReserved` to `true`.
 
-##### Responses
+By default query parameters are serialized using `style: form` and `explode: true`. but there are a number of different serialization options available:
 
-`TODO`
+- `style: form` - Form style serialization is the default serialization for query parameters, it generally uses ampersands (`&`) to separate multiple values and equals (`=`) to separate the key and value. Defined by [RFC6570](https://tools.ietf.org/html/rfc6570#section-3.2.8).
+- `style: pipeDelimited` - Pipe delimited serialization uses pipes (`|`) to separate multiple values.
+- `style: spaceDelimited` - Space delimited serialization uses percent encoded spaces (`%20`) to separate multiple values.
+- `style: deepObject` - Deep object serialization uses nested objects to represent the parameter value.
 
-###### Response Object
+##### Primitive Types
 
-`TODO`
+For primitive types such as `string`, `number`, `integer` and `boolean` the serialization is straight forward and the value is serialized as a string, the `style` and `explode` fields have little effect on the serialization.
 
-##### Callbacks
+For the examples below we will use a query parameter named `limit` with a value of `10`.
 
-`TODO`
+| Style            |       Explode == `true`       | Explode == `false` |
+| ---------------- | :---------------------------: | :----------------: |
+| `form`           | `/query?limit=10` *(default)* | `/query?limit=10`  |
+| `pipeDelimited`  |       `/query?limit=10`       | `/query?limit=10`  |
+| `spaceDelimited` |       `/query?limit=10`       | `/query?limit=10`  |
+| `deepObject`     |         **NOT VALID**         |   **NOT VALID**    |
 
-###### Callback Object
+##### Simple Arrays
 
-`TODO`
+For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
 
-##### Content
+For the examples below we will use a query parameter named `terms` with a value of `["gin", "vodka", "rum"]`.
 
-`TODO`
+| Style            |                  Explode == `true`                   |        Explode == `false`        |
+| ---------------- | :--------------------------------------------------: | :------------------------------: |
+| `form`           | `/query?terms=gin&terms=vodka&terms=rum` *(default)* |   `/query?terms=gin,vodka,rum`   |
+| `pipeDelimited`  |       `/query?terms=gin&terms=vodka&terms=rum`       |  `/query?terms=gin\|vodka\|rum`  |
+| `spaceDelimited` |       `/query?terms=gin&terms=vodka&terms=rum`       | `/query?terms=gin%20vodka%20rum` |
+| `deepObject`     |                    **NOT VALID**                     |          **NOT VALID**           |
 
-###### Media Type Object
+##### Simple Objects
 
-`TODO`
+For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
 
-##### SDK Generation
+For the examples below we will use a query parameter named `filter` with a value of `{"type": "cocktail", "strength": 5}`.
 
-`TODO`
+| Style            |                 Explode == `true`                 |               Explode == `false`               |
+| ---------------- | :-----------------------------------------------: | :--------------------------------------------: |
+| `form`           |   `/query?type=cocktail&strength=5` *(default)*   |    `/query?filter=type,cocktail,strength,5`    |
+| `pipeDelimited`  |         `/query?type=cocktail&strength=5`         |  `/query?filter=type\|cocktail\|strength\|5`   |
+| `spaceDelimited` |         `/query?type=cocktail&strength=5`         | `/query?filter=type%20cocktail%20strength%205` |
+| `deepObject`     | `/query?filter[type]=cocktail&filter[strength]=5` |                 **NOT VALID**                  |
 
-### Webhooks
+There is a special case for simple objects with fields that are an array of primitive types such as `string`, `number`, `integer` and `boolean` that can be handled by `style: deepObject` and `explode: true`. For example for a query parameter named `filter` with a value of `{"type": ["cocktail", "mocktail"], "strength": [5, 10]}`, this will be serialized like `/query?filter[type]=cocktail&filter[type]=mocktail&filter[strength]=5&filter[strength]=10`.
 
-`TODO`
+##### Complex Objects and Arrays
 
-### Components Object
+For complex objects and arrays, serialization in a query parameter is only really possible using `content` and not any `style` options.
 
-`TODO`
+For example serializing using JSON:
 
-#### Security Schemes
+```yaml
+parameters:
+  - name: filter
+    in: query
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: array
+              items:
+                type: string
+            strength:
+              type: array
+              items:
+                type: integer
+```
 
-`TODO`
+would serialize to `/query?filter=%7B%22type%22%3A%5B%22cocktail%22%2C%22mocktail%22%5D%2C%22strength%22%3A%5B5%2C10%5D%7D` which is the equivalent of `/query?filter={"type":["cocktail","mocktail"],"strength":[5,10]}` unencoded.
 
-#### Path Items
+#### Path Parameters
 
-`TODO`
+Path parameters are serialized at run-time to the path of the URL, this means they are generally serialized to a string representation and must adhere to the [RFC3986](https://www.rfc-editor.org/rfc/rfc3986) specification. Reserved characters are percent encoded (for example `?` becomes `%3F`).
+
+By default path parameters are serialized using `style: simple` and `explode: false`, but there are a number of different serialization options available:
+
+- `style: simple` - Simple style serialization is the default serialization for path parameters, using commas (`,`) to separate multiple values. Defined by [RFC6570](https://tools.ietf.org/html/rfc6570#section-3.2.7).
+- `style: label` - Label style serialization uses dots (`.`) to separate multiple values. Defined by [RFC6570](https://tools.ietf.org/html/rfc6570#section-3.2.6).
+- `style: matrix` - Matrix style serialization uses semicolons (`;`) to separate multiple values. Defined by [RFC6570](https://tools.ietf.org/html/rfc6570#section-3.2.5).
+
+##### Primitive Types
+
+For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string, the `style` and `explode` fields determine the prefix for the value generally.
+
+For the examples below we will use a path parameter named `type` with a value of `cocktail` for a path templated URL of `/drinks/{type}`.
+
+| Style    |    Explode == `true`     |    Explode == `false`    |
+| -------- | :----------------------: | :----------------------: |
+| `simple` |    `/drinks/cocktail`    |    `/drinks/cocktail`    |
+| `label`  |   `/drinks/.cocktail`    |   `/drinks/.cocktail`    |
+| `matrix` | `/drinks/;type=cocktail` | `/drinks/;type=cocktail` |
+
+##### Simple Arrays
+
+For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
+
+For the examples below we will use a path parameter named `types` with a value of `["gin", "vodka", "rum"]` for a path templated URL of `/drinks/{types}`.
+
+| Style    |             Explode == `true`              |         Explode == `false`          |
+| -------- | :----------------------------------------: | :---------------------------------: |
+| `simple` |          `/drinks/gin,vodka,rum`           | `/drinks/gin,vodka,rum` *(default)* |
+| `label`  |          `/drinks/.gin.vodka.rum`          |      `/drinks/.gin,vodka,rum`       |
+| `matrix` | `/drinks/;types=gin;types=vodka;types=rum` |   `/drinks/;types=gin,vodka,rum`    |
+
+##### Simple Objects
+
+For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
+
+For the examples below we will use a path parameter named `filter` with a value of `{"type": "cocktail", "strength": 5}` for a path templated URL of `/drinks/{filter}`.
+
+| Style    |          Explode == `true`          |               Explode == `false`               |
+| -------- | :---------------------------------: | :--------------------------------------------: |
+| `simple` | `/drinks/type=cocktail,strength=5`  | `/drinks/type,cocktail,strength,5` *(default)* |
+| `label`  | `/drinks/.type=cocktail.strength=5` |      `/drinks/.type,cocktail,strength,5`       |
+| `matrix` | `/drinks/;type=cocktail;strength=5` |   `/drinks/;filter=type,cocktail,strength,5`   |
+
+##### Complex Objects and Arrays
+
+For complex objects and arrays, serialization in a path parameter is only really possible using `content` and not any `style` options.
+
+For example serializing using JSON:
+
+```yaml
+parameters:
+  - name: filter
+    in: path
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: array
+              items:
+                type: string
+            strength:
+              type: array
+              items:
+                type: integer
+```
+
+would serialize to `/drinks/%7B%22type%22%3A%5B%22cocktail%22%2C%22mocktail%22%5D%2C%22strength%22%3A%5B5%2C10%5D%7D` which is the equivalent of `/drinks/{"type":["cocktail","mocktail"],"strength":[5,10]}` unencoded.
+
+#### Header Parameters
+
+Header parameters are serialized at run-time to the HTTP headers of the request, types are generally serialized to a string representation, and only `simple` style is available.
+
+Explode defaults to `false`.
+
+##### Primitive Types
+
+For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string, 
+
+For the examples below we will use a header parameter named `X-Drink-Limit` with a value of `5`.
+
+| Style    | Explode == `true` |      Explode == `false`       |
+| -------- | :---------------: | :---------------------------: |
+| `simple` | `X-Drink-Type: 5` | `X-Drink-Type: 5` *(default)* |
+
+##### Simple Arrays
+
+For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` the `style` and `explode` fields have little effect on the serialization.
+
+For the examples below we will use a header parameter named `X-Drink-Types` with a value of `["gin", "vodka", "rum"]`.
+
+| Style    |       Explode == `true`       |            Explode == `false`             |
+| -------- | :---------------------------: | :---------------------------------------: |
+| `simple` | `X-Drink-Type: gin,vodka,rum` | `X-Drink-Type: gin,vodka,rum` *(default)* |
+
+##### Simple Objects
+
+For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `explode` field.
+
+For the examples below we will use a header parameter named `X-Drink-Filter` with a value of `{"type": "cocktail", "strength": 5}`.
+
+| Style    |            Explode == `true`             |                  Explode == `false`                  |
+| -------- | :--------------------------------------: | :--------------------------------------------------: |
+| `simple` | `X-Drink-Type: type=cocktail,strength=5` | `X-Drink-Type: type,cocktail,strength,5` *(default)* |
+
+##### Complex Objects and Arrays
+
+For complex objects and arrays, serialization in a header parameter is only really possible using `content` and not any `style` options.
+
+For example serializing using JSON:
+
+```yaml
+parameters:
+  - name: X-Drink-Filter
+    in: header
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: array
+              items:
+                type: string
+            strength:
+              type: array
+              items:
+                type: integer
+```
+
+would serialize to `X-Drink-Filter: {"type":["cocktail","mocktail"],"strength":[5,10]}`.
+
+#### Cookie Parameters
+
+Cookie parameters are serialized at run-time to a HTTP cookie header, types are generally serialized to a string representation, and only `form` style is available.
+
+Currently cookies are not well supported by OpenAPI and this may change in the future, so using the default `style: form` and `explode: true` values results in serialization incompatible with most cookie parsers.
+
+Therefore it is only really recommended to use cookies for primitive types or arrays with `explode: false` but the current serialization behaviors are included below for completeness.
+
+##### Primitive Types
+
+For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string.
+
+For the examples below we will use a cookie parameter named `drink-limit` with a value of `5`.
+
+| Style  |          Explode == `true`           |   Explode == `false`    |
+| ------ | :----------------------------------: | :---------------------: |
+| `form` | `Cookie: drink-limit=5`  *(default)* | `Cookie: drink-limit=5` |
+
+##### Simple Arrays
+
+For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `explode` field.
+
+For the examples below we will use a cookie parameter named `drink-types` with a value of `["gin", "vodka", "rum"]`.
+
+| Style  |                            Explode == `true`                            |         Explode == `false`          |
+| ------ | :---------------------------------------------------------------------: | :---------------------------------: |
+| `form` | `Cookie: drink-types=gin&drink-types=vodka&drink-types=rum` *(default)* | `Cookie: drink-types=gin,vodka,rum` |
+
+##### Simple Objects
+
+For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `explode` field.
+
+For the examples below we will use a cookie parameter named `drink-filter` with a value of `{"type": "cocktail", "strength": 5}`.
+
+| Style  |               Explode == `true`                |               Explode == `false`                |
+| ------ | :--------------------------------------------: | :---------------------------------------------: |
+| `form` | `Cookie: type=cocktail&strength=5` *(default)* | `Cookie: drink-filter=type,cocktail,strength,5` |
+
+##### Complex Objects and Arrays
+
+For complex objects and arrays, serialization in a cookie parameter is only really possible using `content` and not any `style` options.
+
+For example serializing using JSON:
+
+```yaml
+parameters:
+  - name: drink-filter
+    in: cookie
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: array
+              items:
+                type: string
+            strength:
+              type: array
+              items:
+                type: integer
+```
+
+would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"strength":[5,10]}`.
 
 ## Schema Object
 
@@ -1242,3 +1544,5 @@ The request body is used to describe the body of the request for operations that
 `TODO`
 
 ### Reference Object
+
+`TODO`
