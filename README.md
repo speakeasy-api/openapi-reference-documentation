@@ -37,10 +37,14 @@
   - [Request Body Object](#request-body-object)
   - [Responses](#responses)
   - [Response Object](#response-object)
+    - [Links](#links)
+    - [Link Object](#link-object)
   - [Callbacks](#callbacks)
     - [Callback Object](#callback-object)
   - [Content](#content)
     - [Media Type Object](#media-type-object)
+  - [Headers](#headers)
+    - [Header Object](#header-object)
   - [SDK Generation](#sdk-generation-5)
 - [Parameters](#parameters)
   - [Parameter Object](#parameter-object)
@@ -67,10 +71,12 @@
       - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
 - [Schema Object](#schema-object)
   - [OneOf](#oneof)
+  - [Examples](#examples)
+    - [Example Object](#example-object)
 - [Extensions](#extensions)
 - [References](#references)
   - [Reference Object](#reference-object)
-
+  - [Expression](#expression)
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
 
@@ -1123,11 +1129,169 @@ The request body is used to describe the body of the request for operations that
 
 ### Responses
 
-`TODO`
+The Responses object is a map of [Response Objects](#response-object) or [References](#references) to [Response Objects](#response-object) that define the possible responses that can be returned from executing the operation.
+
+The keys in the map represent any known HTTP status codes that the API may return. The HTTP status codes can be defined like below:
+
+- Numeric Status Code - ie `200`, `404` or `500` etc. HTTP status codes defined in [RFC 9110](https://httpwg.org/specs/rfc9110.html#overview.of.status.codes).
+- Status Code Wildcards - ie `1XX`, `2XX`, `3XX`, `4XX` or `5XX` etc. A wildcard that matches any status code in the range of its significant digit, for example `2XX` represents status codes `200` to `299` inclusive.
+- `default` - A catch all identifier for any other status codes not defined in the map.
+
+The map ***must*** contain at least one successful response code.
+
+All values ***must*** be defined as explicit strings ie `"200"` to allow for compatibility between JSON and YAML.
+
+For example:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks.
+      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      tags:
+        - drinks
+      parameters:
+        - name: type
+          in: query
+          description: The type of drink to filter by. If not provided all drinks will be returned.
+          required: false
+          schema:
+            $ref: "#/components/schemas/DrinkType"
+      responses:
+        "200":
+          description: A list of drinks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+        "5XX":
+          description: An error occurred interacting with the API.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        default:
+          description: An unknown error occurred interacting with the API.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+```
+
+Any number of [extension](#extensions) fields can be added to the responses object that can be used by tooling and vendors.
 
 ### Response Object
 
-`TODO`
+The Response Object describes a single response that can be returned from executing an [operation](#operation-object).
+
+| Field         |        Type         |      Required      | Description                                                                                                                                           |
+| ------------- | :-----------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` |      *string*       | :heavy_check_mark: | A description of the response. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                      |
+| `headers`     | [Headers](#headers) | :heavy_minus_sign: | A map of [Header Objects](#header-object) that define the headers that can be returned from executing this operation.                                 |
+| `content`     | [Content](#content) | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be returned from executing this operation.            |
+| `links`       |   [Links](#links)   | :heavy_minus_sign: | A map of [Link Objects](#link-object) or [References](#references) that define the possible links that can be returned from executing this operation. |
+
+#### Links
+
+The Links object is a map of [Link Objects](#link-object) or [References](#references) to [Link Objects](#link-object) that allow for describing possible API usage scenarios between different operations. For example if a response returns a `Drink` object, and the `Drink` object has a `ingredients` property that is a list of `Ingredient` objects, then a link can be defined to the `listIngredients` operation showing how the ingredients can be used as an input to the `listIngredients` operation.
+
+For example:
+
+```yaml
+/drink/{name}:
+  get:
+    operationId: getDrink
+      summary: Get a drink.
+      description: Get a drink by name, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      tags:
+        - drinks
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+    responses:
+      "200":
+        description: A drink.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Drink"
+        links:
+          listIngredients:
+            operationId: listIngredients
+            parameters:
+              ingredients: $response.body#/ingredients
+            description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
+/ingredients:
+    get:
+      operationId: listIngredients
+      summary: Get a list of ingredients.
+      description: Get a list of ingredients, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      tags:
+        - ingredients
+      parameters:
+        - name: ingredients
+          in: query
+          description: A list of ingredients to filter by. If not provided all ingredients will be returned.
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: A list of ingredients.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ingredient"
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+```
+
+#### Link Object
+
+The Link Object represents a possible link that can be followed from the response. 
+
+| Field          |                       Type                        |      Required      | Description                                                                                                                                                                                                                                                                                                                                  |
+| -------------- | :-----------------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `operationId`  |                     *string*                      | :heavy_check_mark: | The `operationId` of an [Operation](#operation-object) that exists in the document. Use either this field or the `operationRef` field not both.                                                                                                                                                                                              |
+| `operationRef` |                     *string*                      | :heavy_check_mark: | Either a [Relative Reference](#references) or [Absolute Reference](#references) to an [Operation](#operation-object) that exists in the document. Use either this field or the `operationId` field not both.                                                                                                                                 |
+| `description`  |                     *string*                      | :heavy_minus_sign: | A description of the link and intentions for it use. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                       |
+| `parameters`   | *map[string, any \| [{Expression}](#expression)]* | :heavy_minus_sign: | A map of parameters to pass to the linked operation. The key is the name of the parameter and the value is either a constant value or an [Expression](#expression) that will be evaluated.<br/><br/>The parameter name can also be qualified with the location of the parameter, for example `path.parameter_name` or `query.parameter_name` |
+| `requestBody`  |       *any \| [{Expression}](#expression)*        | :heavy_minus_sign: | A constant value or [Expression](#expression) that will be used as the request body when calling the linked operation.                                                                                                                                                                                                                       |
+| `server`       |          [Server Object](#server-object)          | :heavy_minus_sign: | An optional server to be used by the linked operation.                                                                                                                                                                                                                                                                                       |
+
+OperationRef Example:
+
+```yaml
+links:
+  listIngredients:
+    operationRef: "#/paths/~1ingredients/get"
+    parameters:
+      ingredients: $response.body#/ingredients
+
+# or
+
+links:
+  listIngredients:
+    operationRef: "https://speakeasy.bar/#/paths/~1ingredients/get"
+    parameters:
+      ingredients: $response.body#/ingredients
+```
 
 ### Callbacks
 
@@ -1142,6 +1306,14 @@ The request body is used to describe the body of the request for operations that
 `TODO`
 
 #### Media Type Object
+
+`TODO`
+
+### Headers
+
+`TODO`
+
+#### Header Object
 
 `TODO`
 
@@ -1545,6 +1717,14 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 
 `TODO`
 
+### Examples
+
+`TODO`
+
+#### Example Object
+
+`TODO`
+
 ## Extensions
 
 `TODO`
@@ -1554,5 +1734,9 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 `TODO`
 
 ### Reference Object
+
+`TODO`
+
+### Expression
 
 `TODO`
