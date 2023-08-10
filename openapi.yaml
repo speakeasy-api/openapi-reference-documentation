@@ -168,6 +168,32 @@ paths:
           $ref: "#/components/responses/APIError"
         default:
           $ref: "#/components/responses/UnknownError"
+webhooks:
+  stockUpdate:
+    post:
+      summary: Receive stock updates.
+      description: Receive stock updates from the bar, this will be called whenever the stock levels of a drink or ingredient changes.
+      tags:
+        - drinks
+        - ingredients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                drink:
+                  $ref: "#/components/schemas/Drink"
+                ingredient:
+                  $ref: "#/components/schemas/Ingredient"
+      responses:
+        "200":
+          description: The stock update was received successfully.
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
 components:
   schemas:
     APIError:

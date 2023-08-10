@@ -23,6 +23,7 @@
     - [SDK Generation](#sdk-generation-2)
   - [Security](#security)
     - [Security Requirement Object](#security-requirement-object)
+    - [Security Scheme Object](#security-scheme-object)
     - [SDK Generation](#sdk-generation-3)
   - [Tags](#tags)
     - [Tag Object](#tag-object)
@@ -31,8 +32,6 @@
     - [Path Item Object](#path-item-object)
   - [Webhooks](#webhooks)
   - [Components Object](#components-object)
-    - [Security Schemes](#security-schemes)
-    - [Path Items](#path-items)
 - [Operation Object](#operation-object)
   - [Request Body Object](#request-body-object)
   - [Responses](#responses)
@@ -75,7 +74,8 @@
     - [Example Object](#example-object)
 - [Extensions](#extensions)
 - [References](#references)
-  - [Reference Object](#reference-object)
+  - [OpenAPI Reference Object](#openapi-reference-object)
+  - [JSON Schema Reference Object](#json-schema-reference-object)
   - [Expression](#expression)
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
@@ -88,6 +88,8 @@
 
 - TODO: Go through and update all examples of yaml and generated code once full documentation and example spec is complete.
 - TODO: Ensure we refer to API, Endpoint, etc consistently throughout the documentation.
+- TODO: Determine the best way to link back to the generator? Should we talk directly about it in this documentation, or leave it to links and/or expandable sections that go into more detail?
+- TODO: make the difference between OpenAPI references and JSON Schema references clear. I think this is a common point of confusion for people.
 
 ## OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)
 
@@ -156,7 +158,7 @@ components:
 
 | Field               |                              Type                               |      Required      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------- | :-------------------------------------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `openapi`           |                            *string*                             | :heavy_check_mark: | The version of the OpenAPI specification that the document conforms to, this should be one of the [Supported Versions](https://github.com/OAI/OpenAPI-Specification/tree/main/versions) of the OpenAPI specification.<br /><br />*Note:* Speakeasy tooling currently only supports versions `3.0.X` and `3.1.X` of the OpenAPI specification.                                                                                                                                                                         |
+| `openapi`           |                            *string*                             | :heavy_check_mark: | The version of the OpenAPI specification that the document conforms to, this should be one of the [Supported Versions](https://github.com/OAI/OpenAPI-Specification/tree/main/versions) of the OpenAPI specification.<br /><br />*Note:* Speakeasy tooling currently only supports versions `3.0.x` and `3.1.x` of the OpenAPI specification.                                                                                                                                                                         |
 | `jsonSchemaDialect` |                            *string*                             | :heavy_minus_sign: | **(Available in OpenAPI 3.1.x ONLY)**<br />The version of the JSON Schema specification that the document conforms to (if not provided by the `$schema` field within a [Schema Object](#schema-object)), this is a URI to one of the [Supported Versions](https://json-schema.org/specification-links.html#published-drafts) of the JSON Schema specification.<br /><br />*Note:* Currently **not** supported by Speakeasy tooling.                                                                                   |
 | `info`              |                   [Info Object](#info-object)                   | :heavy_check_mark: | Contains information about the document including fields like `title`, `version`, `description` that help to identify the purpose and owner of the document.                                                                                                                                                                                                                                                                                                                                                          |
 | `externalDocs`      | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Optional documentation available externally about the API.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -191,8 +193,6 @@ Some common organizational patterns for OpenAPI documents are:
 ### Info Object
 
 The document's `info` object contains information about the document including fields like `title`, `version`, `description` that help to identify the purpose and owner of the document.
-
-`TODO: Summarize how this is used by Speakeasy Generator`
 
 Example:
 
@@ -696,7 +696,7 @@ components:
       in: header
 ```
 
-The named security schemes referenced ***must*** be defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
+The named security schemes referenced ***must*** be [Security Scheme Object](#security-scheme-object) defined in the [Components Object](#components-object) under the `securitySchemes` field.
 
 Security can also be made optional by providing an empty object (`{}`) in the list of security requirements. For example:
 
@@ -808,11 +808,13 @@ This **AND**/**OR** logic along with optional (`{}`) security can be used in any
 
 #### Security Requirement Object
 
-A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names ***must*** match the names defined in the [Components Object](#components-object) under the [`securitySchemes`](#security-schemes) field.
+A Security Requirement Object defines a map of security schemes names to scopes that are required to access the API. The names ***must*** match the names of [Security Scheme Objects](#security-scheme-object) defined in the [Components Object](#components-object) under the `securitySchemes` field.
 
 | Field                  |       Type       |      Required      | Description                                                                                                                                                                                                                                                                                                                                                |
 | ---------------------- | :--------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{securitySchemeName}` | *list\<string\>* | :heavy_minus_sign: | A list of scopes/roles required for the security scheme. If the security scheme type is `oauth2` or `openIdConnect`, this is a list of scopes names required by the API consumer to be able to access/use the API, for any other types this could contain a list of roles or similar required for the API consumer to obtain to authenticate with the API. |
+
+#### Security Scheme Object
 
 #### SDK Generation
 
@@ -905,7 +907,7 @@ s := speakeasy.New()
 res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice Tea"}, operations.GetDrinkSecurity{APIKey: "YOUR_API_KEY_HERE"})
 ```
 
-`TODO: once we support optional method level security add an example for that here as well`
+[//]: # "TODO: once we support optional method level security add an example for that here as well"
 
 ### Tags
 
@@ -1031,40 +1033,78 @@ components:
         ... # operation definition
 ```
 
-| Field         |                 Type                  |      Required      | Description                                                                                                                                                                                                   |
-| ------------- | :-----------------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$ref`        |               *string*                | :heavy_minus_sign: | Allows for referencing a [Path Item Object](#path-item-object) defined in the [Components Object](#components-object) under the [`pathItems`](#path-items) field. If used then no other fields should be set. |
-| `summary`     |               *string*                | :heavy_minus_sign: | A short summary of what the path item represents. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                           |
-| `description` |               *string*                | :heavy_minus_sign: | A description of the path item. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                             |
-| `servers`     |          [Servers](#servers)          | :heavy_minus_sign: | A list of [Server Objects](#server-object) that override the servers defined at the document level, and applies to all operations defined on this path.                                                       |
-| `parameters`  |       [Parameters](#parameters)       | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are common to all operations defined on this path.                                                                                                      |
-| `get`         | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`GET` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET)                                                                                           |
-| `put`         | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`PUT` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT)                                                                                           |
-| `post`        | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`POST` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)                                                                                         |
-| `delete`      | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`DELETE` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE)                                                                                     |
-| `options`     | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`OPTIONS` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS)                                                                                   |
-| `head`        | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`HEAD` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD)                                                                                         |
-| `patch`       | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`PATCH` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH)                                                                                       |
-| `trace`       | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`TRACE` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE)                                                                                       |
-| `x-*`         |       [Extensions](#extensions)       | :heavy_minus_sign: | Any number of extension fields can be added to the path item object that can be used by tooling and vendors.                                                                                                  |
+| Field         |                 Type                  |      Required      | Description                                                                                                                                                                                    |
+| ------------- | :-----------------------------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$ref`        |               *string*                | :heavy_minus_sign: | Allows for referencing a [Path Item Object](#path-item-object) defined in the [Components Object](#components-object) under the `pathItems` field. If used then no other fields should be set. |
+| `summary`     |               *string*                | :heavy_minus_sign: | A short summary of what the path item represents. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                            |
+| `description` |               *string*                | :heavy_minus_sign: | A description of the path item. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                              |
+| `servers`     |          [Servers](#servers)          | :heavy_minus_sign: | A list of [Server Objects](#server-object) that override the servers defined at the document level, and applies to all operations defined on this path.                                        |
+| `parameters`  |       [Parameters](#parameters)       | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are common to all operations defined on this path.                                                                                       |
+| `get`         | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`GET` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET)                                                                            |
+| `put`         | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`PUT` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT)                                                                            |
+| `post`        | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`POST` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)                                                                          |
+| `delete`      | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`DELETE` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE)                                                                      |
+| `options`     | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`OPTIONS` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS)                                                                    |
+| `head`        | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`HEAD` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD)                                                                          |
+| `patch`       | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`PATCH` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH)                                                                        |
+| `trace`       | [Operation Object](#operation-object) | :heavy_minus_sign: | A operation associated with the [`TRACE` HTTP method.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE)                                                                        |
+| `x-*`         |       [Extensions](#extensions)       | :heavy_minus_sign: | Any number of extension fields can be added to the path item object that can be used by tooling and vendors.                                                                                   |
 
 The above order is a recommendation for how the fields should be ordered, but is not significant to the order in which the endpoints should be used.
 
 ### Webhooks
 
-`TODO`
+**(Available in OpenAPI 3.1.x ONLY)** Webhooks represents a possible list of incoming requests that form part of the documented API, that a consumer can subscribe to.
+
+Webhooks are represented by a map of [Path Item Objects](#path-item-object) or [Reference Objects](#reference-object) that are keyed by the unique name of the webhook.
+
+For example:
+
+```yaml
+webhooks:
+  stockUpdate:
+    post:
+      summary: Receive stock updates.
+      description: Receive stock updates from the bar, this will be called whenever the stock levels of a drink or ingredient changes.
+      tags:
+        - drinks
+        - ingredients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                drink:
+                  $ref: "#/components/schemas/Drink"
+                ingredient:
+                  $ref: "#/components/schemas/Ingredient"
+      responses:
+        "200":
+          description: The stock update was received successfully.
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+```
 
 ### Components Object
 
-`TODO`
+The Components Object is a container for reusable objects that can be referenced across the API. These objects can be referenced using [References](#references), and generally are only valid if referenced by other parts of the API.
 
-#### Security Schemes
-
-`TODO`
-
-#### Path Items
-
-`TODO`
+| Field             |                                                           Type                                                            |      Required      | Description                                                                                                                                                                                                                                                                                                 |
+| ----------------- | :-----------------------------------------------------------------------------------------------------------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `schemas`         |                                      *map[string, [Schema Object](#schema-object)]*                                       | :heavy_minus_sign: | A map of [Schema Objects](#schema-object) that can be referenced by other parts of the API.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.** |
+| `securitySchemes` | *map[string, [Security Scheme Object](#security-scheme-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign: | A map of [Security Scheme Objects](#security-scheme-object) that can be referenced by other parts of the API.                                                                                                                                                                                               |
+| `pathItems`       |       *map[string, [Path Item Object](#path-item-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Path Item Objects](#path-item-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
+| `parameters`      |       *map[string, [Parameter Object](#parameter-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Parameter Objects](#parameter-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
+| `requestBodies`   |    *map[string, [Request Body Object](#request-body-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*    | :heavy_minus_sign: | A map of [Request Body Objects](#request-body-object) that can be referenced by other parts of the API.                                                                                                                                                                                                     |
+| `responses`       |        *map[string, [Response Object](#response-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Response Objects](#response-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
+| `headers`         |          *map[string, [Header Object](#header-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*          | :heavy_minus_sign: | A map of [Header Objects](#header-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                 |
+| `examples`        |         *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*         | :heavy_minus_sign: | A map of [Example Objects](#example-object) that can be referenced by other parts of the API.                                                                                                                                                                                                               |
+| `callbacks`       |        *map[string, [Callback Object](#callback-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
+| `links`           |            *map[string, [Link Object](#link-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*            | :heavy_minus_sign: | A map of [Link Objects](#link-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                     |
 
 ## Operation Object
 
@@ -1121,11 +1161,12 @@ The above order of fields is a recommendation for how the fields should be defin
 
 The request body is used to describe the body of the request for operations that support a request body.
 
-| Field         |        Type         |      Required      | Description                                                                                                                          |
-| ------------- | :-----------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `description` |      *string*       | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
-| `content`     | [Content](#content) | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the request body.        |
-| `required`    |      *boolean*      | :heavy_minus_sign: | Whether the request body is required or not. Defaults to `false`.                                                                    |
+| Field         |           Type            |      Required      | Description                                                                                                                          |
+| ------------- | :-----------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` |         *string*          | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `content`     |    [Content](#content)    | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the request body.        |
+| `required`    |         *boolean*         | :heavy_minus_sign: | Whether the request body is required or not. Defaults to `false`.                                                                    |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the request body object that can be used by tooling and vendors.                      |
 
 ### Responses
 
@@ -1188,12 +1229,13 @@ Any number of [extension](#extensions) fields can be added to the responses obje
 
 The Response Object describes a single response that can be returned from executing an [operation](#operation-object).
 
-| Field         |        Type         |      Required      | Description                                                                                                                                           |
-| ------------- | :-----------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` |      *string*       | :heavy_check_mark: | A description of the response. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                      |
-| `headers`     | [Headers](#headers) | :heavy_minus_sign: | A map of [Header Objects](#header-object) that define the headers that can be returned from executing this operation.                                 |
-| `content`     | [Content](#content) | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be returned from executing this operation.            |
-| `links`       |   [Links](#links)   | :heavy_minus_sign: | A map of [Link Objects](#link-object) or [References](#references) that define the possible links that can be returned from executing this operation. |
+| Field         |           Type            |      Required      | Description                                                                                                                                           |
+| ------------- | :-----------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` |         *string*          | :heavy_check_mark: | A description of the response. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                      |
+| `headers`     |    [Headers](#headers)    | :heavy_minus_sign: | A map of [Header Objects](#header-object) that define the headers that can be returned from executing this operation.                                 |
+| `content`     |    [Content](#content)    | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be returned from executing this operation.            |
+| `links`       |      [Links](#links)      | :heavy_minus_sign: | A map of [Link Objects](#link-object) or [References](#references) that define the possible links that can be returned from executing this operation. |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the response object that can be used by tooling and vendors.                                           |
 
 #### Links
 
@@ -1274,6 +1316,7 @@ The Link Object represents a possible link that can be followed from the respons
 | `parameters`   | *map[string, any \| [{Expression}](#expression)]* | :heavy_minus_sign: | A map of parameters to pass to the linked operation. The key is the name of the parameter and the value is either a constant value or an [Expression](#expression) that will be evaluated.<br/><br/>The parameter name can also be qualified with the location of the parameter, for example `path.parameter_name` or `query.parameter_name` |
 | `requestBody`  |       *any \| [{Expression}](#expression)*        | :heavy_minus_sign: | A constant value or [Expression](#expression) that will be used as the request body when calling the linked operation.                                                                                                                                                                                                                       |
 | `server`       |          [Server Object](#server-object)          | :heavy_minus_sign: | An optional server to be used by the linked operation.                                                                                                                                                                                                                                                                                       |
+| `x-*`          |             [Extensions](#extensions)             | :heavy_minus_sign: | Any number of extension fields can be added to the link object that can be used by tooling and vendors.                                                                                                                                                                                                                                      |
 
 OperationRef Example:
 
@@ -1733,9 +1776,11 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 
 `TODO`
 
-### Reference Object
+### OpenAPI Reference Object
 
 `TODO`
+
+### JSON Schema Reference Object
 
 ### Expression
 
