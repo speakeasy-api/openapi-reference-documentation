@@ -1433,7 +1433,30 @@ Any number of [extension](#extensions) fields can be added to the Callback Objec
 
 ### Content
 
-`TODO`
+A map of Media Types (including wildcards) to a [Media Type Object](#media-type-object) that describes the content of the request or response as it relates to the media type consumed or produced.
+
+The key in the map is a [Media/MIME Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) that determines how the content is encoded. This media type can include wildcards indicating a range of media types it covers. For example, `application/*` would match `application/json`, `application/xml`, etc. `*/*` would match any media type. Or it can be explicitly defined to match only a single media type. For example, `application/json; charset=utf-8`.
+
+Where both a wildcard and a specific media type are defined, the specific media type definition takes precedence.
+
+For example:
+
+```yaml
+content:
+  application/json: # Upload a JSON file
+    schema:
+      $ref: "#/components/schemas/Drink"
+  img/*: # Upload any image format
+    schema:
+      type: string
+      format: binary
+  text/*: # Upload any text based description of a drink
+    schema:
+      type: string
+  text/csv: # Upload a CSV file (this will take precedence over text/*)
+    schema:
+      $ref: "#/components/schemas/Drink"
+```
 
 #### Media Type Object
 
