@@ -1349,7 +1349,7 @@ links:
 
 ### Callbacks
 
-A map of [Callback Objects](#callback-object) or [References](#references) that define incoming requests that may be triggered by the parent operation, and the expected responses to be returned. The key is a unique identifier for the callback operation.
+A map of [Callback Objects](#callback-object) or [References](#references) that define incoming requests that may be triggered by the parent operation, and the expected responses to be returned. The key is a unique identifier for the collection of callbacks contained within.
 
 **Note: Callbacks are only valid on operations that also pass the required URL to call the callback on, in either the parameters or the request body of the parent operation. In the event that a request from the API is sent in reaction to calling the parent operation but the callback URL is provided elsewhere, use [Webhooks](#webhooks) to document the callback instead (Webhooks only available in `3.1.x`)**
 
@@ -1417,7 +1417,19 @@ For example:
 
 #### Callback Object
 
-`TODO`
+A map of [Runtime Expressions](#expression) (that represent a URL the callback request is sent to) to a [Path Item Object](#path-item-object) or [Reference](#references) that defines a request to be initiated by the API provider and a potential response to be returned.
+
+The expression when evaluated at runtime will resolve to a URL either represented in the parameters, request body or response body of the parent operation.
+
+Examples:
+
+`{$request.query.callback_url}` will resolve to the value sent in the `callback_url` query parameter sent in the parent operation.
+
+`{$request.body#/asyncURL}` will resolve to the value of the `asyncURL` property in the request body of the parent operation.
+
+`{$response.body#/success/progressEndpoint}` will resolve to the value of the `progressEndpoint` property within the `success` object in the response body of the parent operation.
+
+Any number of [extension](#extensions) fields can be added to the Callback Object that can be used by tooling and vendors.
 
 ### Content
 
