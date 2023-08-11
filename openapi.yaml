@@ -40,8 +40,11 @@ tags:
     description: The drinks endpoints.
   - name: ingredients
     description: The ingredients endpoints.
+  - name: orders
+    description: The orders endpoints.
   - name: authentication
     description: The authentication endpoints.
+  - name: config
 paths:
   /authenticate:
     post:
@@ -107,6 +110,7 @@ paths:
           $ref: "#/components/responses/APIError"
         default:
           $ref: "#/components/responses/UnknownError"
+
   /drink/{name}:
     get:
       operationId: getDrink
@@ -137,6 +141,7 @@ paths:
           $ref: "#/components/responses/APIError"
         default:
           $ref: "#/components/responses/UnknownError"
+
   /ingredients:
     get:
       operationId: listIngredients
@@ -164,6 +169,93 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Ingredient"
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+
+  /order:
+    post:
+      operationId: createOrder
+      summary: Create an order.
+      description: Create an order for a drink.
+      tags:
+        - orders
+      parameters:
+        - name: callback_url
+          in: query
+          description: The url to call when the order is updated.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Order"
+      responses:
+        "200":
+          description: The order was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+      callbacks:
+        orderUpdate:
+          "{$request.query.callback_url}":
+            post:
+              summary: Receive order updates.
+              description: Receive order updates from the supplier, this will be called whenever the status of an order changes.
+              tags:
+                - orders
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        order:
+                          $ref: "#/components/schemas/Order"
+              responses:
+                "200":
+                  description: The order update was received successfully.
+                "5XX":
+                  $ref: "#/components/responses/APIError"
+                default:
+                  $ref: "#/components/responses/UnknownError"
+  /webhooks/subscribe:
+    post:
+      operationId: subscribeToWebhooks
+      summary: Subscribe to webhooks.
+      description: Subscribe to webhooks.
+      tags:
+        - configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  webhook:
+                    type: string
+                    enum:
+                      - stockUpdate
+      responses:
+        "200":
+          description: The webhook was subscribed to successfully.
         "5XX":
           $ref: "#/components/responses/APIError"
         default:
@@ -220,32 +312,29 @@ components:
           description: The name of the drink.
           type: string
           examples:
-            - name: Old Fashioned
-            - name: Manhattan
-            - name: Negroni
+            - Old Fashioned
+            - Manhattan
+            - Negroni
+        type:
+          $ref: "#/components/schemas/DrinkType"
         price:
           description: The price of one unit of the drink in US cents.
           type: number
           examples:
-            - price: 1000 # $10.00
-            - price: 1200 # $12.00
-            - price: 1500 # $15.00
-        type:
-          $ref: "#/components/schemas/DrinkType"
+            - 1000 # $10.00
+            - 1200 # $12.00
+            - 1500 # $15.00
         stock:
           description: The number of units of the drink in stock, only available when authenticated.
           type: integer
-          examples:
-            - stock: 10
-            - stock: 5
-            - stock: 0
+          readOnly: true
         productCode:
           description: The product code of the drink, only available when authenticated.
           type: string
           examples:
-            - productCode: "AC-A2DF3"
-            - productCode: "NAC-3F2D1"
-            - productCode: "APM-1F2D3"
+            - "AC-A2DF3"
+            - "NAC-3F2D1"
+            - "APM-1F2D3"
       required:
         - name
         - price
@@ -266,32 +355,72 @@ components:
           description: The name of the ingredient.
           type: string
           examples:
-            - name: Sugar Syrup
-            - name: Angostura Bitters
-            - name: Orange Peel
+            - Sugar Syrup
+            - Angostura Bitters
+            - Orange Peel
         type:
-          description: The type of ingredient.
-          type: string
-          examples:
-            - type: fresh
-            - type: long-life
-            - type: packaged
+          $ref: "#/components/schemas/IngredientType"
         stock:
           description: The number of units of the ingredient in stock, only available when authenticated.
           type: integer
           examples:
-            - stock: 10
-            - stock: 5
-            - stock: 0
+            - 10
+            - 5
+            - 0
+          readOnly: true
         productCode:
           description: The product code of the ingredient, only available when authenticated.
           type: string
           examples:
-            - productCode: "AC-A2DF3"
-            - productCode: "NAC-3F2D1"
-            - productCode: "APM-1F2D3"
+            - "AC-A2DF3"
+            - "NAC-3F2D1"
+            - "APM-1F2D3"
       required:
         - name
+        - type
+    IngredientType:
+      description: The type of ingredient.
+      type: string
+      enum:
+        - fresh
+        - long-life
+        - packaged
+    Order:
+      description: An order for a drink or ingredient.
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/OrderType"
+        productCode:
+          description: The product code of the drink or ingredient.
+          type: string
+          examples:
+            - "AC-A2DF3"
+            - "NAC-3F2D1"
+            - "APM-1F2D3"
+        quantity:
+          description: The number of units of the drink or ingredient to order.
+          type: integer
+          minimum: 1
+        status:
+          description: The status of the order.
+          type: string
+          enum:
+            - pending
+            - processing
+            - complete
+          readOnly: true
+      required:
+        - type
+        - productCode
+        - quantity
+        - status
+    OrderType:
+      description: The type of order.
+      type: string
+      enum:
+        - drink
+        - ingredient
   securitySchemes:
     apiKey:
       type: apiKey

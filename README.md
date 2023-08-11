@@ -90,6 +90,14 @@
 - TODO: Ensure we refer to API, Endpoint, etc consistently throughout the documentation.
 - TODO: Determine the best way to link back to the generator? Should we talk directly about it in this documentation, or leave it to links and/or expandable sections that go into more detail?
 - TODO: make the difference between OpenAPI references and JSON Schema references clear. I think this is a common point of confusion for people.
+- TODO: do we want to add comments into our examples explaining them more?
+- TODO: in some cases the smart bear docs document different sections of the spec in a lot of detail, almost as "how-to" guides ie. <https://swagger.io/docs/specification/callbacks/> I think we should have the equivelant but should that be done inline in this documentation or as separate linked pages from here? List of potential candidates:
+  - callbacks
+  - webhooks
+  - parameters (have implemented this in a lot of detail in line in this documentation but should we break it out into a separate page?)
+  - components
+  - references
+  - ???
 
 ## OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)
 
@@ -816,6 +824,8 @@ A Security Requirement Object defines a map of security schemes names to scopes 
 
 #### Security Scheme Object
 
+`TODO`
+
 #### SDK Generation
 
 Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
@@ -1056,7 +1066,7 @@ The above order is a recommendation for how the fields should be ordered, but is
 
 **(Available in OpenAPI 3.1.x ONLY)** Webhooks represents a possible list of incoming requests that form part of the documented API, that a consumer can subscribe to.
 
-Webhooks are represented by a map of [Path Item Objects](#path-item-object) or [Reference Objects](#reference-object) that are keyed by the unique name of the webhook.
+Webhooks are represented by a map of [Path Item Objects](#path-item-object) or [OpenAPI Reference Objects](#openapi-reference-object) that are keyed by the unique name of the webhook.
 
 For example:
 
@@ -1105,6 +1115,7 @@ The Components Object is a container for reusable objects that can be referenced
 | `examples`        |         *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*         | :heavy_minus_sign: | A map of [Example Objects](#example-object) that can be referenced by other parts of the API.                                                                                                                                                                                                               |
 | `callbacks`       |        *map[string, [Callback Object](#callback-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
 | `links`           |            *map[string, [Link Object](#link-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*            | :heavy_minus_sign: | A map of [Link Objects](#link-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                     |
+| `x-*`             |                                                 [Extensions](#extensions)                                                 | :heavy_minus_sign: | Any number of extension fields can be added to the components object that can be used by tooling and vendors.                                                                                                                                                                                               |
 
 ## Operation Object
 
@@ -1306,7 +1317,7 @@ For example:
 
 #### Link Object
 
-The Link Object represents a possible link that can be followed from the response. 
+The Link Object represents a possible link that can be followed from the response.
 
 | Field          |                       Type                        |      Required      | Description                                                                                                                                                                                                                                                                                                                                  |
 | -------------- | :-----------------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1338,7 +1349,71 @@ links:
 
 ### Callbacks
 
-`TODO`
+A map of [Callback Objects](#callback-object) or [References](#references) that define incoming requests that may be triggered by the parent operation, and the expected responses to be returned. The key is a unique identifier for the callback operation.
+
+**Note: Callbacks are only valid on operations that also pass the required URL to call the callback on, in either the parameters or the request body of the parent operation. In the event that a request from the API is sent in reaction to calling the parent operation but the callback URL is provided elsewhere, use [Webhooks](#webhooks) to document the callback instead (Webhooks only available in `3.1.x`)**
+
+For example:
+
+```yaml
+  /order:
+    post:
+      operationId: createOrder
+      summary: Create an order.
+      description: Create an order for a drink.
+      tags:
+        - orders
+      parameters:
+        - name: callback_url
+          in: query
+          description: The url to call when the order is updated.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Order"
+      responses:
+        "200":
+          description: The order was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+      callbacks:
+        orderUpdate:
+          "{$request.query.callback_url}":
+            post:
+              summary: Receive order updates.
+              description: Receive order updates from the supplier, this will be called whenever the status of an order changes.
+              tags:
+                - orders
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        order:
+                          $ref: "#/components/schemas/Order"
+              responses:
+                "200":
+                  description: The order update was received successfully.
+                "5XX":
+                  $ref: "#/components/responses/APIError"
+                default:
+                  $ref: "#/components/responses/UnknownError"
+```
 
 #### Callback Object
 
@@ -1437,22 +1512,22 @@ paths:
 
 ### Parameter Object
 
-| Field             |                                   Type                                   |      Required      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ----------------- | :----------------------------------------------------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`            |                                 *string*                                 | :heavy_check_mark: | The **case sensitive** name of the parameter. This ***must*** be unique when combined with the `in` field.<br/><br/>If the `in` field is `path` then this field ***must*** be referenced in the owning path.                                                                                                                                                                                                                                           |
-| `in`              |                                 *string*                                 | :heavy_check_mark: | The type/location of the parameter. The available types are:<br/><ul><li>`path` - a templated parameter defined within the path.</li><li>`query` - a query parameter passed via the URL.</li><li>`header` - a header parameter passed via HTTP headers.</li><li>`cookie` - a cookie parameter passed via HTTP cookies.</li></ul>                                                                                                                       |
-| `description`     |                                 *string*                                 | :heavy_minus_sign: | A description of the parameter. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                                                                                                                                                      |
-| `required`        |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter is required or not. If the `in` field is `path` then this field is **always** required and ***must*** be `true`. Defaults to `false`.                                                                                                                                                                                                                                                                                            |
-| `deprecated`      |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter is deprecated or not. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                                                       |
-| `style`           |                                 *string*                                 | :heavy_minus_sign: | Describes how the parameter value will be serialized depending on the `in` field. The available styles are `matrix`, `label`, `form`, `simple`, `spaceDelimited`, `pipeDelimited`, `deepObject`.<br/><br/>The default style depends on the `in` field:<br/><ul><li>`path` - `simple`</li><li>`query` - `form`</li><li>`header` - `simple`</li><li>`cookie` - `form`</li></ul>See [Parameter Serialization](#parameter-serialization) for more details. |
-| `explode`         |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter value will be exploded or not, based on the parameter type. Defaults to `true` when `style` is `form` otherwise `false`.<br><br/>See [Parameter Serialization](#parameter-serialization) for more details.                                                                                                                                                                                                                       |
-| `schema`          | [Schema Object](#schema-object) or [Reference Object](#reference-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the parameter. This is ***required*** unless `content` is defined.                                                                                                                                                                                                                                                                                                                          |
-| `content`         |                           [Content](#content)                            | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the parameter. This is ***required*** unless `schema` is defined.                                                                                                                                                                                                                                                                          |
-| `allowEmptyValue` |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter value can be empty or not. Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                    |
-| `allowReserved`   |                                *boolean*                                 | :heavy_minus_sign: | Whether the parameter value can contain reserved characters or not as defined by [RFC3986](https://www.rfc-editor.org/rfc/rfc3986). Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                 |
-| `example`         |                                  *any*                                   | :heavy_minus_sign: | An example of the parameter's value. This is ignored if the `examples` field is defined.                                                                                                                                                                                                                                                                                                                                                               |
-| `examples`        |                          [Examples](#examples)                           | :heavy_minus_sign: | A map of [Example Objects](#example-object) and/or [Reference Objects](#reference-object) that define the possible examples of the parameter's value.                                                                                                                                                                                                                                                                                                  |
-| `x-*`             |                        [Extensions](#extensions)                         | :heavy_minus_sign: | Any number of extension fields can be added to the parameter object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                                                                                           |
+| Field             |              Type               |      Required      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------- | :-----------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`            |            *string*             | :heavy_check_mark: | The **case sensitive** name of the parameter. This ***must*** be unique when combined with the `in` field.<br/><br/>If the `in` field is `path` then this field ***must*** be referenced in the owning path.                                                                                                                                                                                                                                           |
+| `in`              |            *string*             | :heavy_check_mark: | The type/location of the parameter. The available types are:<br/><ul><li>`path` - a templated parameter defined within the path.</li><li>`query` - a query parameter passed via the URL.</li><li>`header` - a header parameter passed via HTTP headers.</li><li>`cookie` - a cookie parameter passed via HTTP cookies.</li></ul>                                                                                                                       |
+| `description`     |            *string*             | :heavy_minus_sign: | A description of the parameter. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                                                                                                                                                      |
+| `required`        |            *boolean*            | :heavy_minus_sign: | Whether the parameter is required or not. If the `in` field is `path` then this field is **always** required and ***must*** be `true`. Defaults to `false`.                                                                                                                                                                                                                                                                                            |
+| `deprecated`      |            *boolean*            | :heavy_minus_sign: | Whether the parameter is deprecated or not. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                                                       |
+| `style`           |            *string*             | :heavy_minus_sign: | Describes how the parameter value will be serialized depending on the `in` field. The available styles are `matrix`, `label`, `form`, `simple`, `spaceDelimited`, `pipeDelimited`, `deepObject`.<br/><br/>The default style depends on the `in` field:<br/><ul><li>`path` - `simple`</li><li>`query` - `form`</li><li>`header` - `simple`</li><li>`cookie` - `form`</li></ul>See [Parameter Serialization](#parameter-serialization) for more details. |
+| `explode`         |            *boolean*            | :heavy_minus_sign: | Whether the parameter value will be exploded or not, based on the parameter type. Defaults to `true` when `style` is `form` otherwise `false`.<br><br/>See [Parameter Serialization](#parameter-serialization) for more details.                                                                                                                                                                                                                       |
+| `schema`          | [Schema Object](#schema-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the parameter. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.**                                                                                                          |
+| `content`         |       [Content](#content)       | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the parameter. This is ***required*** unless `schema` is defined.                                                                                                                                                                                                                                                                          |
+| `allowEmptyValue` |            *boolean*            | :heavy_minus_sign: | Whether the parameter value can be empty or not. Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                    |
+| `allowReserved`   |            *boolean*            | :heavy_minus_sign: | Whether the parameter value can contain reserved characters or not as defined by [RFC3986](https://www.rfc-editor.org/rfc/rfc3986). Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                 |
+| `example`         |              *any*              | :heavy_minus_sign: | An example of the parameter's value. This is ignored if the `examples` field is defined.                                                                                                                                                                                                                                                                                                                                                               |
+| `examples`        |      [Examples](#examples)      | :heavy_minus_sign: | A map of [Example Objects](#example-object) and/or [OpenAPI Reference Objects](#openapi-reference-object) that define the possible examples of the parameter's value.                                                                                                                                                                                                                                                                                  |
+| `x-*`             |    [Extensions](#extensions)    | :heavy_minus_sign: | Any number of extension fields can be added to the parameter object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                                                                                           |
 
 The above order of fields is a recommendation for how the fields should be defined in the document.
 
@@ -1630,7 +1705,7 @@ If using headers for authentication, it is recommended to use the OpenAPI [`secu
 
 ##### Primitive Types
 
-For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string, 
+For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string.
 
 For the examples below we will use a header parameter named `X-Drink-Limit` with a value of `5`.
 
