@@ -20,19 +20,22 @@ servers:
     description: The production server.
   - url: https://staging.speakeasy.bar
     description: The staging server.
-  - url: https://{organization}.{environment}.speakeasy.bar
-    description: A per-organization and per-environment API.
-    variables:
-      organization:
-        description: The organization name. Defaults to a generic organization.
-        default: api
-      environment:
-        description: The environment name. Defaults to the production environment.
-        default: prod
-        enum:
-          - prod
-          - staging
-          - dev
+  # TODO: Wat for OAS3.1 bug fix - Variables in server URLs are not currently supported.
+  # https://github.com/OAI/OpenAPI-Specification/pull/3455
+  # We can uncomment this when the bug is fixed, but for now this will not validate.
+  # - url: "https://{organization}.{environment}.speakeasy.bar"
+  #   description: A per-organization and per-environment API.
+  #   variables:
+  #     organization:
+  #       description: The organization name. Defaults to a generic organization.
+  #       default: api
+  #     environment:
+  #       description: The environment name. Defaults to the production environment.
+  #       default: prod
+  #       enum:
+  #         - prod
+  #         - staging
+  #         - dev
 security:
   - apiKey: []
 tags:
@@ -88,7 +91,7 @@ paths:
       description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
       security:
         - {}
-        - {apiKey: []}
+        - { apiKey: [] }
       tags:
         - drinks
       parameters:
@@ -107,8 +110,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: "#/components/schemas/Drink"
-                  - $ref: "#/components/schemas/PublicDrink"
+                    - $ref: "#/components/schemas/Drink"
+                    - $ref: "#/components/schemas/PublicDrink"
                   discriminator:
                     propertyName: dataLevel
                     mapping:
@@ -189,7 +192,13 @@ paths:
               examples:
                 old_fashioned:
                   summary: An Old Fashioned
-                  value: {"name": "Old Fashioned", "type": "cocktail", "price": 1000, "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg"}
+                  value:
+                    {
+                      "name": "Old Fashioned",
+                      "type": "cocktail",
+                      "price": 1000,
+                      "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg",
+                    }
             application/xml:
               schema:
                 $ref: "#/components/schemas/Drink"
@@ -223,12 +232,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Drink"
-        links:
-          listIngredients:
-            operationId: listIngredients
-            parameters:
-              ingredients: $response.body#/ingredients
-            description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
+        # TODO: Add links to the response
+        # links:
+        #   listIngredients:
+        #     operationId: listIngredients
+        #     parameters:
+        #       ingredients: $response.body#/ingredients
+        #     description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
         "5XX":
           $ref: "#/components/responses/APIError"
         default:
@@ -305,7 +315,13 @@ paths:
               examples:
                 old_fashioned:
                   summary: An Old Fashioned
-                  value: {"name": "Old Fashioned", "type": "cocktail", "price": 1000, "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg"}
+                  value:
+                    {
+                      "name": "Old Fashioned",
+                      "type": "cocktail",
+                      "price": 1000,
+                      "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg",
+                    }
             application/xml:
               schema:
                 $ref: "#/components/schemas/Drink"
@@ -337,7 +353,7 @@ paths:
           $ref: "#/components/responses/APIError"
         default:
           $ref: "#/components/responses/UnknownError"
-  
+
   /drinks/search:
     get:
       operationId: searchDrinks
@@ -356,9 +372,12 @@ paths:
           schema:
             type: string
           examples:
-            - old fashioned
-            - manhattan
-            - negroni
+            old_fashioned:
+              summary: Search for Old Fashioned
+              value: Old Fashioned
+            manhattan:
+              summary: Search for Manhattan
+              value: Manhattan
         - name: type
           in: query
           description: The type of drink to filter by. If not provided all drinks will be returned.
@@ -434,10 +453,16 @@ paths:
             examples:
               old_fashioned:
                 summary: An order for one Old Fashioned
-                value: {"type": "drink", "productCode": "AC-A2DF3", "quantity": 1}
+                value:
+                  { "type": "drink", "productCode": "AC-A2DF3", "quantity": 1 }
               sugar_syrup:
                 summary: An order for three units of Sugar Syrup
-                value: {"type": "ingredient", "productCode": "NAC-3F2D1", "quantity": 3}
+                value:
+                  {
+                    "type": "ingredient",
+                    "productCode": "NAC-3F2D1",
+                    "quantity": 3,
+                  }
       responses:
         "200":
           description: The order was created successfully.
@@ -608,25 +633,25 @@ components:
     Drink:
       type: object
       allOf:
-      - $ref: "#/components/schemas/PublicDrink"
-      - type: object
-        stock:
-          description: The number of units of the drink in stock, only available when authenticated.
-          type: integer
-          readOnly: true
-        productCode:
-          $ref: "#/components/schemas/DrinkProductCode"
-        ingredients:
-          description: The ingredients required to make the drink, only available when authenticated.
-          type: array
-          items:
-            $ref: "#/components/schemas/DrinkIngredient"
-        dataLevel:
-          description: The level of data included in the response.
-          type: string
-          enum:
-            - authenticated
-          readOnly: true
+        - $ref: "#/components/schemas/PublicDrink"
+        - type: object
+          stock:
+            description: The number of units of the drink in stock, only available when authenticated.
+            type: integer
+            readOnly: true
+          productCode:
+            $ref: "#/components/schemas/DrinkProductCode"
+          ingredients:
+            description: The ingredients required to make the drink, only available when authenticated.
+            type: array
+            items:
+              $ref: "#/components/schemas/DrinkIngredient"
+          dataLevel:
+            description: The level of data included in the response.
+            type: string
+            enum:
+              - authenticated
+            readOnly: true
       required:
         - name
         - price
@@ -758,51 +783,109 @@ components:
   examples:
     unauthenticated_drinks:
       summary: A list of drinks for unauthenticated users
-      value: [{"name": "Old Fashioned", "type": "cocktail", "price": 1000, "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg", "dataLevel": "unauthenticated"},{"name": "Manhattan", "type": "cocktail", "price": 1200, "photo": "https://speakeasy.bar/drinks/manhattan.jpg", "dataLevel": "unauthenticated"},{"name": "Negroni", "type": "cocktail", "price": 1500, "photo": "https://speakeasy.bar/drinks/negroni.jpg", "dataLevel": "unauthenticated"}]
+      value:
+        [
+          {
+            "name": "Old Fashioned",
+            "type": "cocktail",
+            "price": 1000,
+            "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg",
+            "dataLevel": "unauthenticated",
+          },
+          {
+            "name": "Manhattan",
+            "type": "cocktail",
+            "price": 1200,
+            "photo": "https://speakeasy.bar/drinks/manhattan.jpg",
+            "dataLevel": "unauthenticated",
+          },
+          {
+            "name": "Negroni",
+            "type": "cocktail",
+            "price": 1500,
+            "photo": "https://speakeasy.bar/drinks/negroni.jpg",
+            "dataLevel": "unauthenticated",
+          },
+        ]
     authenticated_drinks:
       summary: A list of drinks for authenticated users
-      value: [{"name": "Old Fashioned", "type": "cocktail", "price": 1000, "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg", "productCode": "AC-A2DF3", "stock": 100, "dataLevel": "authenticated"},{"name": "Manhattan", "type": "cocktail", "price": 1200, "photo": "https://speakeasy.bar/drinks/manhattan.jpg", "productCode": "AC-A2DF4", "stock": 50, "dataLevel": "authenticated"},{"name": "Negroni", "type": "cocktail", "price": 1500, "photo": "https://speakeasy.bar/drinks/negroni.jpg", "productCode": "AC-A2DF5", "stock": 0, "dataLevel": "authenticated"}]
+      value:
+        [
+          {
+            "name": "Old Fashioned",
+            "type": "cocktail",
+            "price": 1000,
+            "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg",
+            "productCode": "AC-A2DF3",
+            "stock": 100,
+            "dataLevel": "authenticated",
+          },
+          {
+            "name": "Manhattan",
+            "type": "cocktail",
+            "price": 1200,
+            "photo": "https://speakeasy.bar/drinks/manhattan.jpg",
+            "productCode": "AC-A2DF4",
+            "stock": 50,
+            "dataLevel": "authenticated",
+          },
+          {
+            "name": "Negroni",
+            "type": "cocktail",
+            "price": 1500,
+            "photo": "https://speakeasy.bar/drinks/negroni.jpg",
+            "productCode": "AC-A2DF5",
+            "stock": 0,
+            "dataLevel": "authenticated",
+          },
+        ]
     drink_response_xml:
       summary: An Old Fashioned XML response
       value: '<drink name="Old Fashioned" type="cocktail" price="1000" photo="https://speakeasy.bar/drinks/old_fashioned.jpg"/>'
     drink_json:
       summary: An Old Fashioned JSON
-      value: {"name": "Old Fashioned", "type": "cocktail", "price": 1000, "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg"}
+      value:
+        {
+          "name": "Old Fashioned",
+          "type": "cocktail",
+          "price": 1000,
+          "photo": "https://speakeasy.bar/drinks/old_fashioned.jpg",
+        }
     drink_text:
       summary: An Old Fashioned text description
       value: "Old Fashioned\n\nA classic cocktail made with bourbon, bitters, sugar and a twist of orange peel."
     drink_csv:
       summary: An Old Fashioned CSV with a photo
-      value: 'name,type,price,photo
-        Old Fashioned,cocktail,1000,https://speakeasy.bar/drinks/old_fashioned.jpg'
+      value: "name,type,price,photo
+        Old Fashioned,cocktail,1000,https://speakeasy.bar/drinks/old_fashioned.jpg"
     drink_multipart:
       summary: An Old Fashioned multipart form with a photo
       value: 'Content-length: 123
         Content-type: multipart/form-data; boundary=----WebKitFormBoundarybHA3AiiDK7ZdXqj
-        
+
         ------WebKitFormBoundarybHA3AiiDK7ZdXqj
         Content-Disposition: form-data; name="name"
         Content-type: text/plain
-        
+
         Old Fashioned
-        
+
         ------WebKitFormBoundarybHA3AiiDK7ZdXqj
         Content-Disposition: form-data; name="type"
         Content-type: text/plain
-        
+
         cocktail
-        
+
         ------WebKitFormBoundarybHA3AiiDK7ZdXqj
         Content-Disposition: form-data; name="price"
         Content-type: text/plain
-        
+
         1000
-        
+
         ------WebKitFormBoundarybHA3AiiDK7ZdXqj
         Content-Disposition: form-data; name="photo"; filename="old_fashioned.jpg"
         Content-type: image/jpeg
-        
+
         content of old_fashioned.jpg...
-        
+
         ------WebKitFormBoundarybHA3AiiDK7ZdXqj--
         '
