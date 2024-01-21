@@ -1375,9 +1375,7 @@ For example:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/Order"
+              $ref: "#/components/schemas/Order"
       responses:
         "200":
           description: The order was created successfully.
@@ -1459,6 +1457,18 @@ content:
 ```
 
 #### Media Type Object
+
+A Media Type Object describes the the request or response for a media type, with optional examples.
+
+|   Field    |  Type     |  Required     |  Description     |
+|  ---  |  ---  |  ---  |  ---  |
+|  `schema`     |  [Schema Object](#schema-object)     |  :heavy_minus_sign:     | A schema that describes the request or response content.      |
+| `example`      |  *any*     |  :heavy_minus_sign:     | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `examples` field.     |
+| `examples`      | *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign:      |  Optional examples of the media type. These examples overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `example` field.     |
+|  `encoding`     | *map[string, [Encoding Object](#encoding-object)]*      | :heavy_minus_sign:      | An optional map of [Encoding Objects](#encoding-object). Each Encoding Object's key should match one of the properties from the [Schema Object](#schema-object) in the `schema` field. Only applies to [Request Body Objects](#request-body-object) when the media type is `multipart` or `application/x-www-form-urlencoded`. |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields as required by tooling and vendors. |
+
+#### Encoding Object
 
 `TODO`
 
