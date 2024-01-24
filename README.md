@@ -1466,27 +1466,55 @@ content:
 
 #### Media Type Object
 
-A Media Type Object describes the the request or response for a media type, with optional examples.
+A Media Type Object describes the request or response for a media type, with optional examples and extensions.
 
 |   Field    |  Type     |  Required     |  Description     |
 |  ---  |  ---  |  ---  |  ---  |
 |  `schema`     |  [Schema Object](#schema-object)     |  :heavy_minus_sign:     | A schema that describes the request or response content.      |
 | `example`      |  *any*     |  :heavy_minus_sign:     | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `examples` field.     |
-| `examples`      | *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign:      |  Optional examples of the media type. These examples overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `example` field.     |
+| `examples`      | *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign:      |  Optional examples of the media type. These examples override any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `example` field.     |
 |  `encoding`     | *map[string, [Encoding Object](#encoding-object)]*      | :heavy_minus_sign:      | An optional map of [Encoding Objects](#encoding-object). Each Encoding Object's key should match one of the properties from the [Schema Object](#schema-object) in the `schema` field. Only applies to [Request Body Objects](#request-body-object) when the media type is `multipart` or `application/x-www-form-urlencoded`. |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields as required by tooling and vendors. |
 
 #### Encoding Object
 
-`TODO`
+Only applicable to `requestBody` where the media type is `multipart` or `application/x-www-form-urlencoded`. An encoding object describes the encoding of a single property in the request schema.
 
-### Headers
+|   Field    |  Type     |  Required     |  Description     |
+|  ---  |  ---  |  ---  |  ---  |
+|  `contentType`  |  *string*  |  :heavy_minus_sign:  |  The Content-Type of the field. If the field is an `object`, the default is `application/json`. If the field is an array, the default is based on the inner type. Otherwise, the default is `application/octet-stream`. Valid values are either a media type (e.g. `application/json`), a wildcard media type (e.g. `image/*`), or a comma-separated list of media types and wildcard media types (e.g. `image/png, application/*`). |
+|  `headers`  |  *map[string, [Header Object](#header-object) \| [Reference Object](#openapi-reference-object)]*  | :heavy_minus_sign:   |  Only applies to `multipart` requests. Allows additional headers related to the field. For example, if the client needs to add a `Content-Disposition` for an uploaded file. A `Content-Type` header in this map will be ignored, in favour of the `contentType` field of the encoding object. |
+|  `style`  |  *string*  |  :heavy_minus_sign:  |  Can take one of the following values: `form`, `spaceDelimited`, `pipeDelimited`, `deepObject`. Specifies the style of the field's serialization only in requests with media type `multipart/form-data` or `application/x-www-form-urlencoded`. See the description of `style` under [Query Parameters](#query-parameters). |
+|  `explode`  |  *boolean*  |  :heavy_minus_sign:  | Only applies to requests with media type `multipart/form-data` or `application/x-www-form-urlencoded` and fields with `array` or `object` types. If `style` is `form`, the default is `true`, otherwise the default is `false`.  |
+|  `allowReserved`  |  *boolean*  |  :heavy_minus_sign:  |  Only applies to requests with media type `application/x-www-form-urlencoded`. Determines whether reserved characters (those allowed in literals but with reserved meanings) are allowed in the parameter's content. The default is `false`. When `true`, it allows reserved characters as defined by [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) to be included without percent-encoding. This can be useful for parameters with content such as URLs.  |
 
-`TODO`
-
-#### Header Object
-
-`TODO`
+```yaml
+paths:
+  /drinks:
+    post:
+      requestbody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                # ... other properties ...
+                photo:
+                  description: A photo of the drink.
+                  type: string
+                  format: binary
+            encoding:
+              photo:
+                contentType: image/jpeg, image/png
+                headers:
+                  Content-Disposition:
+                    description: Specifies the disposition of the file (attachment and file name).
+                    schema:
+                      type: string
+                      default: 'form-data; name="photo"; filename="default.jpg"'
+                allowReserved: false
+                # style: form - not applicable to strings
+                # explode: false - not applicable to strings
+```
 
 ### SDK Generation
 

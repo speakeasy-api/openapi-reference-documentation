@@ -172,13 +172,23 @@ paths:
                   description: The price of one unit of the drink in US cents.
                   type: number
                   examples:
-                    - 1000 # $10.00
-                    - 1200 # $12.00
-                    - 1500 # $15.00
+                    - 1000
+                    - 1200
+                    - 1500
                 photo:
                   description: A photo of the drink.
                   type: string
                   format: binary
+            encoding:
+              photo:
+                contentType: image/jpeg, image/png
+                headers:
+                  Content-Disposition:
+                    description: Specifies the disposition of the file (attachment and file name).
+                    schema:
+                      type: string
+                      default: 'form-data; name="photo"; filename="default.jpg"'
+                allowReserved: false
             examples:
               old_fashioned:
                 $ref: "#/components/examples/drink_multipart"
@@ -631,27 +641,27 @@ components:
         - name
         - price
     Drink:
-      type: object
       allOf:
         - $ref: "#/components/schemas/PublicDrink"
         - type: object
-          stock:
-            description: The number of units of the drink in stock, only available when authenticated.
-            type: integer
-            readOnly: true
-          productCode:
-            $ref: "#/components/schemas/DrinkProductCode"
-          ingredients:
-            description: The ingredients required to make the drink, only available when authenticated.
-            type: array
-            items:
-              $ref: "#/components/schemas/DrinkIngredient"
-          dataLevel:
-            description: The level of data included in the response.
-            type: string
-            enum:
-              - authenticated
-            readOnly: true
+          properties:
+            stock:
+              description: The number of units of the drink in stock, only available when authenticated.
+              type: integer
+              readOnly: true
+            productCode:
+              $ref: "#/components/schemas/DrinkProductCode"
+            ingredients:
+              description: The ingredients required to make the drink, only available when authenticated.
+              type: array
+              items:
+                $ref: "#/components/schemas/DrinkIngredient"
+            dataLevel:
+              description: The level of data included in the response.
+              type: string
+              enum:
+                - authenticated
+              readOnly: true
       required:
         - name
         - price
