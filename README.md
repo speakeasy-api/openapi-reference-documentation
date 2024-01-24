@@ -1349,11 +1349,24 @@ links:
 
 #### Headers
 
-`TODO`
+A map of header names to [Header Objects](#header-object) or [References](#references) that define headers in [Response Objects](#response-object) or [Encoding Objects](#encoding-object).
+
+`TODO` Example
 
 ##### Header Object
 
-`TODO`
+Describes a single header.
+
+The name of a header is determined by the header's key in a `headers` map.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `description` | *string* | :heavy_minus_sign: | A description of the header. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `required` | *boolean* | :heavy_minus_sign: | Whether the header is required or not. Defaults to `false`. |
+| `deprecated` | *boolean* | :heavy_minus_sign: | Whether the header is deprecated or not. Defaults to `false`. |
+| `schema` | [Schema Object](#schema-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the header. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.**                                       |
+| `content` | *map[string, [Media Type Object](#media-type-object)]* | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the header. This is ***required*** unless `schema` is defined. |
+| `x-*` | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the header object for use by tooling and vendors. |
 
 ### Callbacks
 
