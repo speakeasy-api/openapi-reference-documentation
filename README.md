@@ -38,12 +38,12 @@
   - [Response Object](#response-object)
     - [Links](#links)
     - [Link Object](#link-object)
+    - [Headers](#headers)
+      - [Header Object](#header-object)
   - [Callbacks](#callbacks)
     - [Callback Object](#callback-object)
   - [Content](#content)
     - [Media Type Object](#media-type-object)
-  - [Headers](#headers)
-    - [Header Object](#header-object)
   - [SDK Generation](#sdk-generation-5)
 - [Parameters](#parameters)
   - [Parameter Object](#parameter-object)
@@ -1346,6 +1346,14 @@ links:
     parameters:
       ingredients: $response.body#/ingredients
 ```
+
+#### Headers
+
+`TODO`
+
+##### Header Object
+
+`TODO`
 
 ### Callbacks
 
