@@ -29,7 +29,7 @@
     - [Tags](#tags)
       - [Tag Object](#tag-object)
       - [SDK Creation](#sdk-creation)
-    - [x-speakeasy-group](#x-speakeasy-group)
+        - [x-speakeasy-group](#x-speakeasy-group)
         - [Multiple Namespaces](#multiple-namespaces)
         - [Define Multi-Level Namespaces](#define-multi-level-namespaces)
     - [Paths Object](#paths-object)
@@ -973,7 +973,7 @@ The created TypeScript can be called liked this:
 await sdk.drinks.listDrinks(type);
 ```
 
-### x-speakeasy-group
+##### x-speakeasy-group
 
 You can add the x-speakeasy-group field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
 
