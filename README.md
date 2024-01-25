@@ -29,6 +29,8 @@
     - [Tags](#tags)
       - [Tag Object](#tag-object)
       - [SDK Generation](#sdk-generation-4)
+        - [Define Multi-Level Namespaces](#define-multi-level-namespaces)
+        - [Multiple Namespaces](#multiple-namespaces)
     - [Paths Object](#paths-object)
       - [Path Item Object](#path-item-object)
     - [Webhooks](#webhooks)
@@ -952,6 +954,26 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 #### SDK Generation
 
 `TODO`
+
+Speakeasy will split the SDKs and documentation it generates based on your tags.
+
+You can add the x-speakeasy-group field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
+
+##### Define Multi-Level Namespaces
+You can use tags or the x-speakeasy-group extension to define nested namespaces for your operations using . notion. There is no limit to the number of levels you can define.
+
+tags:
+  - drinks.wine
+
+// Get the Vintage of a specified wine.
+sdk.Drinks.Wine.GetVintage("wine")
+
+##### Multiple Namespaces
+If you want to add a method to multiple namespaces, list multiple values in tags or the x-speakeasy-group extension. Both accept an array of values:
+
+// Get the Vintage
+sdk.Drinks.GetVintage("wine")
+sdk.Wine.GetVintage("wine")
 
 ### Paths Object
 
