@@ -28,9 +28,10 @@
       - [SDK Generation](#sdk-generation-3)
     - [Tags](#tags)
       - [Tag Object](#tag-object)
-      - [SDK Generation](#sdk-generation-4)
-        - [Define Multi-Level Namespaces](#define-multi-level-namespaces)
+      - [SDK Creation](#sdk-creation)
+    - [x-speakeasy-group](#x-speakeasy-group)
         - [Multiple Namespaces](#multiple-namespaces)
+        - [Define Multi-Level Namespaces](#define-multi-level-namespaces)
     - [Paths Object](#paths-object)
       - [Path Item Object](#path-item-object)
     - [Webhooks](#webhooks)
@@ -47,7 +48,7 @@
       - [Media Type Object](#media-type-object)
     - [Headers](#headers)
       - [Header Object](#header-object)
-    - [SDK Generation](#sdk-generation-5)
+    - [SDK Generation](#sdk-generation-4)
   - [Parameters](#parameters)
     - [Parameter Object](#parameter-object)
     - [Parameter Serialization](#parameter-serialization)
@@ -951,29 +952,97 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 | `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
 | `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
 
-#### SDK Generation
+#### SDK Creation
 
-`TODO`
+Speakeasy will split the SDKs and documentation it creates based on your tags.
 
-Speakeasy will split the SDKs and documentation it generates based on your tags.
+Consider the following drinks endpoint in the schema:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks
+```
+
+The created TypeScript can be called liked this:
+
+```ts
+await sdk.drinks.listDrinks(type);
+```
+
+### x-speakeasy-group
 
 You can add the x-speakeasy-group field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
 
-##### Define Multi-Level Namespaces
-You can use tags or the x-speakeasy-group extension to define nested namespaces for your operations using . notion. There is no limit to the number of levels you can define.
+For example, if you add x-speakeasy-group to the drinks endpoint, the YAML will look like this:
 
-tags:
-  - drinks.wine
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks
+      x-speakeasy-group:
+        - beverages
+```
 
-// Get the Vintage of a specified wine.
-sdk.Drinks.Wine.GetVintage("wine")
+The created TypeScript can now be called liked this:
+
+```ts
+await sdk.beverages.listDrinks(type);
+```
+
+You will no longer be able to use the code below, even though the tag for drinks is still there:
+
+```ts
+await sdk.drinks.listDrinks(type);
+```
 
 ##### Multiple Namespaces
 If you want to add a method to multiple namespaces, list multiple values in tags or the x-speakeasy-group extension. Both accept an array of values:
 
-// Get the Vintage
-sdk.Drinks.GetVintage("wine")
-sdk.Wine.GetVintage("wine")
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks
+        - beverages
+```
+
+You can call either:
+
+```ts
+await sdk.drinks.listDrinks(type);
+await sdk.beverages.listDrinks(type);
+```
+
+##### Define Multi-Level Namespaces
+You can use tags or the x-speakeasy-group extension to define nested namespaces for your operations using `.` notation. There is no limit to the number of levels you can define.
+
+For instance:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks.wine.champagne
+```
+
+will create an SDK that called as below:
+
+```ts
+await sdk.drinks.wine.champagne.listDrinks(type);
+```
+
+Note that the files `drinks.ts`, `wine.ts`, and `champagne.ts` will be created, though only `champagne.ts` will have operations.
 
 ### Paths Object
 
