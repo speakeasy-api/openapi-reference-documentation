@@ -69,6 +69,7 @@
       - [Simple Objects](#simple-objects-3)
       - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
 - [Schema Object](#schema-object)
+  - [Composition and Inheritance](#composition-and-inheritance)
   - [OneOf](#oneof)
   - [Examples](#examples)
     - [Example Object](#example-object)
@@ -77,6 +78,7 @@
   - [OpenAPI Reference Object](#openapi-reference-object)
   - [JSON Schema Reference Object](#json-schema-reference-object)
   - [Expression](#expression)
+- [Data Type Formats](#data-type-formats)
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
 
@@ -1953,6 +1955,25 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 
 ## Schema Object
 
+The Schema Object represents any data type used as input our output in OpenAPI. Data types can be objects, arrays, or primitives such as `string`, `number`, `integer` and `boolean`.
+
+The Schema Object is based on and extends the [JSON Schema Specification Draft 2020-12](https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00).
+
+OpenAPI 3.1 uses all vocabularies from JSON Schema 2020-12, except for Format Assertion.
+
+For an overview of all JSON Schema properties, see [JSON Schema Docs > JSON Schema 2020-12](https://www.learnjsonschema.com/2020-12/).
+
+OpenAPI 3.1 changes the definition of two JSON Schema properties:
+
+* `description` - In OpenAPI this property may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.
+* `format` - OpenAPI extends JSON Schema's data types by adding additional formats. See [Data Type Formats](#data-type-formats).
+
+OpenAPI adds an additional vocabulary to JSON Schema with the following properties:
+
+`TODO` table of fixed fields for OpenAPI Base Vocab
+
+### Composition and Inheritance
+
 `TODO`
 
 ### OneOf
@@ -1982,5 +2003,9 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 ### JSON Schema Reference Object
 
 ### Expression
+
+`TODO`
+
+## Data Type Formats
 
 `TODO`
