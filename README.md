@@ -715,7 +715,7 @@ security:
   - {}
 ```
 
-Security can also be disable for a specific operation by providing an empty array (`[]`) in the list of security requirements. For example:
+Security can also be disabled for a specific operation by providing an empty array (`[]`) in the list of security requirements. For example:
 
 ```yaml
 paths:
@@ -825,9 +825,90 @@ A Security Requirement Object defines a map of security schemes names to scopes 
 
 #### Security Scheme Object
 
-`TODO`
+Security scheme details<sup><a href="https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-scheme-object"></a>1</sup> are defined in the components section of a schema. A security scheme object can be given any name, but its name must match the name used elsewhere in the document for the scheme to be used. For example:
 
-Security scheme SDK generation - My suggestion is to add a reference table (follow Speakeasy’s table structure for other objects), add examples, a short discussion, and how it influences SDK generation.
+```yaml
+paths:
+  /drinks:
+    get:
+      security:
+        - MyScheme17: []
+components:
+  securitySchemes: # TODO check indentation
+    - MyScheme17:
+        type: http
+        scheme: basic
+```
+
+The only new security features added in OpenAPI version 3.1 are the identifier field and mutual TLS authentication:
+
+- The identifier is a string that is another name for the scheme, separate to the name at the start of the object. This field is purely for reference purposes and has no functional effect. For instance:
+  ```yaml
+  components:
+    securitySchemes:
+      - MyScheme17:
+          identifier: BasicAuthentication2024 Version3
+          type: http
+          scheme: basic
+  ```
+- Mutual TLS requires both the server and client to have identity certificates. Specify it using `type: mutualTLS`.
+
+The type field can have the following values:
+- `http` — for Basic, Bearer, and other HTTP authentication
+- `apiKey` — for API keys and cookie authentication
+- `oauth2` — for OAuth 2
+- `openIdConnect` — for OpenID Connect Discovery
+
+HTTP authentication schemes (they use the Authorization header):
+Basic
+Bearer
+other HTTP schemes as defined by RFC 7235 and HTTP Authentication Scheme Registry
+API keys in headers, query string or cookies
+Cookie authentication
+OAuth 2
+OpenID Connect Discovery
+
+Below are the fields possible in a security scheme.
+
+Name | Description | Values | Required | Speakeasy SDK languages
+--- | --- | --- | --- | ---
+asdf | | | |
+
+
+
+examples
+sdk generation
+
+Speakeasy supports various authentication mechanisms such as apiKey, basic, bearer, oauth2, and openIdConnect. These are described using the security and securitySchemes objects in your OpenAPI document.
+
+It supports types like HTTP Basic Authentication, API Key, Bearer tokens, and OAuth, with dedicated support for common authentication flows
+
+```yaml
+components:
+  securitySchemes:
+    BasicAuth: # An arbitrary scheme name, we recommend something descriptive
+      type: http
+      scheme: basic
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT # Optional token format
+    APIKey:
+      type: apiKey
+      in: header # or query/cookie
+      name: X-API-Key
+    OAuth:
+      type: oauth2
+      flows: # Many different flows are available - https://spec.openapis.org/oas/v3.1.0#oauth-flows-object
+        implicit:
+          authorizationUrl: https://test.com/oauth/authorize
+          scopes:
+            read: Grants read access
+            write: Grants write access
+    OpenIdConnect:
+      type: openIdConnect
+      openIdConnectUrl: https://test.com/.well-known/openid-configuration
+```
 
 #### SDK Generation
 
