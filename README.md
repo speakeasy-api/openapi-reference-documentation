@@ -1351,7 +1351,37 @@ links:
 
 A map of header names to [Header Objects](#header-object) or [References](#references) that define headers in [Response Objects](#response-object) or [Encoding Objects](#encoding-object).
 
-`TODO` Example
+In this simplified example, the server returns three [Header Objects](#header-object) with the names `X-RateLimit-Remaining`, `Last-Modified`, and `Cache-Control`:
+
+```
+paths:
+  /drinks/{productCode}:
+    get:
+      responses:
+        "200"
+          description: A drink.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Drink"
+          headers:
+            X-RateLimit-Remaining:
+              description: The number of requests left for the time window.
+              schema:
+                type: integer
+                example: 99
+            Last-Modified:
+              description: The time at which the information was last modified.
+              schema:
+                type: string
+                format: date-time
+                example: '2024-01-26T18:25:43.511Z'
+            Cache-Control:
+              description: Instructions for caching mechanisms in both requests and responses.
+              schema:
+                type: string
+                example: no-cache
+```
 
 ##### Header Object
 

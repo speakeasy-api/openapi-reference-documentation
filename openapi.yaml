@@ -249,6 +249,23 @@ paths:
         #     parameters:
         #       ingredients: $response.body#/ingredients
         #     description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
+          headers:
+            X-RateLimit-Remaining:
+              description: The number of requests left for the time window.
+              schema:
+                type: integer
+                example: 99
+            Last-Modified:
+              description: The time at which the information was last modified.
+              schema:
+                type: string
+                format: date-time
+                example: '2024-01-26T18:25:43.511Z'
+            Cache-Control:
+              description: Instructions for caching mechanisms in both requests and responses.
+              schema:
+                type: string
+                example: no-cache
         "5XX":
           $ref: "#/components/responses/APIError"
         default:
