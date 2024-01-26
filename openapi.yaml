@@ -263,7 +263,7 @@ paths:
             listIngredients:
               operationId: listIngredients
               parameters:
-                ingredients: $response.body#/ingredients
+                drinkIngredients: $response.body#/ingredients
               description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
         "5XX":
           $ref: "#/components/responses/APIError"
@@ -442,6 +442,16 @@ paths:
             type: array
             items:
               type: string
+        - name: drinkIngredients
+          in: query
+          description: A list of drink ingredients to filter by. If not provided all ingredients will be returned.
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: object
       responses:
         "200":
           description: A list of ingredients.
