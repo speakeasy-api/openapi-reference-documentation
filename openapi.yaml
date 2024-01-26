@@ -242,13 +242,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Drink"
-        # TODO: Add links to the response
-        # links:
-        #   listIngredients:
-        #     operationId: listIngredients
-        #     parameters:
-        #       ingredients: $response.body#/ingredients
-        #     description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
           headers:
             X-RateLimit-Remaining:
               description: The number of requests left for the time window.
@@ -266,6 +259,12 @@ paths:
               schema:
                 type: string
                 example: no-cache
+          links:
+            listIngredients:
+              operationId: listIngredients
+              parameters:
+                ingredients: $response.body#/ingredients
+              description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
         "5XX":
           $ref: "#/components/responses/APIError"
         default:
