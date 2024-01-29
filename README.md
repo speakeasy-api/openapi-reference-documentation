@@ -49,38 +49,57 @@
     - [Headers](#headers)
       - [Header Object](#header-object)
     - [SDK Generation](#sdk-generation-4)
-  - [Parameters](#parameters)
-    - [Parameter Object](#parameter-object)
-    - [Parameter Serialization](#parameter-serialization)
-      - [Query Parameters](#query-parameters)
-        - [Primitive Types](#primitive-types)
-        - [Simple Arrays](#simple-arrays)
-        - [Simple Objects](#simple-objects)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays)
-      - [Path Parameters](#path-parameters)
-        - [Primitive Types](#primitive-types-1)
-        - [Simple Arrays](#simple-arrays-1)
-        - [Simple Objects](#simple-objects-1)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays-1)
-      - [Header Parameters](#header-parameters)
-        - [Primitive Types](#primitive-types-2)
-        - [Simple Arrays](#simple-arrays-2)
-        - [Simple Objects](#simple-objects-2)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays-2)
-      - [Cookie Parameters](#cookie-parameters)
-        - [Primitive Types](#primitive-types-3)
-        - [Simple Arrays](#simple-arrays-3)
-        - [Simple Objects](#simple-objects-3)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
-  - [Schema Object](#schema-object)
-    - [OneOf](#oneof)
-    - [Examples](#examples)
-      - [Example Object](#example-object)
-  - [Extensions](#extensions)
-  - [References](#references)
-    - [OpenAPI Reference Object](#openapi-reference-object)
-    - [JSON Schema Reference Object](#json-schema-reference-object)
-    - [Expression](#expression)
+  - [Paths Object](#paths-object)
+    - [Path Item Object](#path-item-object)
+  - [Webhooks](#webhooks)
+  - [Components Object](#components-object)
+- [Operation Object](#operation-object)
+  - [Request Body Object](#request-body-object)
+  - [Responses](#responses)
+  - [Response Object](#response-object)
+    - [Links](#links)
+    - [Link Object](#link-object)
+    - [Headers](#headers)
+      - [Header Object](#header-object)
+  - [Callbacks](#callbacks)
+    - [Callback Object](#callback-object)
+  - [Content](#content)
+    - [Media Type Object](#media-type-object)
+  - [SDK Generation](#sdk-generation-5)
+- [Parameters](#parameters)
+  - [Parameter Object](#parameter-object)
+  - [Parameter Serialization](#parameter-serialization)
+    - [Query Parameters](#query-parameters)
+      - [Primitive Types](#primitive-types)
+      - [Simple Arrays](#simple-arrays)
+      - [Simple Objects](#simple-objects)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays)
+    - [Path Parameters](#path-parameters)
+      - [Primitive Types](#primitive-types-1)
+      - [Simple Arrays](#simple-arrays-1)
+      - [Simple Objects](#simple-objects-1)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays-1)
+    - [Header Parameters](#header-parameters)
+      - [Primitive Types](#primitive-types-2)
+      - [Simple Arrays](#simple-arrays-2)
+      - [Simple Objects](#simple-objects-2)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays-2)
+    - [Cookie Parameters](#cookie-parameters)
+      - [Primitive Types](#primitive-types-3)
+      - [Simple Arrays](#simple-arrays-3)
+      - [Simple Objects](#simple-objects-3)
+      - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
+- [Schema Object](#schema-object)
+  - [Composition and Inheritance](#composition-and-inheritance)
+  - [OneOf](#oneof)
+  - [Examples](#examples)
+    - [Example Object](#example-object)
+- [Extensions](#extensions)
+- [References](#references)
+  - [OpenAPI Reference Object](#openapi-reference-object)
+  - [JSON Schema Reference Object](#json-schema-reference-object)
+  - [Expression](#expression)
+- [Data Type Formats](#data-type-formats)
 
 ## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
 
@@ -1439,6 +1458,57 @@ links:
       ingredients: $response.body#/ingredients
 ```
 
+#### Headers
+
+A map of header names to [Header Objects](#header-object) or [References](#references) that define headers in [Response Objects](#response-object) or [Encoding Objects](#encoding-object).
+
+In this simplified example, the server returns three [Header Objects](#header-object) with the names `X-RateLimit-Remaining`, `Last-Modified`, and `Cache-Control`:
+
+```
+paths:
+  /drinks/{productCode}:
+    get:
+      responses:
+        "200"
+          description: A drink.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Drink"
+          headers:
+            X-RateLimit-Remaining:
+              description: The number of requests left for the time window.
+              schema:
+                type: integer
+                example: 99
+            Last-Modified:
+              description: The time at which the information was last modified.
+              schema:
+                type: string
+                format: date-time
+                example: '2024-01-26T18:25:43.511Z'
+            Cache-Control:
+              description: Instructions for caching mechanisms in both requests and responses.
+              schema:
+                type: string
+                example: no-cache
+```
+
+##### Header Object
+
+Describes a single header.
+
+The name of a header is determined by the header's key in a `headers` map.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `description` | *string* | :heavy_minus_sign: | A description of the header. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `required` | *boolean* | :heavy_minus_sign: | Whether the header is required or not. Defaults to `false`. |
+| `deprecated` | *boolean* | :heavy_minus_sign: | Whether the header is deprecated or not. Defaults to `false`. |
+| `schema` | [Schema Object](#schema-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the header. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.**                                       |
+| `content` | *map[string, [Media Type Object](#media-type-object)]* | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the header. This is ***required*** unless `schema` is defined. |
+| `x-*` | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the header object for use by tooling and vendors. |
+
 ### Callbacks
 
 A map of [Callback Objects](#callback-object) or [References](#references) that define incoming requests that may be triggered by the parent operation, and the expected responses to be returned. The key is a unique identifier for the collection of callbacks contained within.
@@ -1467,9 +1537,7 @@ For example:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/Order"
+              $ref: "#/components/schemas/Order"
       responses:
         "200":
           description: The order was created successfully.
@@ -1552,15 +1620,55 @@ content:
 
 #### Media Type Object
 
-`TODO`
+A Media Type Object describes the request or response for a media type, with optional examples and extensions.
 
-### Headers
+|   Field    |  Type     |  Required     |  Description     |
+|  ---  |  ---  |  ---  |  ---  |
+|  `schema`     |  [Schema Object](#schema-object)     |  :heavy_minus_sign:     | A schema that describes the request or response content.      |
+| `example`      |  *any*     |  :heavy_minus_sign:     | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `examples` field.     |
+| `examples`      | *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign:      |  Optional examples of the media type. These examples override any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `example` field.     |
+|  `encoding`     | *map[string, [Encoding Object](#encoding-object)]*      | :heavy_minus_sign:      | An optional map of [Encoding Objects](#encoding-object). Each Encoding Object's key should match one of the properties from the [Schema Object](#schema-object) in the `schema` field. Only applies to [Request Body Objects](#request-body-object) when the media type is `multipart` or `application/x-www-form-urlencoded`. |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields as required by tooling and vendors. |
 
-`TODO`
+#### Encoding Object
 
-#### Header Object
+Only applicable to `requestBody` where the media type is `multipart` or `application/x-www-form-urlencoded`. An encoding object describes the encoding of a single property in the request schema.
 
-`TODO`
+|   Field    |  Type     |  Required     |  Description     |
+|  ---  |  ---  |  ---  |  ---  |
+|  `contentType`  |  *string*  |  :heavy_minus_sign:  |  The Content-Type of the field. If the field is an `object`, the default is `application/json`. If the field is an array, the default is based on the inner type. Otherwise, the default is `application/octet-stream`. Valid values are either a media type (e.g. `application/json`), a wildcard media type (e.g. `image/*`), or a comma-separated list of media types and wildcard media types (e.g. `image/png, application/*`). |
+|  `headers`  |  *map[string, [Header Object](#header-object) \| [Reference Object](#openapi-reference-object)]*  | :heavy_minus_sign:   |  Only applies to `multipart` requests. Allows additional headers related to the field. For example, if the client needs to add a `Content-Disposition` for an uploaded file. A `Content-Type` header in this map will be ignored, in favour of the `contentType` field of the encoding object. |
+|  `style`  |  *string*  |  :heavy_minus_sign:  |  Can take one of the following values: `form`, `spaceDelimited`, `pipeDelimited`, `deepObject`. Specifies the style of the field's serialization only in requests with media type `multipart/form-data` or `application/x-www-form-urlencoded`. See the description of `style` under [Query Parameters](#query-parameters). |
+|  `explode`  |  *boolean*  |  :heavy_minus_sign:  | Only applies to requests with media type `multipart/form-data` or `application/x-www-form-urlencoded` and fields with `array` or `object` types. If `style` is `form`, the default is `true`, otherwise the default is `false`.  |
+|  `allowReserved`  |  *boolean*  |  :heavy_minus_sign:  |  Only applies to requests with media type `application/x-www-form-urlencoded`. Determines whether reserved characters (those allowed in literals but with reserved meanings) are allowed in the parameter's content. The default is `false`. When `true`, it allows reserved characters as defined by [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) to be included without percent-encoding. This can be useful for parameters with content such as URLs.  |
+
+```yaml
+paths:
+  /drinks:
+    post:
+      requestbody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                # ... other properties ...
+                photo:
+                  description: A photo of the drink.
+                  type: string
+                  format: binary
+            encoding:
+              photo:
+                contentType: image/jpeg, image/png
+                headers:
+                  Content-Disposition:
+                    description: Specifies the disposition of the file (attachment and file name).
+                    schema:
+                      type: string
+                      default: 'form-data; name="photo"; filename="default.jpg"'
+                allowReserved: false
+                # style: form - not applicable to strings
+                # explode: false - not applicable to strings
+```
 
 ### SDK Generation
 
@@ -1956,6 +2064,25 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 
 ## Schema Object
 
+The Schema Object represents any data type used as input our output in OpenAPI. Data types can be objects, arrays, or primitives such as `string`, `number`, `integer` and `boolean`.
+
+The Schema Object is based on and extends the [JSON Schema Specification Draft 2020-12](https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00).
+
+OpenAPI 3.1 uses all vocabularies from JSON Schema 2020-12, except for Format Assertion.
+
+For an overview of all JSON Schema properties, see [JSON Schema Docs > JSON Schema 2020-12](https://www.learnjsonschema.com/2020-12/).
+
+OpenAPI 3.1 changes the definition of two JSON Schema properties:
+
+* `description` - In OpenAPI this property may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.
+* `format` - OpenAPI extends JSON Schema's data types by adding additional formats. See [Data Type Formats](#data-type-formats).
+
+OpenAPI adds an additional vocabulary to JSON Schema with the following properties:
+
+`TODO` table of fixed fields for OpenAPI Base Vocab
+
+### Composition and Inheritance
+
 `TODO`
 
 ### OneOf
@@ -1985,5 +2112,9 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 ### JSON Schema Reference Object
 
 ### Expression
+
+`TODO`
+
+## Data Type Formats
 
 `TODO`
