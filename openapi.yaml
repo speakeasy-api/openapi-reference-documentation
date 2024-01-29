@@ -47,7 +47,8 @@ tags:
     description: The orders endpoints.
   - name: authentication
     description: The authentication endpoints.
-  - name: config
+  - name: configuration
+    description: The configuration endpoints.
 paths:
   /authenticate:
     post:

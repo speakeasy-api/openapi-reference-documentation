@@ -1,32 +1,53 @@
 # openapi-reference-documentation
 
-- [DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)](#development-notes-remove-before-publishing)
-  - [TODOs](#todos)
-- [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
-- [Introduction](#introduction)
-  - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
-  - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
-  - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
-- [Document Structure](#document-structure)
-- [Format \& File Structure](#format--file-structure)
-- [Document Schema](#document-schema)
-  - [Info Object](#info-object)
-    - [Contact Object](#contact-object)
-    - [License Object](#license-object)
-    - [SDK Generation](#sdk-generation)
-  - [External Documentation Object](#external-documentation-object)
-    - [SDK Generation](#sdk-generation-1)
-  - [Servers](#servers)
-    - [Server Object](#server-object)
-    - [Server Variables \& Templating](#server-variables--templating)
-    - [Server Variable Object](#server-variable-object)
-    - [SDK Generation](#sdk-generation-2)
-  - [Security](#security)
-    - [Security Requirement Object](#security-requirement-object)
-    - [Security Scheme Object](#security-scheme-object)
-    - [SDK Generation](#sdk-generation-3)
-  - [Tags](#tags)
-    - [Tag Object](#tag-object)
+- [openapi-reference-documentation](#openapi-reference-documentation)
+  - [DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)](#development-notes-remove-before-publishing)
+    - [TODOs](#todos)
+  - [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
+  - [Introduction](#introduction)
+    - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
+    - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
+    - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
+  - [Document Structure](#document-structure)
+  - [Format \& File Structure](#format--file-structure)
+  - [Document Schema](#document-schema)
+    - [Info Object](#info-object)
+      - [Contact Object](#contact-object)
+      - [License Object](#license-object)
+      - [SDK Generation](#sdk-generation)
+    - [External Documentation Object](#external-documentation-object)
+      - [SDK Generation](#sdk-generation-1)
+    - [Servers](#servers)
+      - [Server Object](#server-object)
+      - [Server Variables \& Templating](#server-variables--templating)
+      - [Server Variable Object](#server-variable-object)
+      - [SDK Generation](#sdk-generation-2)
+    - [Security](#security)
+      - [Security Requirement Object](#security-requirement-object)
+      - [Security Scheme Object](#security-scheme-object)
+      - [SDK Generation](#sdk-generation-3)
+    - [Tags](#tags)
+      - [Tag Object](#tag-object)
+      - [SDK Creation](#sdk-creation)
+        - [x-speakeasy-group](#x-speakeasy-group)
+        - [Multiple Namespaces](#multiple-namespaces)
+        - [Define Multi-Level Namespaces](#define-multi-level-namespaces)
+    - [Paths Object](#paths-object)
+      - [Path Item Object](#path-item-object)
+    - [Webhooks](#webhooks)
+    - [Components Object](#components-object)
+  - [Operation Object](#operation-object)
+    - [Request Body Object](#request-body-object)
+    - [Responses](#responses)
+    - [Response Object](#response-object)
+      - [Links](#links)
+      - [Link Object](#link-object)
+    - [Callbacks](#callbacks)
+      - [Callback Object](#callback-object)
+    - [Content](#content)
+      - [Media Type Object](#media-type-object)
+    - [Headers](#headers)
+      - [Header Object](#header-object)
     - [SDK Generation](#sdk-generation-4)
   - [Paths Object](#paths-object)
     - [Path Item Object](#path-item-object)
@@ -950,9 +971,97 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 | `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
 | `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
 
-#### SDK Generation
+#### SDK Creation
 
-`TODO`
+Speakeasy will split the SDKs and documentation it creates based on your tags.
+
+Consider the following drinks endpoint in the schema:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks
+```
+
+The created TypeScript can be called liked this:
+
+```ts
+await sdk.drinks.listDrinks(type);
+```
+
+##### x-speakeasy-group
+
+You can add the x-speakeasy-group field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
+
+For example, if you add x-speakeasy-group to the drinks endpoint, the YAML will look like this:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks
+      x-speakeasy-group:
+        - beverages
+```
+
+The created TypeScript can now be called liked this:
+
+```ts
+await sdk.beverages.listDrinks(type);
+```
+
+You will no longer be able to use the code below, even though the tag for drinks is still there:
+
+```ts
+await sdk.drinks.listDrinks(type);
+```
+
+##### Multiple Namespaces
+If you want to add a method to multiple namespaces, list multiple values in tags or the x-speakeasy-group extension. Both accept an array of values:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks
+        - beverages
+```
+
+You can call either:
+
+```ts
+await sdk.drinks.listDrinks(type);
+await sdk.beverages.listDrinks(type);
+```
+
+##### Define Multi-Level Namespaces
+You can use tags or the x-speakeasy-group extension to define nested namespaces for your operations using `.` notation. There is no limit to the number of levels you can define.
+
+For instance:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      tags:
+        - drinks.wine.champagne
+```
+
+will create an SDK that called as below:
+
+```ts
+await sdk.drinks.wine.champagne.listDrinks(type);
+```
+
+Note that the files `drinks.ts`, `wine.ts`, and `champagne.ts` will be created, though only `champagne.ts` will have operations.
 
 ### Paths Object
 
@@ -970,9 +1079,9 @@ paths:
   /drink:
     get:
       ... # operation definition
-    put: 
+    put:
       ... # operation definition
-    post: 
+    post:
       ... # operation definition
     delete:
       ... # operation definition
@@ -997,7 +1106,7 @@ Example:
 paths:
   /drinks:
     summary: Various operations for browsing and searching drinks
-    description: 
+    description:
     servers: # Override the servers defined at the document level and apply to all operations defined on this path
       - url: https://drinks.speakeasy.bar
         description: The drinks server
