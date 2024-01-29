@@ -850,6 +850,8 @@ Name | Description | Allowed values | Required | Version 3.1 only
 `description` | Human readable information. [CommonMark syntax](https://spec.commonmark.org/) may be used. | | |
 `x-...` | Extension fields | | |
 
+To decide which security to choose, please review this [article](https://www.speakeasyapi.dev/post/openapi-tips-auth).
+
 Below are the fields that are required for each value of `type`.
 
 - `type: apiKey`
@@ -869,10 +871,9 @@ Below are the fields that are required for each value of `type`.
       clientCredentials: ...
       implicit: ...
       password: ...
-      x-...: ...
     ```
     Flows is an object containing four possible authentication flows. At least one must be present. You may use any combination of the flows. Extension fields are allowed.
-  - Below are the fields that are required for each type of flow:
+  - Below are the fields comprising a flow object:
     Name | Applies to | Description | Required
     ---|---|---|---
     `scopes` | All flows | The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it. The map may be empty. | :heavy_check_mark:
@@ -881,37 +882,87 @@ Below are the fields that are required for each value of `type`.
     `refreshUrl` | All flows | The URL to be used for obtaining refresh tokens. E.g. `https://...`
     `x-...` | Extension fields | | |
 
-TODO
-- speakeasy note and extensions
-- example
-- sdk generation
+Below is an example security schemes object with every possible field besides extensions.
 
 ```yaml
 components:
   securitySchemes:
-    BasicAuth: # An arbitrary scheme name, we recommend something descriptive
+
+# apiKey ------------
+    auth1:
+      description: Recommended authenticator
+      type: apiKey
+      in: query
+      name: key
+
+    auth2:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+    auth3:
+      type: apiKey
+      in: cookie
+      name: key
+
+# http ------------
+    auth4:
       type: http
       scheme: basic
-    Bearer:
+
+    auth5:
       type: http
       scheme: bearer
-      bearerFormat: JWT # Optional token format
-    APIKey:
-      type: apiKey
-      in: header # or query/cookie
-      name: X-API-Key
-    OAuth:
+      bearerFormat: JWT
+
+    auth6:
+      type: http
+      scheme: digest
+
+# mutualTLS ------------
+    auth7:
+      type: mutualTLS
+
+# openIdConnect ------------
+    auth8:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/openidconfig.json
+
+# oauth2 ------------
+    auth9:
       type: oauth2
-      flows: # Many different flows are available - https://spec.openapis.org/oas/v3.1.0#oauth-flows-object
-        implicit:
-          authorizationUrl: https://test.com/oauth/authorize
+      flows:
+        authorizationCode:
           scopes:
             read: Grants read access
             write: Grants write access
-    OpenIdConnect:
-      type: openIdConnect
-      openIdConnectUrl: https://test.com/.well-known/openid-configuration
+          authorizationUrl: https://test.com/oauth/authorize
+          tokenUrl: https://test.com/oauth/token
+          refreshUrl: https://test.com/oauth/refresh
+        clientCredentials:
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          tokenUrl: https://test.com/oauth/token
+          refreshUrl: https://test.com/oauth/refresh
+        implicit:
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          authorizationUrl: https://test.com/oauth/authorize
+          refreshUrl: https://test.com/oauth/refresh
+        password:
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          tokenUrl: https://test.com/oauth/token
+          refreshUrl: https://test.com/oauth/refresh
 ```
+
+TODO
+- speakeasy note and extensions
+- sdk generation
+
 
 #### SDK Generation
 
