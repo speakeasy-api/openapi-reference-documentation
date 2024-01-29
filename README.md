@@ -24,7 +24,7 @@
       - [SDK Generation](#sdk-generation-2)
     - [Security](#security)
       - [Security Requirement Object](#security-requirement-object)
-      - [Security Scheme Object3.1](#security-scheme-object31)
+      - [Security Scheme Object](#security-scheme-object)
       - [SDK Generation](#sdk-generation-3)
     - [Tags](#tags)
       - [Tag Object](#tag-object)
@@ -823,9 +823,9 @@ A Security Requirement Object defines a map of security schemes names to scopes 
 | ---------------------- | :--------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{securitySchemeName}` | *list\<string\>* | :heavy_minus_sign: | A list of scopes/roles required for the security scheme. If the security scheme type is `oauth2` or `openIdConnect`, this is a list of scopes names required by the API consumer to be able to access/use the API, for any other types this could contain a list of roles or similar required for the API consumer to obtain to authenticate with the API. |
 
-#### Security Scheme Object<sup><a href="https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-scheme-object">3.1</a></sup>
+#### Security Scheme Object
 
-Security scheme details are defined in the components section of a schema. A security scheme object can be given any name, but its name must match the name used elsewhere in the document for the scheme to be used. For example:
+Security scheme details<sup><a href="https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-scheme-object">3.1</a></sup> are defined in the components section of a schema. A security scheme object can be given any name, but its name must match the name used elsewhere in the document for the scheme to be used. For example:
 
 ```yaml
 paths:
@@ -959,11 +959,6 @@ components:
           refreshUrl: https://test.com/oauth/refresh
 ```
 
-TODO
-- speakeasy note and extensions
-- sdk generation
-
-
 #### SDK Generation
 
 Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
@@ -1056,6 +1051,8 @@ res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice 
 ```
 
 [//]: # "TODO: once we support optional method level security add an example for that here as well"
+
+Speakeasy does not support mutualTLS or HTTP digest security types.
 
 ### Tags
 
