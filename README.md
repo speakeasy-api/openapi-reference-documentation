@@ -967,18 +967,18 @@ Below is a table showing how to call every type of authentication shown in the p
 
 Name | Authentication type | Code sample
 ---|---|---
-auth1 | apiKey · query |  `const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";` <br/> `const result = await sdk.drinks1(operationSecurity);`
-auth2 | apiKey · header |
-auth3 | apiKey · cookie |
-auth4 | http · basic |
-auth5 | http · bearer |
+auth1 | apiKey · query | `const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";` <br/> `const result = await sdk.drinks1(operationSecurity);`
+auth2 | apiKey · header | `const operationSecurity: Drinks2Security = "<YOUR_API_KEY_HERE>";` <br /> `const result = await sdk.drinks2(operationSecurity);`
+auth3 | apiKey · cookie | `const operationSecurity: Drinks3Security = "<YOUR_API_KEY_HERE>";`  <br /> `const result = await sdk.drinks3(operationSecurity);`
+auth4 | http · basic | `const operationSecurity: Drinks4Security = {` <br /> `username: "<YOUR_USERNAME_HERE>",` <br /> `password: "<YOUR_PASSWORD_HERE>",` <br /> `};` <br /> `const result = await sdk.drinks4(operationSecurity);`
+auth5 | http · bearer | `const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";` <br /> `const result = await sdk.drinks5(operationSecurity);`
 auth6 | http · digest | Not supported
 auth7 | mutualTLS | Not supported
-auth8 | openIdConnect |
-auth9 | oauth2 · authorizationCode |
-auth9 | oauth2 · clientCredentials |
-auth9 | oauth2 · implicit |
-auth9 | oauth2 · password |
+auth8 | openIdConnect | `const sdk = new SDK({` <br /> `auth8: "Bearer <YOUR_ACCESS_TOKEN_HERE>",` <br /> `});` <br /> `const result = await sdk.drinks8();`
+auth9 | oauth2 · authorizationCode | `const operationSecurity: Drinks9Security = "Bearer <YOUR_ACCESS_TOKEN_HERE>";` <br /> `const result = await sdk.drinks9(operationSecurity);`
+auth9 | oauth2 · clientCredentials |  <br />
+auth9 | oauth2 · implicit |  <br />
+auth9 | oauth2 · password |  <br />
 
 Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
 
