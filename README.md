@@ -831,7 +831,7 @@ A Security Requirement Object defines a map of security schemes names to scopes 
 
 #### Security Scheme Object
 
-Security scheme objects are defined in the [Components Object](#components-object) under the `securitySchemes` field. A security scheme object can have any name, but its name must match the name used elsewhere in the document for the scheme to be used. For example:
+Security scheme objects are defined in the [Components Object](#components-object) under the `securitySchemes` field. Each security scheme object has a unique key. [Security Requirement Objects](#security-requirement-object) elsewhere in the document reference security scheme objects by their keys. For example:
 
 ```yaml
 paths:
