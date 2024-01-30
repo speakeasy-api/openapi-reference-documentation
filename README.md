@@ -917,11 +917,11 @@ components:
 
     auth6:
       type: http
-      scheme: digest
+      scheme: digest # not supported by Speakeasy
 
 # mutualTLS ------------
     auth7:
-      type: mutualTLS
+      type: mutualTLS  # not supported by Speakeasy
 
 # openIdConnect ------------
     auth8:
@@ -961,24 +961,55 @@ components:
 
 #### SDK Generation
 
-Speakeasy does not support mutualTLS, the HTTP digest security type, and some programming languages and flows for OAuth. For details, please see this [article](https://www.speakeasyapi.dev/docs/customize-sdks/authentication).
+Speakeasy does not support mutualTLS, the HTTP digest security type, and some programming languages and flows for OAuth. For details, please see this [article](https://www.speakeasyapi.dev/docs/customize-sdks/authentication). Using OAuth requires you to [write your own callback function](https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks).
 
-Below is a table showing how to call every type of authentication shown in the previous section's example schema, once Speakeasy has created an SDK:
+Below is a list showing how to call every type of authentication shown in the previous section's example schema, once Speakeasy has created an SDK:
 
-Name | Authentication type | Code sample
----|---|---
-auth1 | apiKey · query | `const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";` <br/> `const result = await sdk.drinks1(operationSecurity);`
-auth2 | apiKey · header | `const operationSecurity: Drinks2Security = "<YOUR_API_KEY_HERE>";` <br /> `const result = await sdk.drinks2(operationSecurity);`
-auth3 | apiKey · cookie | `const operationSecurity: Drinks3Security = "<YOUR_API_KEY_HERE>";`  <br /> `const result = await sdk.drinks3(operationSecurity);`
-auth4 | http · basic | `const operationSecurity: Drinks4Security = {` <br /> `username: "<YOUR_USERNAME_HERE>",` <br /> `password: "<YOUR_PASSWORD_HERE>",` <br /> `};` <br /> `const result = await sdk.drinks4(operationSecurity);`
-auth5 | http · bearer | `const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";` <br /> `const result = await sdk.drinks5(operationSecurity);`
-auth6 | http · digest | Not supported
-auth7 | mutualTLS | Not supported
-auth8 | openIdConnect | `const sdk = new SDK({` <br /> `auth8: "Bearer <YOUR_ACCESS_TOKEN_HERE>",` <br /> `});` <br /> `const result = await sdk.drinks8();`
-auth9 | oauth2 · authorizationCode | `const operationSecurity: Drinks9Security = "Bearer <YOUR_ACCESS_TOKEN_HERE>";` <br /> `const result = await sdk.drinks9(operationSecurity);`
-auth9 | oauth2 · clientCredentials |  <br />
-auth9 | oauth2 · implicit |  <br />
-auth9 | oauth2 · password |  <br />
+- auth1 — apiKey · query
+  - ```ts
+    const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";
+    const result = await sdk.drinks1(operationSecurity);
+    ```
+- auth2 — apiKey · header
+  - ```ts
+    const operationSecurity: Drinks2Security = "<YOUR_API_KEY_HERE>";
+    const result = await sdk.drinks2(operationSecurity);
+    ```
+- auth3 — apiKey · cookie
+  - ```ts
+    const operationSecurity: Drinks3Security = "<YOUR_API_KEY_HERE>";
+    const result = await sdk.drinks3(operationSecurity);
+    ```
+- auth4 — http · basic
+  - ```ts
+    const operationSecurity: Drinks4Security = {
+      username: "<YOUR_USERNAME_HERE>",
+      password: "<YOUR_PASSWORD_HERE>",
+    };
+    const result = await sdk.drinks4(operationSecurity);
+    ```
+- auth5 — http · bearer
+  - ```ts
+    const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";
+    const result = await sdk.drinks5(operationSecurity);
+    ```
+- auth6 — http · digest
+  - Not supported
+- auth7 — mutualTLS
+  - Not supported
+- auth8 — openIdConnect
+  - ```ts
+    const sdk = new SDK({
+      auth8: "Bearer <YOUR_ACCESS_TOKEN_HERE>",
+    });
+    const result = await sdk.drinks8();
+    ```
+- auth9 — oauth2
+  - ```ts
+    const operationSecurity: Drinks9Security = "Bearer <YOUR_ACCESS_TOKEN_HERE>";
+    const result = await sdk.drinks9(operationSecurity);
+    // custom work to be done: https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks
+    ```
 
 Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
 
