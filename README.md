@@ -961,6 +961,25 @@ components:
 
 #### SDK Generation
 
+Speakeasy does not support mutualTLS, the HTTP digest security type, and some programming languages and flows for OAuth. For details, please see this [article](https://www.speakeasyapi.dev/docs/customize-sdks/authentication).
+
+Below is a table showing how to call every type of authentication shown in the previous section's example schema, once Speakeasy has created an SDK:
+
+Name | Authentication type | Code sample
+---|---|---
+auth1 | apiKey · query |  `const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";` <br/> `const result = await sdk.drinks1(operationSecurity);`
+auth2 | apiKey · header |
+auth3 | apiKey · cookie |
+auth4 | http · basic |
+auth5 | http · bearer |
+auth6 | http · digest | Not supported
+auth7 | mutualTLS | Not supported
+auth8 | openIdConnect |
+auth9 | oauth2 · authorizationCode |
+auth9 | oauth2 · clientCredentials |
+auth9 | oauth2 · implicit |
+auth9 | oauth2 · password |
+
 Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
 
 For global security requirements the generator may generate code like the following which is used when configuring the SDK instance:
@@ -1051,8 +1070,6 @@ res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice 
 ```
 
 [//]: # "TODO: once we support optional method level security add an example for that here as well"
-
-Speakeasy does not support mutualTLS or HTTP digest security types.
 
 ### Tags
 
