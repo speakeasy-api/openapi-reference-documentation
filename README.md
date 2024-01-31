@@ -967,7 +967,7 @@ components:
 
 Speakeasy does not support mutualTLS, the HTTP digest security type, and some programming languages and flows for OAuth. For details, please see this [article](https://www.speakeasyapi.dev/docs/customize-sdks/authentication). Using OAuth requires you to [write your own callback function](https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks).
 
-Below is a list showing how to call every type of authentication shown in the previous section's example schema, once Speakeasy has created an SDK:
+Below is a list showing how to call each supported authentication shown in the previous section's example schema, once Speakeasy has created an SDK:
 
 - auth1 — apiKey · query
   - ```ts
