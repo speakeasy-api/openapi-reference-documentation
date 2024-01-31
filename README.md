@@ -25,8 +25,8 @@
     - [Security](#security)
       - [Security Requirement Object](#security-requirement-object)
       - [Security Scheme Object](#security-scheme-object)
-        - [OAuth2 flow object](#oauth2-flow-object)
-        - [Example security scheme schema](#example-security-scheme-schema)
+      - [OAuth2 Flow Object](#oauth2-flow-object)
+      - [Example Security Scheme Schema](#example-security-scheme-schema)
       - [SDK Generation](#sdk-generation-3)
     - [Tags](#tags)
       - [Tag Object](#tag-object)
@@ -872,7 +872,8 @@ _ | `type: mutualTLS` | No extra fields are required. Mutual TLS means the serve
 `openIdConnectUrl: https://...` | `type: openIdConnect` | Used to discover configuration values. The URL must point to a JSON OpenID Connect Discovery document.
 `flows:`<br/>&nbsp;&nbsp;`authorizationCode: ...`<br/>&nbsp;&nbsp;`clientCredentials: ...`<br/>&nbsp;&nbsp;`implicit: ...`<br/>&nbsp;&nbsp;`password: ...` | `type: oauth2` | Flows is an object containing four possible authentication flow objects. At least one must be present and you can use all four. The structure of a flow is detailed in the next section.
 
-##### OAuth2 flow object
+#### OAuth2 Flow Object
+
 Below are the required fields comprising a flow object used as a value for `flows: ...`.
 
 Field | Applies to | Description | Required
@@ -883,7 +884,7 @@ Field | Applies to | Description | Required
 `refreshUrl` | All flows | The URL to be used for obtaining refresh tokens. E.g. `https://...` |
 `x-...` | Extension fields | |
 
-##### Example security scheme schema
+#### Example Security Scheme Schema
 
 Below is an example security schemes object with every possible field besides extensions.
 
