@@ -997,10 +997,6 @@ Below is a list showing how to call each supported authentication shown in the p
     const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";
     const result = await sdk.drinks5(operationSecurity);
     ```
-- auth6 — http · digest
-  - Not supported
-- auth7 — mutualTLS
-  - Not supported
 - auth8 — openIdConnect
   - ```ts
     const sdk = new SDK({
