@@ -25,6 +25,8 @@
     - [Security](#security)
       - [Security Requirement Object](#security-requirement-object)
       - [Security Scheme Object](#security-scheme-object)
+        - [OAuth flow](#oauth-flow)
+        - [Example security scheme schema](#example-security-scheme-schema)
       - [SDK Generation](#sdk-generation-3)
     - [Tags](#tags)
       - [Tag Object](#tag-object)
@@ -878,15 +880,20 @@ Below are the fields that are required for each value of `type`.
       implicit: ...
       password: ...
     ```
-    Flows is an object containing four possible authentication flows. At least one must be present. You may use any combination of the flows. Extension fields are allowed.
-  - Below are the fields comprising a flow object:
-    Name | Applies to | Description | Required
-    ---|---|---|---
-    `scopes` | All flows | The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it. The map may be empty. | :heavy_check_mark:
-    `authorizationUrl` | `flows:` `implicit` or `authorizationCode` | The authorization URL to be used for this flow. E.g. `https://...` | :heavy_check_mark:
-    `tokenUrl` | `flows:` `authorizationCode`, `clientCredentials`, or `password` | The token URL to be used for this flow. E.g. `https://...` | :heavy_check_mark:
-    `refreshUrl` | All flows | The URL to be used for obtaining refresh tokens. E.g. `https://...`
-    `x-...` | Extension fields | | |
+    Flows is an object containing four possible authentication flow objects. At least one must be present and you can use all four. The structure of a flow is detailed in the next section.
+
+##### OAuth flow
+Below are the fields comprising a flow object:
+
+Name | Applies to | Description | Required
+---|---|---|---
+`scopes` | All flows | The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it. The map may be empty. | :heavy_check_mark:
+`authorizationUrl` | `flows:` `implicit` or `authorizationCode` | The authorization URL to be used for this flow. E.g. `https://...` | :heavy_check_mark:
+`tokenUrl` | `flows:` `authorizationCode`, `clientCredentials`, or `password` | The token URL to be used for this flow. E.g. `https://...` | :heavy_check_mark:
+`refreshUrl` | All flows | The URL to be used for obtaining refresh tokens. E.g. `https://...`
+`x-...` | Extension fields | | |
+
+##### Example security scheme schema
 
 Below is an example security schemes object with every possible field besides extensions.
 
