@@ -1112,11 +1112,11 @@ res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice 
 
 ### Tags
 
-The document level `tags` field contains a list of [tag](#tag-object) definitions that may be used to categorize or group operations in the API. Tags can be referenced by [Operations](#operation-object) via the operations level `tags` field.
+The document-level `tags` field contains a list of [tag](#tag-object) definitions that may be used to categorize or group operations in the API. Tags can be referenced by [Operations](#operation-object) via the operations-level `tags` field.
 
-Tag definitions at the document level are completely optional even if a undefined tag is referenced within an [Operation](#operation-object). Though it is recommended that all tags used to be defined here to provide useful documentation and intent for the tags.
+Tag definitions at the document level are optional, even if an undefined tag is referenced within an [Operation](#operation-object), but it is recommended that all tags used are defined here to provide useful documentation and intent for the tags.
 
-Tag names ***must*** be unique within the document.
+Tag names ***must*** be unique in the document.
 
 Example:
 
@@ -1134,7 +1134,7 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 
 | Field          |                              Type                               |      Required      | Description                                                                                                                 |
 | -------------- | :-------------------------------------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------- |
-| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***must*** be unique within the document.                                                              |
+| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***Must*** be unique in the document.                                                              |
 | `description`  |                            *string*                             | :heavy_minus_sign: | A description of the tag. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
 | `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
 | `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
@@ -1154,7 +1154,7 @@ paths:
         - drinks
 ```
 
-The created TypeScript can be called liked this:
+The created TypeScript can be called like this:
 
 ```ts
 await sdk.drinks.listDrinks(type);
@@ -1162,7 +1162,7 @@ await sdk.drinks.listDrinks(type);
 
 ##### x-speakeasy-group
 
-You can add the x-speakeasy-group field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
+Add the `x-speakeasy-group` field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
 
 For example, if you add x-speakeasy-group to the drinks endpoint, the YAML will look like this:
 
@@ -1177,7 +1177,7 @@ paths:
         - beverages
 ```
 
-The created TypeScript can now be called liked this:
+The created TypeScript can now be called like this:
 
 ```ts
 await sdk.beverages.listDrinks(type);
@@ -1190,7 +1190,7 @@ await sdk.drinks.listDrinks(type);
 ```
 
 ##### Multiple Namespaces
-If you want to add a method to multiple namespaces, list multiple values in tags or the x-speakeasy-group extension. Both accept an array of values:
+If you want to add a method to multiple namespaces, list multiple values in tags or the `x-speakeasy-group` extension. Both accept an array of values:
 
 ```yaml
 paths:
@@ -1210,7 +1210,7 @@ await sdk.beverages.listDrinks(type);
 ```
 
 ##### Define Multi-Level Namespaces
-You can use tags or the x-speakeasy-group extension to define nested namespaces for your operations using `.` notation. There is no limit to the number of levels you can define.
+You can use tags or the `x-speakeasy-group` extension to define nested namespaces for your operations using `.` notation. There is no limit to the number of levels you can define.
 
 For instance:
 
@@ -1223,13 +1223,13 @@ paths:
         - drinks.wine.champagne
 ```
 
-will create an SDK that called as below:
+This will create an SDK that can be called as below:
 
 ```ts
 await sdk.drinks.wine.champagne.listDrinks(type);
 ```
 
-Note that the files `drinks.ts`, `wine.ts`, and `champagne.ts` will be created, though only `champagne.ts` will have operations.
+Note that the files `drinks.ts`, `wine.ts`, and `champagne.ts` will be created, but only `champagne.ts` will have operations.
 
 ### Paths Object
 
