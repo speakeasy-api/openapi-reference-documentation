@@ -77,7 +77,8 @@
         - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
   - [Schema Object](#schema-object)
     - [Composition and Inheritance](#composition-and-inheritance)
-    - [OneOf](#oneof)
+    - [Discriminator Object](#discriminator-object)
+    - [XML Object](#xml-object)
     - [Examples](#examples)
       - [Example Object](#example-object)
   - [Extensions](#extensions)
@@ -2233,6 +2234,8 @@ would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"streng
 
 The Schema Object represents any data type used as input our output in OpenAPI. Data types can be objects, arrays, or primitives such as `string`, `number`, `integer` and `boolean`.
 
+Schema objects are sometimes referred to as *models*, *data types*, or simply, *schemas*. This is because Schema types are used to model complex data types used by an API.
+
 The Schema Object is based on and extends the [JSON Schema Specification Draft 2020-12](https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00).
 
 OpenAPI 3.1 uses all vocabularies from JSON Schema 2020-12, except for Format Assertion.
@@ -2246,13 +2249,115 @@ OpenAPI 3.1 changes the definition of two JSON Schema properties:
 
 OpenAPI adds an additional vocabulary to JSON Schema with the following properties:
 
-`TODO` table of fixed fields for OpenAPI Base Vocab
+| Field Name           | Type                                                            | Description                                                                                                                                                                                            |
+| -------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `discriminator`      | [Discriminator Object](#discriminator-object)                   | A discriminator object describes how to differentiate between related schemas based on the value of a field in a request or response. See [Composition and Inheritance](#composition-and-inheritance). |
+| `xml`                | [XML Object](#xml-object)                                       | Adds details about how the schema should be represented as XML.                                                                                                                                        |
+| `externalDocs`       | [External Documentation Object](#external-documentation-object) | Points to external documentation for this schema.                                                                                                                                                      |
+| `example`            | *any*                                                           | An example that satisfies this schema. **Deprecated:** Although valid, the use of `example` is discouraged. Use [Examples](#examples) instead.                                                         |
+| `x-`                 | [Extensions](#extensions)                                       | Any number of extension fields can be added to the schema that can be used by tooling and vendors.                                                                                                     |
+| Arbitrary properties | *any*                                                           | The schema object supports arbitrary properties without the `x-` prefix. This is discouraged in favour of [Extensions](#extensions).                                                                   |
+
+The example below illustrates three schema objects: `IngredientProductCode`, `Ingredient`, and `IngredientType`.
+
+```yaml
+components:
+  schemas:
+    IngredientProductCode:
+      description: The product code of an ingredient, only available when authenticated.
+      type: string
+      examples:
+        - "AC-A2DF3"
+        - "NAC-3F2D1"
+        - "APM-1F2D3"
+    Ingredient:
+      type: object
+      properties:
+        name:
+          description: The name of the ingredient.
+          type: string
+          examples:
+            - Sugar Syrup
+            - Angostura Bitters
+            - Orange Peel
+        type:
+          $ref: "#/components/schemas/IngredientType"
+        stock:
+          description: The number of units of the ingredient in stock, only available when authenticated.
+          type: integer
+          examples:
+            - 10
+            - 5
+            - 0
+          readOnly: true
+        productCode:
+          $ref: "#/components/schemas/IngredientProductCode"
+        photo:
+          description: A photo of the ingredient.
+          type: string
+          format: uri
+          examples:
+            - https://speakeasy.bar/ingredients/sugar_syrup.jpg
+            - https://speakeasy.bar/ingredients/angostura_bitters.jpg
+            - https://speakeasy.bar/ingredients/orange_peel.jpg
+      required:
+        - name
+        - type
+    IngredientType:
+      description: The type of ingredient.
+      type: string
+      enum:
+        - fresh
+        - long-life
+        - packaged
+```
 
 ### Composition and Inheritance
 
+OpenAPI allows us to combine object schemas using the keywords `allOf`, `anyOf`, and `oneOf`.
+
+These keywords correspond to the following logical operators:
+
+| Keyword | Operator | Description                                                                      |
+| ------- | -------- | -------------------------------------------------------------------------------- |
+| `allOf` | `AND`    | A union of all subschemas. Instances must satisfy **all of** A, B, and C.        |
+| `anyOf` | `OR`     | An inclusive disjunction. Instances must satisfy **at least one of** A, B, or C. |
+| `oneOf` | `XOR`    | An exclusive disjunction. Instances must satisfy **exactly one of** A, B, or C.  |
+
+The example below illustrates the different composition keywords:
+
+```yaml
+components:
+  schemas:
+    # ... Other schemas ...
+    Negroni:
+      description: A Negroni cocktail. Contains gin, vermouth and campari.
+      allOf:
+        - $ref: "#/components/schemas/Vermouth"
+        - $ref: "#/components/schemas/Gin"
+        - $ref: "#/components/schemas/Campari"
+    Martini:
+      description: A Martini cocktail. Contains gin and vermouth, or vodka and vermouth.
+      oneOf:
+        - $ref: "#/components/schemas/Vodka"
+        - $ref: "#/components/schemas/Gin"
+      allOf:
+        - $ref: "#/components/schemas/Vermouth"
+    Punch:
+      description: A Punch cocktail. Contains any combination of alcohol.
+      anyOf:
+        - $ref: "#/components/schemas/Rum"
+        - $ref: "#/components/schemas/Brandy"
+        - $ref: "#/components/schemas/Whisky"
+        - $ref: "#/components/schemas/Vodka"
+        - $ref: "#/components/schemas/Gin"
+```
+
+### Discriminator Object
+
 `TODO`
 
-### OneOf
+### XML Object
 
 `TODO`
 
