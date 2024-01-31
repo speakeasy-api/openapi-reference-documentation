@@ -970,50 +970,57 @@ Speakeasy does not support mutualTLS, the HTTP digest security type, and some pr
 Below is a list showing how to call each supported authentication shown in the previous section's example schema, once Speakeasy has created an SDK:
 
 - auth1 — apiKey · query
-  - ```ts
+  
+  ```ts
     const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";
     const result = await sdk.drinks1(operationSecurity);
-    ```
+  ```
 - auth2 — apiKey · header
-  - ```ts
-    const operationSecurity: Drinks2Security = "<YOUR_API_KEY_HERE>";
-    const result = await sdk.drinks2(operationSecurity);
-    ```
+
+  ```ts
+  const operationSecurity: Drinks2Security = "<YOUR_API_KEY_HERE>";
+  const result = await sdk.drinks2(operationSecurity);
+  ```
 - auth3 — apiKey · cookie
-  - ```ts
-    const operationSecurity: Drinks3Security = "<YOUR_API_KEY_HERE>";
-    const result = await sdk.drinks3(operationSecurity);
-    ```
+
+  ```ts
+  const operationSecurity: Drinks3Security = "<YOUR_API_KEY_HERE>";
+  const result = await sdk.drinks3(operationSecurity);
+  ```
 - auth4 — http · basic
-  - ```ts
-    const operationSecurity: Drinks4Security = {
-      username: "<YOUR_USERNAME_HERE>",
-      password: "<YOUR_PASSWORD_HERE>",
-    };
-    const result = await sdk.drinks4(operationSecurity);
-    ```
+
+  ```ts
+  const operationSecurity: Drinks4Security = {
+    username: "<YOUR_USERNAME_HERE>",
+    password: "<YOUR_PASSWORD_HERE>",
+  };
+  const result = await sdk.drinks4(operationSecurity);
+  ```
 - auth5 — http · bearer
-  - ```ts
-    const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";
-    const result = await sdk.drinks5(operationSecurity);
-    ```
-- auth8 — openIdConnect
-  - ```ts
-    const sdk = new SDK({
-      auth8: "Bearer <YOUR_ACCESS_TOKEN_HERE>",
-    });
-    const result = await sdk.drinks8();
-    ```
-- auth9 — oauth2
-  - ```ts
-    const operationSecurity: Drinks9Security = "Bearer <YOUR_ACCESS_TOKEN_HERE>";
-    const result = await sdk.drinks9(operationSecurity);
-    // custom work to be done: https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks
-    ```
 
-Depending on whether global or operation level security is used the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
+  ```ts
+  const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";
+  const result = await sdk.drinks5(operationSecurity);
+  ```
+- auth6 — openIdConnect
 
-For global security requirements the generator may generate code like the following which is used when configuring the SDK instance:
+  ```ts
+  const sdk = new SDK({
+    auth6: "Bearer <YOUR_ACCESS_TOKEN_HERE>",
+  });
+  const result = await sdk.drinks6();
+  ```
+- auth7 — oauth2
+
+  ```ts
+  const operationSecurity: Drinks7Security = "Bearer <YOUR_ACCESS_TOKEN_HERE>";
+  const result = await sdk.drinks7(operationSecurity);
+  // custom work to be done: https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks
+  ```
+
+Depending on whether global or operation level security is used, the Speakeasy SDK Generator will generate the correct code to handle the security requirements.
+
+For global security requirements, the generator may generate code like the following, which is used when configuring the SDK instance:
 
 ```go
 // speakeasy.go
