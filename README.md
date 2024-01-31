@@ -852,13 +852,13 @@ The type field is the overall category of authentication. The value of type dete
 
 Below are the string fields that do not depend on type and can be used in any security scheme.
 
-Name | Description | Allowed values | Required | Version 3.1 only
----|---|---|---|---
-`type` | The type of the security scheme | `apiKey`, `http`, `mutualTLS`, `oauth2`, `openIdConnect` | :heavy_check_mark: | `mutualTLS`
-`description` | Human readable information. [CommonMark syntax](https://spec.commonmark.org/) may be used. | | |
-`x-...` | Extension fields | | |
+Field | Required | Description
+---|---|---
+`type` | :heavy_check_mark: | The type of the security scheme. <br/><br/>Allowed values: `apiKey`, `http`, `mutualTLS`, `oauth2`, or `openIdConnect`. <br/><br/>`mutualTLS` is for OpenApi version 3.1 only.
+`description` | | Human readable information. [CommonMark syntax](https://spec.commonmark.org/) may be used.
+`x-...` | | Extension fields
 
-To decide which security to choose, please review this [article](https://www.speakeasyapi.dev/post/openapi-tips-auth).
+To decide which authentication type to choose, please review this [article](https://www.speakeasyapi.dev/post/openapi-tips-auth).
 
 Below are the fields that are required for each value of `type`.
 
