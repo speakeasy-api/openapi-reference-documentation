@@ -486,27 +486,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Order"
-            examples:
-              old_fashioned:
-                summary: An order for one Old Fashioned
-                value:
-                  { "type": "drink", "productCode": "AC-A2DF3", "quantity": 1 }
-              sugar_syrup:
-                summary: An order for three units of Sugar Syrup
-                value:
-                  {
-                    "type": "ingredient",
-                    "productCode": "NAC-3F2D1",
-                    "quantity": 3,
-                  }
+              oneOf:
+              - $ref: "#/components/schemas/DrinkOrder"
+              - $ref: "#/components/schemas/IngredientOrder"
+              discriminator:
+                propertyName: orderType
+                mapping:
+                  drink: "#/components/schemas/DrinkOrder"
+                  ingredient: "#/components/schemas/IngredientOrder"
       responses:
         "200":
           description: The order was created successfully.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Order"
+                oneOf:
+                - $ref: "#/components/schemas/DrinkOrder"
+                - $ref: "#/components/schemas/IngredientOrder"
+                discriminator:
+                  propertyName: orderType
+                  mapping:
+                    drink: "#/components/schemas/DrinkOrder"
+                    ingredient: "#/components/schemas/IngredientOrder"
               examples:
                 old_fashioned:
                   summary: Pending order
@@ -767,8 +768,12 @@ components:
       description: An order for a drink or ingredient.
       type: object
       properties:
-        type:
-          $ref: "#/components/schemas/OrderType"
+        orderType:
+          description: The type of order.
+          type: string
+          enum:
+            - drink
+            - ingredient
         productCode:
           description: The product code of the drink or ingredient.
           type: string
@@ -793,12 +798,37 @@ components:
         - productCode
         - quantity
         - status
-    OrderType:
-      description: The type of order.
-      type: string
-      enum:
-        - drink
-        - ingredient
+    DrinkOrder:
+      allOf:
+        - $ref: "#/components/schemas/Order"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - drink
+            barCounter:
+              description: The bar counter to collect the drink from.
+              type: string
+              enum:
+                - upstairs
+                - outside
+                - lounge
+    IngredientOrder:
+      allOf:
+        - $ref: "#/components/schemas/Order"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - ingredient
+            deliveryAddress:
+              description: The address to deliver the ingredient to.
+              type: string
+              examples:
+                - "123 Main St, Anytown, USA"
+                - "456 Elm St, Anytown, USA"
   securitySchemes:
     apiKey:
       type: apiKey

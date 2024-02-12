@@ -1134,7 +1134,7 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 
 | Field          |                              Type                               |      Required      | Description                                                                                                                 |
 | -------------- | :-------------------------------------------------------------: | :----------------: | --------------------------------------------------------------------------------------------------------------------------- |
-| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***Must*** be unique in the document.                                                              |
+| `name`         |                            *string*                             | :heavy_check_mark: | The name of the tag. ***Must*** be unique in the document.                                                                  |
 | `description`  |                            *string*                             | :heavy_minus_sign: | A description of the tag. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
 | `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
 | `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
@@ -2355,7 +2355,57 @@ components:
 
 ### Discriminator Object
 
-`TODO`
+When using `oneOf` to indicate that a request body or response contains exactly one of multiple [Schema Objects](#schema-object), a discriminator object can help the client or server figure out which schema is included in the request or response.
+
+The discriminator object in OpenAPI tells a client or server which field can be used to discriminate between different schemas.
+
+| Field          | Type                      | Required           | Description                                                                                                      |
+| -------------- | ------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `propertyName` | `string`                  | :heavy_check_mark: | The property name used to discriminate between schemas.                                                          |
+| `mapping`      | *map[string, string]      | :heavy_minus_sign: | An optional map of values and schema reference strings.                                                          |
+| `x-*`          | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the discriminator object that can be used by tooling and vendors. |
+
+In the example below, the Speakeasy Bar can receive one of two order types: A drink order with a bar counter reference, or an ingredient order with a delivery address:
+
+```yaml
+components:
+  responses:
+    OrderResponse:
+      oneOf:
+      - $ref: "#/components/schemas/DrinkOrder"
+      - $ref: "#/components/schemas/IngredientOrder"
+```
+
+If we include a discriminator object, the client can indicate the order type, so that the server does not need to figure that out:
+
+```yaml
+components:
+  responses:
+    OrderResponse:
+      oneOf:
+      - $ref: "#/components/schemas/DrinkOrder"
+      - $ref: "#/components/schemas/IngredientOrder"
+      discriminator:
+        propertyName: orderType
+```
+
+In the previous example, the value of the `orderType` property will determine the order type. The value of `orderType` must match one of the schema components, so must be either `DrinkOrder` or `IngredientOrder`.
+
+To use values that don't match a schema key, a discriminator object can include a `mapping` property that maps values to schemas. Here's an example:
+
+```yaml
+components:
+  responses:
+    OrderResponse:
+      oneOf:
+      - $ref: "#/components/schemas/DrinkOrder"
+      - $ref: "#/components/schemas/IngredientOrder"
+      discriminator:
+        propertyName: orderType
+        mapping:
+          drink: "#/components/schemas/DrinkOrder"
+          ingredient: "#/components/schemas/IngredientOrder"
+```
 
 ### XML Object
 
