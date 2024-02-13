@@ -509,11 +509,11 @@ paths:
                     drink: "#/components/schemas/DrinkOrder"
                     ingredient: "#/components/schemas/IngredientOrder"
               examples:
-                old_fashioned:
+                pending_order:
                   summary: Pending order
                   description: The order was created successfully but is still pending.
                   value: '{"type": "drink", "productCode": "AC-A2DF3", "quantity": 1, "status": "pending"}'
-                sugar_syrup:
+                completed_order:
                   summary: Completed order
                   description: The order was completed immediately as there was enough stock to fulfill it.
                   value: '{"type": "ingredient", "productCode": "NAC-3F2D1", "quantity": 3, "status": "complete"}'
@@ -794,7 +794,7 @@ components:
             - complete
           readOnly: true
       required:
-        - type
+        - orderType
         - productCode
         - quantity
         - status
@@ -803,7 +803,7 @@ components:
         - $ref: "#/components/schemas/Order"
         - type: object
           properties:
-            type:
+            orderType:
               type: string
               enum:
                 - drink
@@ -819,7 +819,7 @@ components:
         - $ref: "#/components/schemas/Order"
         - type: object
           properties:
-            type:
+            orderType:
               type: string
               enum:
                 - ingredient
