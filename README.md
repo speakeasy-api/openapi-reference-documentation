@@ -14,20 +14,20 @@
     - [Info Object](#info-object)
       - [Contact Object](#contact-object)
       - [License Object](#license-object)
-      - [SDK Generation](#sdk-generation)
+      - [The Info Object in Generated SDKs](#the-info-object-in-generated-sdks)
     - [External Documentation Object](#external-documentation-object)
-      - [SDK Generation](#sdk-generation-1)
+      - [External Documentation in Generated SDKs](#external-documentation-in-generated-sdks)
     - [Servers](#servers)
       - [Server Object](#server-object)
       - [Server Variables \& Templating](#server-variables--templating)
       - [Server Variable Object](#server-variable-object)
-      - [SDK Generation](#sdk-generation-2)
+      - [Servers in Generated SDKs](#servers-in-generated-sdks)
     - [Security](#security)
       - [Security Requirement Object](#security-requirement-object)
       - [Security Scheme Object](#security-scheme-object)
       - [OAuth2 Flow Object](#oauth2-flow-object)
       - [Example Security Scheme Schema](#example-security-scheme-schema)
-      - [SDK Generation](#sdk-generation-3)
+      - [Security Schemes in Generated SDKs](#security-schemes-in-generated-sdks)
     - [Tags](#tags)
       - [Tag Object](#tag-object)
       - [SDK Creation](#sdk-creation)
@@ -51,30 +51,30 @@
     - [Content](#content)
       - [Media Type Object](#media-type-object)
       - [Encoding Object](#encoding-object)
-    - [SDK Generation](#sdk-generation-4)
+    - [Operation Objects in Generated SDKs](#operation-objects-in-generated-sdks)
   - [Parameters](#parameters)
     - [Parameter Object](#parameter-object)
     - [Parameter Serialization](#parameter-serialization)
       - [Query Parameters](#query-parameters)
-        - [Primitive Types](#primitive-types)
-        - [Simple Arrays](#simple-arrays)
-        - [Simple Objects](#simple-objects)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays)
+        - [Primitive Types As Query Parameters](#primitive-types-as-query-parameters)
+        - [Simple Arrays As Query Parameters](#simple-arrays-as-query-parameters)
+        - [Simple Objects As Query Parameters](#simple-objects-as-query-parameters)
+        - [Complex Objects and Arrays As Query Parameters](#complex-objects-and-arrays-as-query-parameters)
       - [Path Parameters](#path-parameters)
-        - [Primitive Types](#primitive-types-1)
-        - [Simple Arrays](#simple-arrays-1)
-        - [Simple Objects](#simple-objects-1)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays-1)
+        - [Primitive Types As Path Parameters](#primitive-types-as-path-parameters)
+        - [Simple Arrays As Path Parameters](#simple-arrays-as-path-parameters)
+        - [Simple Objects As Path Parameters](#simple-objects-as-path-parameters)
+        - [Complex Objects and Arrays As Path Parameters](#complex-objects-and-arrays-as-path-parameters)
       - [Header Parameters](#header-parameters)
-        - [Primitive Types](#primitive-types-2)
-        - [Simple Arrays](#simple-arrays-2)
-        - [Simple Objects](#simple-objects-2)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays-2)
+        - [Primitive Types As Headers](#primitive-types-as-headers)
+        - [Simple Arrays As Headers](#simple-arrays-as-headers)
+        - [Simple Objects As Headers](#simple-objects-as-headers)
+        - [Complex Objects and Arrays As Headers](#complex-objects-and-arrays-as-headers)
       - [Cookie Parameters](#cookie-parameters)
-        - [Primitive Types](#primitive-types-3)
-        - [Simple Arrays](#simple-arrays-3)
-        - [Simple Objects](#simple-objects-3)
-        - [Complex Objects and Arrays](#complex-objects-and-arrays-3)
+        - [Primitive Types As Cookies](#primitive-types-as-cookies)
+        - [Simple Arrays As Cookies](#simple-arrays-as-cookies)
+        - [Simple Objects As Cookies](#simple-objects-as-cookies)
+        - [Complex Objects and Arrays As Cookies](#complex-objects-and-arrays-as-cookies)
   - [Schema Object](#schema-object)
     - [Composition and Inheritance](#composition-and-inheritance)
     - [Discriminator Object](#discriminator-object)
@@ -84,7 +84,9 @@
   - [Extensions](#extensions)
   - [References](#references)
     - [OpenAPI Reference Object](#openapi-reference-object)
-    - [JSON Schema Reference Object](#json-schema-reference-object)
+    - [JSON Schema References](#json-schema-references)
+      - [Absolute References](#absolute-references)
+      - [Relative References](#relative-references)
     - [Expression](#expression)
   - [Data Type Formats](#data-type-formats)
 
@@ -99,7 +101,7 @@
 - TODO: Go through and update all examples of yaml and generated code once full documentation and example spec is complete.
 - TODO: Ensure we refer to API, Endpoint, etc consistently throughout the documentation.
 - TODO: Determine the best way to link back to the generator? Should we talk directly about it in this documentation, or leave it to links and/or expandable sections that go into more detail?
-- TODO: make the difference between OpenAPI references and JSON Schema references clear. I think this is a common point of confusion for people.
+- ~~TODO~~DONE: make the difference between OpenAPI references and JSON Schema references clear. I think this is a common point of confusion for people.
 - TODO: do we want to add comments into our examples explaining them more?
 - TODO: in some cases the smart bear docs document different sections of the spec in a lot of detail, almost as "how-to" guides ie. <https://swagger.io/docs/specification/callbacks/> I think we should have the equivelant but should that be done inline in this documentation or as separate linked pages from here? List of potential candidates:
   - callbacks
@@ -117,7 +119,7 @@
 
 ### What is OpenAPI and why use it?
 
-`TODO`
+- TODO - What is OpenAPI and why use it?
 
 ### What versions of OpenAPI does this documentation cover?
 
@@ -125,7 +127,7 @@ This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specif
 
 ### How does this documentation differ from the official OpenAPI documentation?
 
-`TODO`
+- TODO - How does this documentation differ from the official OpenAPI documentation?
 
 ## Document Structure
 
@@ -266,7 +268,7 @@ The license the API is made available under.
 | `url`        |         *string*          | :heavy_minus_sign: | A URL to the license information. Provided only if identifier isn't set.                                                                    |
 | `x-*`        | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the license object that can be used by tooling and vendors.                                  |
 
-#### SDK Generation
+#### The Info Object in Generated SDKs
 
 Speakeasy's SDK Generator will use the `info` object to produce code comments and documentation for the generated SDKs. If [External Documentation](#external-documentation-object) is also provided at the document level, this will be included in the generated comments as well.
 
@@ -288,7 +290,7 @@ Allows for providing information about external documentation available for the 
 | `description` |         *string*          | :heavy_minus_sign: | A description of the external documentation. [CommonMark syntax](https://spec.commonmark.org/) can be used to provide a rich description. |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the external documentation object that can be used by tooling and vendors.                 |
 
-#### SDK Generation
+#### External Documentation in Generated SDKs
 
 Speakeasy's SDK Generator will use the `externalDocs` object to produce code comments and documentation for the generated SDKs. This will be included alongside comments for any of the Methods ([Operations](#operation-object)), Classes/Enums ([Object Schemas](#schema-object)) or SDKs ([Tags](#tags)) that reference the `externalDocs` object.
 
@@ -426,7 +428,7 @@ paths:
                   $ref: "#/components/schemas/Mocktail"
 ```
 
-*Note:* the above API can also be achieved using [`oneOf`](#oneof) in a single operation definition, but depending on the use case this may not be desirable.
+*Note:* the above API can also be achieved using [`oneOf`](#composition-and-inheritance) in a single operation definition, but depending on the use case this may not be desirable.
 
 #### Server Variables & Templating
 
@@ -464,7 +466,7 @@ A Server Variable Object describes a single variable that is optionally part of 
 | `enum`        |     *list\<string\>*      | :heavy_minus_sign: | A list of allowed *string* values for the variable.                                                                                                      |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the server variable object that can be used by tooling and vendors.                                       |
 
-#### SDK Generation
+#### Servers in Generated SDKs
 
 The Speakeasy SDK Generator generally requires at least one absolute URL to be provided to ensure the out of the box experience is as smooth as possible for developers using the generated SDKs. If not present in the OpenAPI document this can be provided via configuration. [Click here for more details](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/servers/#declare-base-server-url).
 
@@ -853,37 +855,37 @@ The type field is the overall category of authentication. The value of type dete
 
 Below are the string fields that do not depend on type and can be used in any security scheme.
 
-Field | Required | Description
----|---|---
-`type` | :heavy_check_mark: | The type of the security scheme. <br/><br/>Allowed values: `apiKey`, `http`, `mutualTLS`, `oauth2`, or `openIdConnect`. <br/><br/>`mutualTLS` is for OpenApi version 3.1 only.
-`description` | | Human readable information. [CommonMark syntax](https://spec.commonmark.org/) may be used.
-`x-...` | | Extension fields
+| Field | Required | Description |
+| ---|---|--- |
+| `type` | :heavy_check_mark: | The type of the security scheme. <br/><br/>Allowed values: `apiKey`, `http`, `mutualTLS`, `oauth2`, or `openIdConnect`. <br/><br/>`mutualTLS` is for OpenApi version 3.1 only. |
+| `description` | | Human readable information. [CommonMark syntax](https://spec.commonmark.org/) may be used. |
+| `x-...` | | Extension fields |
 
 To decide which authentication type to choose, please review this [article](https://www.speakeasyapi.dev/post/openapi-tips-auth).
 
 Below are the fields that are required for each value of `type`. They are all strings, except for the OAuth flows, which are discussed in the next section.
 
-Field |	Applies to | Description
----|---|---
-`in:` `query`, `header`, or `cookie` | `type: apiKey` | The location of the API key in the request.
-`name:` | `type: apiKey` | The name of the key parameter in the location.
-`scheme:` `basic`, `bearer`, or `digest` | `type: http` | The name of the HTTP Authorization scheme to be used in the Authorization header. [More values](https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml) are theoretically allowed, but not supported in practice.
-`bearerFormat:` | `type: http`<br/>`scheme: bearer` | A hint to the client to identify how the bearer token is formatted. Bearer tokens are usually generated by an authorization server, so this information is primarily for documentation purposes.
-_ | `type: mutualTLS` | No extra fields are required. Mutual TLS means the server will ask the client for a public security certificate after the server has sent its certificate.
-`openIdConnectUrl: https://...` | `type: openIdConnect` | Used to discover configuration values. The URL must point to a JSON OpenID Connect Discovery document.
-`flows:`<br/>&nbsp;&nbsp;`authorizationCode: ...`<br/>&nbsp;&nbsp;`clientCredentials: ...`<br/>&nbsp;&nbsp;`implicit: ...`<br/>&nbsp;&nbsp;`password: ...` | `type: oauth2` | Flows is an object containing four possible authentication flow objects. At least one must be present and you can use all four. The structure of a flow is detailed in the next section.
+| Field | Applies to | Description |
+| ---|---|--- |
+| `in:` `query`, `header`, or `cookie` | `type: apiKey` | The location of the API key in the request. |
+| `name:` | `type: apiKey` | The name of the key parameter in the location. |
+| `scheme:` `basic`, `bearer`, or `digest` | `type: http` | The name of the HTTP Authorization scheme to be used in the Authorization header. [More values](https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml) are theoretically allowed, but not supported in practice. |
+| `bearerFormat:` | `type: http`<br/>`scheme: bearer` | A hint to the client to identify how the bearer token is formatted. Bearer tokens are usually generated by an authorization server, so this information is primarily for documentation purposes. |
+| _ | `type: mutualTLS` | No extra fields are required. Mutual TLS means the server will ask the client for a public security certificate after the server has sent its certificate. |
+| `openIdConnectUrl: https://...` | `type: openIdConnect` | Used to discover configuration values. The URL must point to a JSON OpenID Connect Discovery document. |
+| `flows:`<br/>&nbsp;&nbsp;`authorizationCode: ...`<br/>&nbsp;&nbsp;`clientCredentials: ...`<br/>&nbsp;&nbsp;`implicit: ...`<br/>&nbsp;&nbsp;`password: ...` | `type: oauth2` | Flows is an object containing four possible authentication flow objects. At least one must be present and you can use all four. The structure of a flow is detailed in the next section. |
 
 #### OAuth2 Flow Object
 
-Below are the required fields comprising a flow object used as a value for `flows: ...`.
+Below are the required fields comprising a flow object used as a ****val**ue** for `flows: ...`.
 
-Field | Applies to | Description | Required
----|---|---|---
-`scopes` | All flows | The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it. The map may be empty. | :heavy_check_mark:
-`authorizationUrl` | `flows:` `implicit` or `authorizationCode` | The authorization URL to be used for this flow. E.g. `https://...` | :heavy_check_mark:
-`tokenUrl` | `flows:` `authorizationCode`, `clientCredentials`, or `password` | The token URL to be used for this flow. E.g. `https://...` | :heavy_check_mark:
-`refreshUrl` | All flows | The URL to be used for obtaining refresh tokens. E.g. `https://...` |
-`x-...` | Extension fields | |
+| Field | Applies to | Description | Required |
+| ---|---|---|--- |
+| `scopes` | All flows | The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it. The map may be empty. | :heavy_check_mark: |
+| `authorizationUrl` | `flows:` `implicit` or `authorizationCode` | The authorization URL to be used for this flow. E.g. `https://...` | :heavy_check_mark: |
+| `tokenUrl` | `flows:` `authorizationCode`, `clientCredentials`, or `password` | The token URL to be used for this flow. E.g. `https://...` | :heavy_check_mark: |
+| `refreshUrl` | All flows | The URL to be used for obtaining refresh tokens. E.g. `https://...` | |
+| `x-...` | Extension fields | | |
 
 #### Example Security Scheme Schema
 
@@ -964,7 +966,7 @@ components:
           refreshUrl: https://test.com/oauth/refresh
 ```
 
-#### SDK Generation
+#### Security Schemes in Generated SDKs
 
 Speakeasy does not support mutualTLS, the HTTP digest security type, and some programming languages and flows for OAuth. For details, please see this [article](https://www.speakeasyapi.dev/docs/customize-sdks/authentication). Using OAuth requires you to [write your own callback function](https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks).
 
@@ -976,18 +978,21 @@ Below is a list showing how to call each supported authentication shown in the p
     const operationSecurity: Drinks1Security = "<YOUR_API_KEY_HERE>";
     const result = await sdk.drinks1(operationSecurity);
   ```
+
 - auth2 — apiKey · header
 
   ```ts
   const operationSecurity: Drinks2Security = "<YOUR_API_KEY_HERE>";
   const result = await sdk.drinks2(operationSecurity);
   ```
+
 - auth3 — apiKey · cookie
 
   ```ts
   const operationSecurity: Drinks3Security = "<YOUR_API_KEY_HERE>";
   const result = await sdk.drinks3(operationSecurity);
   ```
+
 - auth4 — http · basic
 
   ```ts
@@ -997,12 +1002,14 @@ Below is a list showing how to call each supported authentication shown in the p
   };
   const result = await sdk.drinks4(operationSecurity);
   ```
+
 - auth5 — http · bearer
 
   ```ts
   const operationSecurity: Drinks5Security = "<YOUR_BEARER_TOKEN_HERE>";
   const result = await sdk.drinks5(operationSecurity);
   ```
+
 - auth6 — openIdConnect
 
   ```ts
@@ -1011,6 +1018,7 @@ Below is a list showing how to call each supported authentication shown in the p
   });
   const result = await sdk.drinks6();
   ```
+
 - auth7 — oauth2
 
   ```ts
@@ -1190,6 +1198,7 @@ await sdk.drinks.listDrinks(type);
 ```
 
 ##### Multiple Namespaces
+
 If you want to add a method to multiple namespaces, list multiple values in tags or the `x-speakeasy-group` extension. Both accept an array of values:
 
 ```yaml
@@ -1210,6 +1219,7 @@ await sdk.beverages.listDrinks(type);
 ```
 
 ##### Define Multi-Level Namespaces
+
 You can use tags or the `x-speakeasy-group` extension to define nested namespaces for your operations using `.` notation. There is no limit to the number of levels you can define.
 
 For instance:
@@ -1384,7 +1394,7 @@ The Components Object is a container for reusable objects that can be referenced
 
 | Field             |                                                           Type                                                            |      Required      | Description                                                                                                                                                                                                                                                                                                 |
 | ----------------- | :-----------------------------------------------------------------------------------------------------------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `schemas`         |                                      *map[string, [Schema Object](#schema-object)]*                                       | :heavy_minus_sign: | A map of [Schema Objects](#schema-object) that can be referenced by other parts of the API.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.** |
+| `schemas`         |                                      *map[string, [Schema Object](#schema-object)]*                                       | :heavy_minus_sign: | A map of [Schema Objects](#schema-object) that can be referenced by other parts of the API.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-references) format.** |
 | `securitySchemes` | *map[string, [Security Scheme Object](#security-scheme-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign: | A map of [Security Scheme Objects](#security-scheme-object) that can be referenced by other parts of the API.                                                                                                                                                                                               |
 | `pathItems`       |       *map[string, [Path Item Object](#path-item-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Path Item Objects](#path-item-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
 | `parameters`      |       *map[string, [Parameter Object](#parameter-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Parameter Objects](#parameter-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
@@ -1632,7 +1642,7 @@ A map of header names to [Header Objects](#header-object) or [References](#refer
 
 In this simplified example, the server returns three [Header Objects](#header-object) with the names `X-RateLimit-Remaining`, `Last-Modified`, and `Cache-Control`:
 
-```
+```yaml
 paths:
   /drinks/{productCode}:
     get:
@@ -1673,7 +1683,7 @@ The name of a header is determined by the header's key in a `headers` map.
 | `description` | *string*                                               | :heavy_minus_sign: | A description of the header. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                                             |
 | `required`    | *boolean*                                              | :heavy_minus_sign: | Whether the header is required or not. Defaults to `false`.                                                                                                                                                                                                                                                                                |
 | `deprecated`  | *boolean*                                              | :heavy_minus_sign: | Whether the header is deprecated or not. Defaults to `false`.                                                                                                                                                                                                                                                                              |
-| `schema`      | [Schema Object](#schema-object)                        | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the header. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.** |
+| `schema`      | [Schema Object](#schema-object)                        | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the header. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-references) format.** |
 | `content`     | *map[string, [Media Type Object](#media-type-object)]* | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the header. This is ***required*** unless `schema` is defined.                                                                                                                                                                 |
 | `x-*`         | [Extensions](#extensions)                              | :heavy_minus_sign: | Any number of extension fields can be added to the header object for use by tooling and vendors.                                                                                                                                                                                                                                           |
 
@@ -1793,8 +1803,8 @@ A Media Type Object describes the request or response for a media type, with opt
 | Field      | Type                                                                                                      | Required           | Description                                                                                                                                                                                                                                                                                                                    |
 | ---------- | --------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `schema`   | [Schema Object](#schema-object)                                                                           | :heavy_minus_sign: | A schema that describes the request or response content.                                                                                                                                                                                                                                                                       |
-| `example`  | *any*                                                                                                     | :heavy_minus_sign: | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `examples` field.                                                                                                                                         |
-| `examples` | *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign: | Optional examples of the media type. These examples override any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive of the `example` field.                                                                                                                                           |
+| `example`  | *any*                                                                                                     | :heavy_minus_sign: | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive with the `examples` field.                                                                                                                                       |
+| `examples` | *map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign: | Optional examples of the media type. These examples override any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive with the `example` field.                                                                                                                                         |
 | `encoding` | *map[string, [Encoding Object](#encoding-object)]*                                                        | :heavy_minus_sign: | An optional map of [Encoding Objects](#encoding-object). Each Encoding Object's key should match one of the properties from the [Schema Object](#schema-object) in the `schema` field. Only applies to [Request Body Objects](#request-body-object) when the media type is `multipart` or `application/x-www-form-urlencoded`. |
 | `x-*`      | [Extensions](#extensions)                                                                                 | :heavy_minus_sign: | Any number of extension fields as required by tooling and vendors.                                                                                                                                                                                                                                                             |
 
@@ -1838,9 +1848,9 @@ paths:
                 # explode: false - not applicable to strings
 ```
 
-### SDK Generation
+### Operation Objects in Generated SDKs
 
-`TODO`
+- TODO - SDK Generation
 
 ## Parameters
 
@@ -1924,7 +1934,7 @@ paths:
 | `deprecated`      |            *boolean*            | :heavy_minus_sign: | Whether the parameter is deprecated or not. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                                                       |
 | `style`           |            *string*             | :heavy_minus_sign: | Describes how the parameter value will be serialized depending on the `in` field. The available styles are `matrix`, `label`, `form`, `simple`, `spaceDelimited`, `pipeDelimited`, `deepObject`.<br/><br/>The default style depends on the `in` field:<br/><ul><li>`path` - `simple`</li><li>`query` - `form`</li><li>`header` - `simple`</li><li>`cookie` - `form`</li></ul>See [Parameter Serialization](#parameter-serialization) for more details. |
 | `explode`         |            *boolean*            | :heavy_minus_sign: | Whether the parameter value will be exploded or not, based on the parameter type. Defaults to `true` when `style` is `form` otherwise `false`.<br><br/>See [Parameter Serialization](#parameter-serialization) for more details.                                                                                                                                                                                                                       |
-| `schema`          | [Schema Object](#schema-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the parameter. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-reference-object) format.**                                                                                                          |
+| `schema`          | [Schema Object](#schema-object) | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the parameter. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI `3.0.X` does support [OpenAPI Reference Objects](#openapi-reference-object) here as the value, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-references) format.**                                                                                                          |
 | `content`         |       [Content](#content)       | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the parameter. This is ***required*** unless `schema` is defined.                                                                                                                                                                                                                                                                          |
 | `allowEmptyValue` |            *boolean*            | :heavy_minus_sign: | Whether the parameter value can be empty or not. Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                    |
 | `allowReserved`   |            *boolean*            | :heavy_minus_sign: | Whether the parameter value can contain reserved characters or not as defined by [RFC3986](https://www.rfc-editor.org/rfc/rfc3986). Only used if `in` is `query`. Defaults to `false`.                                                                                                                                                                                                                                                                 |
@@ -1951,7 +1961,7 @@ By default query parameters are serialized using `style: form` and `explode: tru
 - `style: spaceDelimited` - Space delimited serialization uses percent encoded spaces (`%20`) to separate multiple values.
 - `style: deepObject` - Deep object serialization uses nested objects to represent the parameter value.
 
-##### Primitive Types
+##### Primitive Types As Query Parameters
 
 For primitive types such as `string`, `number`, `integer` and `boolean` the serialization is straight forward and the value is serialized as a string, the `style` and `explode` fields have little effect on the serialization.
 
@@ -1964,7 +1974,7 @@ For the examples below we will use a query parameter named `limit` with a value 
 | `spaceDelimited` |       `/query?limit=10`       | `/query?limit=10`  |
 | `deepObject`     |         **NOT VALID**         |   **NOT VALID**    |
 
-##### Simple Arrays
+##### Simple Arrays As Query Parameters
 
 For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
 
@@ -1977,7 +1987,7 @@ For the examples below we will use a query parameter named `terms` with a value 
 | `spaceDelimited` |       `/query?terms=gin&terms=vodka&terms=rum`       | `/query?terms=gin%20vodka%20rum` |
 | `deepObject`     |                    **NOT VALID**                     |          **NOT VALID**           |
 
-##### Simple Objects
+##### Simple Objects As Query Parameters
 
 For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
 
@@ -1992,7 +2002,7 @@ For the examples below we will use a query parameter named `filter` with a value
 
 There is a special case for simple objects with fields that are an array of primitive types such as `string`, `number`, `integer` and `boolean` that can be handled by `style: deepObject` and `explode: true`. For example for a query parameter named `filter` with a value of `{"type": ["cocktail", "mocktail"], "strength": [5, 10]}`, this will be serialized like `/query?filter[type]=cocktail&filter[type]=mocktail&filter[strength]=5&filter[strength]=10`.
 
-##### Complex Objects and Arrays
+##### Complex Objects and Arrays As Query Parameters
 
 For complex objects and arrays, serialization in a query parameter is only really possible using `content` and not any `style` options.
 
@@ -2029,7 +2039,7 @@ By default path parameters are serialized using `style: simple` and `explode: fa
 - `style: label` - Label style serialization uses dots (`.`) to separate multiple values. Defined by [RFC6570](https://tools.ietf.org/html/rfc6570#section-3.2.6).
 - `style: matrix` - Matrix style serialization uses semicolons (`;`) to separate multiple values. Defined by [RFC6570](https://tools.ietf.org/html/rfc6570#section-3.2.5).
 
-##### Primitive Types
+##### Primitive Types As Path Parameters
 
 For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string, the `style` and `explode` fields determine the prefix for the value generally.
 
@@ -2041,7 +2051,7 @@ For the examples below we will use a path parameter named `type` with a value of
 | `label`  |   `/drinks/.cocktail`    |   `/drinks/.cocktail`    |
 | `matrix` | `/drinks/;type=cocktail` | `/drinks/;type=cocktail` |
 
-##### Simple Arrays
+##### Simple Arrays As Path Parameters
 
 For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
 
@@ -2053,7 +2063,7 @@ For the examples below we will use a path parameter named `types` with a value o
 | `label`  |          `/drinks/.gin.vodka.rum`          |      `/drinks/.gin,vodka,rum`       |
 | `matrix` | `/drinks/;types=gin;types=vodka;types=rum` |   `/drinks/;types=gin,vodka,rum`    |
 
-##### Simple Objects
+##### Simple Objects As Path Parameters
 
 For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `style` and `explode` fields.
 
@@ -2065,7 +2075,7 @@ For the examples below we will use a path parameter named `filter` with a value 
 | `label`  | `/drinks/.type=cocktail.strength=5` |      `/drinks/.type,cocktail,strength,5`       |
 | `matrix` | `/drinks/;type=cocktail;strength=5` |   `/drinks/;filter=type,cocktail,strength,5`   |
 
-##### Complex Objects and Arrays
+##### Complex Objects and Arrays As Path Parameters
 
 For complex objects and arrays, serialization in a path parameter is only really possible using `content` and not any `style` options.
 
@@ -2106,7 +2116,7 @@ There are a few reserved headers that cannot be used as parameter names and are 
 
 If using headers for authentication, it is recommended to use the OpenAPI [`security`](#security) field to document a security scheme instead of a header parameter.
 
-##### Primitive Types
+##### Primitive Types As Headers
 
 For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string.
 
@@ -2116,7 +2126,7 @@ For the examples below we will use a header parameter named `X-Drink-Limit` with
 | -------- | :---------------: | :---------------------------: |
 | `simple` | `X-Drink-Type: 5` | `X-Drink-Type: 5` *(default)* |
 
-##### Simple Arrays
+##### Simple Arrays As Headers
 
 For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` the `style` and `explode` fields have little effect on the serialization.
 
@@ -2126,7 +2136,7 @@ For the examples below we will use a header parameter named `X-Drink-Types` with
 | -------- | :---------------------------: | :---------------------------------------: |
 | `simple` | `X-Drink-Type: gin,vodka,rum` | `X-Drink-Type: gin,vodka,rum` *(default)* |
 
-##### Simple Objects
+##### Simple Objects As Headers
 
 For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `explode` field.
 
@@ -2136,7 +2146,7 @@ For the examples below we will use a header parameter named `X-Drink-Filter` wit
 | -------- | :--------------------------------------: | :--------------------------------------------------: |
 | `simple` | `X-Drink-Type: type=cocktail,strength=5` | `X-Drink-Type: type,cocktail,strength,5` *(default)* |
 
-##### Complex Objects and Arrays
+##### Complex Objects and Arrays As Headers
 
 For complex objects and arrays, serialization in a header parameter is only really possible using `content` and not any `style` options.
 
@@ -2173,7 +2183,7 @@ Therefore it is only really recommended to use cookies for primitive types or ar
 
 If using cookies for authentication, it is recommended to use the OpenAPI [`security`](#security) field to document a security scheme instead of a cookie parameter.
 
-##### Primitive Types
+##### Primitive Types As Cookies
 
 For primitive types such as `string`, `number`, `integer` and `boolean` they are serialized as a string.
 
@@ -2183,7 +2193,7 @@ For the examples below we will use a cookie parameter named `drink-limit` with a
 | ------ | :----------------------------------: | :---------------------: |
 | `form` | `Cookie: drink-limit=5`  *(default)* | `Cookie: drink-limit=5` |
 
-##### Simple Arrays
+##### Simple Arrays As Cookies
 
 For simple arrays of primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `explode` field.
 
@@ -2193,7 +2203,7 @@ For the examples below we will use a cookie parameter named `drink-types` with a
 | ------ | :---------------------------------------------------------------------: | :---------------------------------: |
 | `form` | `Cookie: drink-types=gin&drink-types=vodka&drink-types=rum` *(default)* | `Cookie: drink-types=gin,vodka,rum` |
 
-##### Simple Objects
+##### Simple Objects As Cookies
 
 For simple objects whose fields are primitive types such as `string`, `number`, `integer` and `boolean` serialization will vary depending on the `explode` field.
 
@@ -2203,7 +2213,7 @@ For the examples below we will use a cookie parameter named `drink-filter` with 
 | ------ | :--------------------------------------------: | :---------------------------------------------: |
 | `form` | `Cookie: type=cocktail&strength=5` *(default)* | `Cookie: drink-filter=type,cocktail,strength,5` |
 
-##### Complex Objects and Arrays
+##### Complex Objects and Arrays As Cookies
 
 For complex objects and arrays, serialization in a cookie parameter is only really possible using `content` and not any `style` options.
 
@@ -2244,10 +2254,10 @@ For an overview of all JSON Schema properties, see [JSON Schema Docs > JSON Sche
 
 OpenAPI 3.1 changes the definition of two JSON Schema properties:
 
-* `description` - In OpenAPI this property may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.
-* `format` - OpenAPI extends JSON Schema's data types by adding additional formats. See [Data Type Formats](#data-type-formats).
+- `description` - In OpenAPI this property may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.
+- `format` - OpenAPI extends JSON Schema's data types by adding additional formats. See [Data Type Formats](#data-type-formats).
 
-OpenAPI adds an additional vocabulary to JSON Schema with the following properties:
+OpenAPI adds another vocabulary to JSON Schema with the following properties:
 
 | Field Name           | Type                                                            | Description                                                                                                                                                                                            |
 | -------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -2256,7 +2266,7 @@ OpenAPI adds an additional vocabulary to JSON Schema with the following properti
 | `externalDocs`       | [External Documentation Object](#external-documentation-object) | Points to external documentation for this schema.                                                                                                                                                      |
 | `example`            | *any*                                                           | An example that satisfies this schema. **Deprecated:** Although valid, the use of `example` is discouraged. Use [Examples](#examples) instead.                                                         |
 | `x-`                 | [Extensions](#extensions)                                       | Any number of extension fields can be added to the schema that can be used by tooling and vendors.                                                                                                     |
-| Arbitrary properties | *any*                                                           | The schema object supports arbitrary properties without the `x-` prefix. This is discouraged in favour of [Extensions](#extensions).                                                                   |
+| Arbitrary properties | *any*                                                           | The schema object supports arbitrary properties without the `x-` prefix. This is discouraged in favor of [Extensions](#extensions).                                                                   |
 
 The example below illustrates three schema objects: `IngredientProductCode`, `Ingredient`, and `IngredientType`.
 
@@ -2376,7 +2386,7 @@ components:
       - $ref: "#/components/schemas/IngredientOrder"
 ```
 
-If we include a discriminator object, the client can indicate the order type, so that the server does not need to figure that out:
+If we include a discriminator object, the client can indicate the order type so that the server does not need to figure that out:
 
 ```yaml
 components:
@@ -2409,34 +2419,258 @@ components:
 
 ### XML Object
 
-`TODO`
+The XML Object allows us to add details about how the schema should be represented as XML.
+
+This is useful because XML has different data types and structures compared to JSON.
+
+For example, in JSON, an array is a list of values only, while in XML, array values are represented as elements with names.
+
+| Field       | Type                      | Required           | Description                                                                                                                                                                                                                |
+| ----------- | ------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`      | *string*                  | :heavy_minus_sign: | The name of the element when the property is represented in XML. When used in `items`, the name applies to each element in the XML array.                                                                                   |
+| `namespace` | *string*                  | :heavy_minus_sign: | The absolute URL of the XML namespace.                                                                                                                                                                                     |
+| `prefix`    | *string*                  | :heavy_minus_sign: | A prefix for the element's name.                                                                                                                                                                                           |
+| `attribute` | *boolean*                 | :heavy_minus_sign: | Whether the property should be represented as an XML attribute (`<drink id="3" />`) instead of an XML element (`<drink><id>3</id></drink>`). Defaults to `false`, so each property is represented as an element by default. |
+| `wrapped`   | *boolean*                 | :heavy_minus_sign: | Whether array elements should be wrapped in a container element or not. Defaults to `false`, so array elements are not wrapped by default. Only applies to arrays.                                                         |
+| `x-*`       | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the XML object that can be used by tooling and vendors.                                                                                                                     |
+
+The examples below illustrate how XML Objects can be used:
+
+```yaml
+# TODO - XML Object examples
+```
+
+```xml
+<!-- TODO - XML examples -->
+```
 
 ### Examples
 
-`TODO`
+OpenAPI examples improve your API's documentation and SDK developer experience. We can add examples to objects, parameters, or properties using either the `example` or `examples` keyword.
+
+Here's how these keywords differ:
+
+- `example`: A single [Example Object](#example-object).
+- `examples`: A map of strings to [Example Objects](#example-object).
+
+In OpenAPI 3.1, the `examples` keyword from JSON Schema is preferred.
+
+Unlike JSON Schema, OpenAPI's `examples` keyword expects an object instead of an array.
+
+It is recommended to add reusable [Example Objects](#example-object) to the `components` object under the `examples` keyword.
 
 #### Example Object
 
-`TODO`
+We can use the Example Object to add an example of a schema, parameter, or response.
+
+| Field           | Type                      | Required           | Description                                                                                                                                |
+| --------------- | ------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `summary`       | *string*                  | :heavy_minus_sign: | A brief summary of the example.                                                                                                            |
+| `description`   | *string*                  | :heavy_minus_sign: | A detailed description of the example. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.   |
+| `value`         | *any*                     | :heavy_minus_sign: | The example value. Mutually exclusive with the `externalValue` field.                                                                      |
+| `externalValue` | *string*                  | :heavy_minus_sign: | A URL that points to the example. This is useful if the example is too large to include inline. Mutually exclusive with the `value` field. |
+| `x-*`           | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the Example Object that can be used by tooling and vendors.                                 |
+
+The example below illustrates how to add an example to a schema:
+
+```yaml
+components:
+  examples:
+    SugarSyrup:
+      summary: An example of a sugar syrup ingredient.
+      value:
+        name: Sugar Syrup
+        type: long-life
+        stock: 10
+        photo: https://speakeasy.bar/ingredients/sugar_syrup.jpg
+```
+
+The example below illustrates how to add an example to an object property:
+
+```yaml
+components:
+  schemas:
+    Ingredient:
+      type: object
+      properties:
+        name:
+          type: string
+          examples:
+            - value: Sugar Syrup
+              summary: An example of a sugar syrup ingredient.
+              description: A sugar syrup used to sweeten cocktails.
+        type:
+          $ref: "#/components/schemas/IngredientType"
+        stock:
+          type: integer
+          readOnly: true
+          examples:
+            - value: 10
+              summary: An example of the number of units in stock.
+              description: The number of units of the ingredient in stock, only available when authenticated.
+        productCode:
+          $ref: "#/components/schemas/IngredientProductCode"
+        photo:
+          type: string
+          format: uri
+          examples:
+            - value: https://example.com/sugarsyrup.jpg
+```
 
 ## Extensions
 
-`TODO`
+Extensions allow us to add extra keywords not included in the OpenAPI Specification. This enables tooling, such as SDK generators, to access vendor-specific functionality directly in an OpenAPI document.
+
+Extension fields always start with `x-`.
+
+Although optional, it is conventional for vendors to further prefix their extensions with the name of the vendor. For example, Speakeasy uses extensions that start with `x-speakeasy-`. This makes it easier to track vendor extensions over time, and to remove unused vendor extensions in the future.
+
+The value of an extension field can be an object, array, `null`, or any primitive value. Vendors determine the values they expect for the extensions they use.
+
+| Field   | Type                      | Description                                                                                                |
+| ------- | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `^x-` | *any* | An extension's value can be an object, array, primitive, or `null`. Expected values are determined by tooling vendors. |
+
+Here's an example of a Speakeasy extension that adds retries to requests made by Speakeasy managed SDKs:
+
+```yaml
+x-speakeasy-retries:
+  strategy: backoff
+  backoff:
+    initialInterval: 500        # 500 milliseconds
+    maxInterval: 60000          # 60 seconds
+    maxElapsedTime: 3600000     # 5 minutes
+    exponent: 1.5
+  statusCodes:
+    - 5XX
+  retryConnectionErrors: true
+```
 
 ## References
 
-`TODO`
+References are a useful way to define common schemas as components and reference them elsewhere in an API description.
+
+This reduces the duplication in an API description, which makes an API easier to maintain.
+
+References also allow us to split an API description into multiple files, to help keep individual parts of an API separate and easier to maintain.
 
 ### OpenAPI Reference Object
 
-`TODO`
+Any object supported by the [Components Object](#components-object) can be replaced by an OpenAPI Reference Object. A Reference Object points to a component using the `$ref` field, which is itself a [JSON Schema Reference](#json-schema-references), and can optionally override the `summary` or `description` of the referenced object.
 
-### JSON Schema Reference Object
+| Field        | Type                      | Required           | Description                                                                                                                                |
+| ------------ | ------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `$ref`       | *string*                  | :heavy_check_mark: | A [JSON Schema Reference](#json-schema-references) to a component.                                                                                                     |
+| `summary`    | *string*                  | :heavy_minus_sign: | A brief summary that overrides the referenced component's `summary` field. This field is ignored if the referenced component's type does not support the `summary` field.                                                                                                |
+| `description`| *string*                  | :heavy_minus_sign: | A detailed description that overrides the referenced component's `description` field. This field is ignored if the referenced component's type does not support the `description` field. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.   |
+
+In the example below, we define a `Drink` schema in the `components` section:
+
+```yaml
+# TODO - Niel: Drink component schema
+```
+
+This component schema can be referenced in API paths:
+
+```yaml
+# TODO - Niel: Reference Drink schema
+```
+
+### JSON Schema References
+
+OpenAPI inherits JSON Schema's flexible `$ref` keyword. A JSON Schema reference is an absolute or relative URI that points to a property in the current schema or an external schema. Relative references are resolved using the current document's location as the base URI.
+
+JSON Schema `$ref` can reference elements within the same schema, or external schemas, while OpenAPI Reference Objects are focused on referencing components defined within the components section of an OpenAPI document and allows us to override the `summary` and `description` metadata of the referenced component.
+
+#### Absolute References
+
+Absolute references include a protocol like `http://` or `https://` followed by the rest of the URI.
+
+The example below references a `Ingredient` component in a remote OpenAPI document:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      summary: Get ingredients
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'https://speakeasy.bar/schemas/ingredients.yaml#/components/schemas/Ingredient'
+```
+
+#### Relative References
+
+Relative references specify a location based on the current document. They are useful for referencing elements within the same API description.
+
+In the example below, the reference points to the `Drink` schema defined within the `components` section of the current OpenAPI document:
+
+```yaml
+paths:
+  /order:
+    post:
+      summary: Place an order for a drink
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Drink' 
+
+```
 
 ### Expression
 
-`TODO`
+Runtime expressions allow us to dynamically determine values during API execution. These expressions add flexibility and reduce the need for hard coding details within an API description.
+
+Expressions in OpenAPI are enclosed within curly braces `{}` and always begin with the dollar sign `$`.
+
+Runtime expressions are commonly used within [Link Objects](#link-object) and [Callbacks Objects](#callback-object) to pass dynamic values to linked operations or callbacks.
+
+```yaml
+paths:
+  /orders/{orderId}:
+    get:
+      # ... 
+    links:
+      viewItems: 
+        operationId: getOrderItems
+        parameters: 
+          orderId: $request.path.orderId  # Pass orderId from the parent operation
+```
 
 ## Data Type Formats
 
-`TODO`
+Data type formats in OpenAPI 3.1 provide a standardized way to define the types and formats of data in an API. Below is a list of the standard formats available in OpenAPI:
+
+| Type      | Format            | Description                                                                                   | Example                                  |
+|-----------|-------------------|-----------------------------------------------------------------------------------------------|------------------------------------------|
+| *string*  | `date-time`       | Date and time together, adhering to RFC 3339.                                                | `2023-02-24T18:25:43.511Z`               |
+| *string*  | `date`            | A calendar date (full-date) as per RFC 3339.                                                 | `2023-02-24`                             |
+| *string*  | `time`            | A time of day, with or without time zone information, as per RFC 3339.                       | `18:25:43.511Z`                          |
+| *string*  | `duration`        | A duration as per ISO 8601.                                                                   | `P3Y6M4DT12H30M5S`                       |
+| *string*  | `email`           | An email address, conforming to the syntax defined in RFC 5322.                              | `contact@speakeasy.bar`                  |
+| *string*  | `idn-email`       | An internationalized email address.                                                          | `联络@speakeasy.bar`                     |
+| *string*  | `hostname`        | A hostname, following the requirements of RFC 1034 and RFC 1123.                             | `speakeasy.bar`                          |
+| *string*  | `idn-hostname`    | An internationalized hostname.                                                               | `国際化.speakeasy.bar`                   |
+| *string*  | `ipv4`            | An IPv4 address, adhering to the dot-decimal notation as defined in RFC 2673.                | `192.0.2.1`                              |
+| *string*  | `ipv6`            | An IPv6 address, as defined in RFC 4291.                                                     | `2001:0db8:85a3:0000:0000:8a2e:0370:7334`|
+| *string*  | `uri`             | A Uniform Resource Identifier (URI) as per RFC 3986.                                         | `https://speakeasy.bar/menu`            |
+| *string*  | `uri-reference`   | A URI Reference, which can be a relative or absolute URI, as per RFC 3986.                   | `/menu/drinks`                           |
+| *string*  | `iri`             | An Internationalized Resource Identifier (IRI) as per RFC 3987.                              | `https://speakeasy.bar/メニュー`         |
+| *string*  | `iri-reference`   | An IRI Reference, which can be a relative or absolute IRI, as per RFC 3987.                  | `/メニュー/ドリンク`                     |
+| *string*  | `uri-template`    | A URI Template as per RFC 6570.                                                              | `https://speakeasy.bar/orders/{order}`  |
+| *string*  | `json-pointer`    | A JSON Pointer as per RFC 6901.                                                              | `/drinks/4`                              |
+| *string*  | `relative-json-pointer` | A relative JSON Pointer.                                                        | `1/drinks/7`                             |
+| *string*  | `regex`           | A regular expression, which should be valid according to the ECMA 262 regular expression dialect. | `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$` |
+| *integer* | `int32`           | signed 32 bits                         | `2147483647`          |
+| *integer* | `int64`           | signed 64 bits (long)            | `9223372036854775807` |
+| *number*  | `float`           | A single-precision 32-bit IEEE 754 floating point.                 | `3.4028235E38`        |
+| *number*  | `double`          | A double-precision 64-bit IEEE 754 floating point.                 | `1.7976931348623157E308` |
+| *string*  | `password`        | A hint to UIs to obscure input.                                   | `p@ssw0rd`            |
+
+Tools are not required to implement validation or generation based on these formats, and will often use only the most common formats. It is best not to rely on validation of formats based on generated code, as these values are often used for documentation rather than validation.
