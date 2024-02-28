@@ -6,9 +6,9 @@
   - [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
   - [Introduction](#introduction)
     - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
-    - [What versions of OpenAPI does this documentation cover?](#what-versions-of-openapi-does-this-documentation-cover)
     - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
-  - [Document Structure](#document-structure)
+    - [Which versions of the OpenAPI Specification does this documentation cover?](#which-versions-of-the-openapi-specification-does-this-documentation-cover)
+  - [OpenAPI Document Structure](#openapi-document-structure)
   - [Format \& File Structure](#format--file-structure)
   - [Document Schema](#document-schema)
     - [Info Object](#info-object)
@@ -117,19 +117,58 @@
 
 ## Introduction
 
+Whether creating or consuming web services, developers understand the importance of API design. An API that developers enjoy interacting with can turn a SaaS business into a platfrom.
+
+But even if we spend years polishing the perfectly RESTful API it is unlikely to lead anywhere without clear and accurate documentation, supported by SDKs that delight developer-users.
+
+However, the quest of keeping documentation up to date and maintaining usable SDKs in multiple programming languages is beyond the reach of most startups.
+
+One way to overcome this bump in the road to growth, is to adopt a formal specification for APIs. Instead of creating documentation and multiple SDKs by hand, a formal API specification allows anyone to generate documentation, SDKs, and even server-side API endpoints.
+
+OpenAPI fits the bill, and we'd like to help you understand this powerful tool.
+
 ### What is OpenAPI and why use it?
 
-- TODO - What is OpenAPI and why use it?
+When we refer to OpenAPI, we most often mean the **OpenAPI Specification** - a standardized document structure for describing HTTP APIs in a way that humans and computers can understand.
 
-### What versions of OpenAPI does this documentation cover?
+To use OpenAPI, you create a JSON or YAML file that describes your API using the vocabulary provided by the OpenAPI Specification - we'll call this JSON or YAML file an **OpenAPI document**.
 
-This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specification. Where there is a important difference between the two versions, we will call it out specifically, otherwise the documentation will be applicable to both versions.
+A valid OpenAPI document can serve as a blueprint when generating documentation and SDKs. An app or library that reads an OpenAPI document in order to generate SDKs or documentation, is called a **generator**.
+
+Here's how these concepts fit together:
+
+![A diagram illustrating how the different parts of an OpenAPI workflow fit together](./images/openapi-diagram.png)
+
+At the center of the OpenAPI workflow, we have the OpenAPI document - the blueprint for our API, a recipe for creating SDKs, and a source of truth for our documentation.
+
+In order to create and maintain an OpenAPI document, we need to understand the OpenAPI Specification.
+
+This documentation will help you understand the OpenAPI Specification.
 
 ### How does this documentation differ from the official OpenAPI documentation?
 
-- TODO - How does this documentation differ from the official OpenAPI documentation?
+Official documentation for the OpenAPI Specification, while thorough and complete, focusses on formal definition before usability. We aim to provide a gentler and more practical introduction without sacrificing accuracy.
 
-## Document Structure
+This documentation combines a simpler description of the specification with examples from a working API.
+
+We've structured the documentation according to the needs of OpenAPI users of any skill level.
+
+Instead of jumping head-first into the specification, find an entry-point that suites your current understanding and goals:
+
+- To **learn about OpenAPI by building an API** work through our [OpenAPI tutorials](./tutorial/README.md), where we create an OpenAPI document from scratch, then generate server endpoint stubs, SDKs, and documentation.
+- Follow [step-by-step guides](./guides/README.md) on **how to accomplish specific tasks using OpenAPI**.
+- Reference a **detailed description** of the [OpenAPI Specification](./specification/README.md).
+- Understand OpenAPI terminology by referencing the [OpenAPI Glossary](./glossary/README.md)
+- Understand **OpenAPI best practices** by reading our [OpenAPI tips and advice](./tips/README.md).
+- See our detailed **OpenAPI document example** in the [Speakeasy Bar API](./example/README.md).
+
+If you have no idea where to start, we recommend working through our [OpenAPI tutorial](./tutorials/README.md) to get the wheels turning.
+
+### Which versions of the OpenAPI Specification does this documentation cover?
+
+This documentation will cover versions `3.1.x` and `3.0.x` of the OpenAPI specification. Where there is an important difference between the two versions, we will call it out specifically, otherwise the documentation will be applicable to both versions.
+
+## OpenAPI Document Structure
 
 An OpenAPI document is made up of a number of different sections, each of which is described in detail below.
 
@@ -1408,7 +1447,9 @@ The Components Object is a container for reusable objects that can be referenced
 
 ## Operation Object
 
-An Operation describes a single endpoint within the API, including all its possible inputs/outputs and configuration required to make a successful request.
+An operation object describes a single API operation within a path, including all its possible inputs/outputs and configuration required to make a successful request.
+
+Each operation object corresponds to an HTTP verb, such as `get`, `post`, or `delete`.
 
 Example:
 
@@ -1416,6 +1457,7 @@ Example:
 paths:
   /drinks:
     get:
+      # The Operation Object
       operationId: listDrinks
       summary: Get a list of drinks.
       description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
@@ -1850,7 +1892,47 @@ paths:
 
 ### Operation Objects in Generated SDKs
 
-- TODO - SDK Generation
+The Speakeasy SDK generator creates a complete self-contained file per operation.
+
+For our Speakeasy Bar example, this modular approach would lead to the following TypeScript files.
+
+```bash
+src/models/operations/
+├── authenticate.ts
+├── createorder.ts
+├── deletedrink.ts
+├── getdrink.ts
+├── index.ts
+├── listdrinks.ts
+├── searchdrinks.ts
+├── subscribetowebhooks.ts
+├── updatedrinkjson.ts
+├── updatedrinkmultipart.ts
+├── updatedrinkraw.ts
+└── updatedrinkstring.ts
+```
+
+Each operation is presented as a function, with the `operationId` as the function name. When using tags to structure the SDK, each operation function is bundled in a module named after its tag.
+
+Speakeasy generates the following usage example as part of the TypeScript SDK:
+
+```typescript
+import { SDK } from "openapi";
+
+async function run() {
+  const sdk = new SDK();
+
+  const productCode = "NAC-3F2D1";
+  const operationSecurity = "<YOUR_API_KEY_HERE>";
+  
+  const result = await sdk.drinks.getDrink(operationSecurity, productCode);
+
+  // Handle the result
+  console.log(result)
+}
+
+run();
+```
 
 ## Parameters
 
@@ -2437,11 +2519,61 @@ For example, in JSON, an array is a list of values only, while in XML, array val
 The examples below illustrate how XML Objects can be used:
 
 ```yaml
-# TODO - XML Object examples
+components:
+  schemas:
+    Drink:
+      type: object
+      properties:
+        name:
+          type: string
+          xml:
+            name: drinkName
+            namespace: http://speakeasy.bar/schemas
+            prefix: se
+        ingredients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ingredient"
+          xml:
+            name: ingredients
+            wrapped: true
+            namespace: http://speakeasy.bar/schemas
+            prefix: se
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: number
+          xml:
+            name: ingredientId
+            namespace: http://speakeasy.bar/schemas
+            prefix: se
+            attribute: true
+        name:
+          type: string
+          xml:
+            name: ingredientName
+            namespace: http://speakeasy.bar/schemas
+            prefix: se
 ```
 
+The example above translates to the following XML example:
+
 ```xml
-<!-- TODO - XML examples -->
+<se:drink xmlns:se="http://speakeasy.bar/schemas">
+  <se:drinkName>Mojito</se:drinkName>
+  <se:ingredients>
+    <se:ingredient se:id="1">
+      <se:ingredientName>Sugar</se:ingredientName>
+    </se:ingredient>
+    <se:ingredient se:id="2">
+      <se:ingredientName>Lime</se:ingredientName>
+    </se:ingredient>
+    <se:ingredient se:id="3">
+      <se:ingredientName>Mint</se:ingredientName>
+    </se:ingredient>
+  </se:ingredients>
+</se:drink>
 ```
 
 ### Examples
@@ -2567,13 +2699,47 @@ Any object supported by the [Components Object](#components-object) can be repla
 In the example below, we define a `Drink` schema in the `components` section:
 
 ```yaml
-# TODO - Niel: Drink component schema
+# Drink Schema
+components:
+  schemas:
+    Drink:
+      type: object
+      properties:
+        name:
+          type: string
+        ingredients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ingredient"
+        instructions:
+          type: string
 ```
 
 This component schema can be referenced in API paths:
 
 ```yaml
-# TODO - Niel: Reference Drink schema
+paths:
+  /drinks:
+    post:
+      summary: Create a new drink
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                ingredients:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Drink"
+                instructions:
+                  type: string
+      responses:
+        '200':
+          description: OK
 ```
 
 ### JSON Schema References

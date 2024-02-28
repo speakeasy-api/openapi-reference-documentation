@@ -20,22 +20,19 @@ servers:
     description: The production server.
   - url: https://staging.speakeasy.bar
     description: The staging server.
-  # TODO: Wat for OAS3.1 bug fix - Variables in server URLs are not currently supported.
-  # https://github.com/OAI/OpenAPI-Specification/pull/3455
-  # We can uncomment this when the bug is fixed, but for now this will not validate.
-  # - url: "https://{organization}.{environment}.speakeasy.bar"
-  #   description: A per-organization and per-environment API.
-  #   variables:
-  #     organization:
-  #       description: The organization name. Defaults to a generic organization.
-  #       default: api
-  #     environment:
-  #       description: The environment name. Defaults to the production environment.
-  #       default: prod
-  #       enum:
-  #         - prod
-  #         - staging
-  #         - dev
+  - url: "https://{organization}.{environment}.speakeasy.bar"
+    description: A per-organization and per-environment API.
+    variables:
+      organization:
+        description: The organization name. Defaults to a generic organization.
+        default: api
+      environment:
+        description: The environment name. Defaults to the production environment.
+        default: prod
+        enum:
+          - prod
+          - staging
+          - dev
 security:
   - apiKey: []
 tags:
@@ -159,6 +156,7 @@ paths:
                 $ref: "#/components/examples/drink_csv"
           multipart/form-data:
             schema:
+              type: object
               properties:
                 name:
                   description: The name of the drink.
@@ -308,6 +306,7 @@ paths:
                 $ref: "#/components/examples/drink_csv"
           multipart/form-data:
             schema:
+              type: object
               properties:
                 name:
                   description: The name of the drink.
