@@ -2,10 +2,10 @@
 
 We'd like to propose an implementation plan for the Speakeasy OpenAPI Documentation project.
 
-We recommend creating a Docusaurus static site, structured as follows:
+We recommend creating a static Docusaurus site structured as follows:
 
 ```bash
-├── Home Page and Introduction
+├── Home page and introduction
 ├── example/
 │   ├── Overview of the Speakeasy Bar API example app.
 │   ├── Links to hosted documentation.
@@ -19,13 +19,13 @@ We recommend creating a Docusaurus static site, structured as follows:
 ├── tips/
 │   └── Best practices, tips, advice on using OpenAPI.
 └── tutorials/
-    ├── OpenAPI Design-First Tutorial.
-    └── API-first OpenAPI Tutorial.
+    ├── OpenAPI design-first tutorial.
+    └── API-first OpenAPI tutorial.
 ```
 
 ## Complete Example API
 
-Based on the [openapi.yaml](./openapi.yaml) document, we can generate server-side stubs with minimal logic as an open source TypeScript app to run in a serverless environment.
+Based on the [`openapi.yaml`](./openapi.yaml) document, we can generate server-side stubs with minimal logic as an open-source TypeScript app to run in a serverless environment.
 
 Speakeasy could host a working example that allows users to make API calls as they explore the documentation and generated SDKs.
 
@@ -56,7 +56,6 @@ We propose creating [multiple step-by-step guides](./guides/README.md) for speci
 - How to generate API documentation using Redoc.
 - How to add Redoc-generated OpenAPI documentation to Docusaurus.
 - How to validate your OpenAPI document as part of CI/CD.
-- etc.
 
 To start with, two guides would be enough.
 
@@ -64,9 +63,9 @@ To start with, two guides would be enough.
 
 A detailed [reference document](./specification/README.md), most of which is already written in [README.md](./README.md).
 
-## Tips and best practices
+## Tips and Best Practices
 
-Repurpose content from the blog, and write more best practices and tips articles. Or simply link to the blog posts and keep publishing there.
+Repurpose content from the blog and write more best practices and tips articles. Or simply link to the blog posts and keep publishing there.
 
 ## Tutorials
 
