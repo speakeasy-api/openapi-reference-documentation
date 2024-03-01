@@ -1,4 +1,4 @@
-# openapi-reference-documentation
+# OpenAPI Reference
 
 ## Introduction
 
