@@ -1,155 +1,30 @@
 # openapi-reference-documentation
 
-- [openapi-reference-documentation](#openapi-reference-documentation)
-  - [DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)](#development-notes-remove-before-publishing)
-    - [TODOs](#todos)
-  - [OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)](#open-questions-remove-before-publishing)
-  - [Introduction](#introduction)
-    - [What is OpenAPI and why use it?](#what-is-openapi-and-why-use-it)
-    - [How does this documentation differ from the official OpenAPI documentation?](#how-does-this-documentation-differ-from-the-official-openapi-documentation)
-    - [Which versions of the OpenAPI Specification does this documentation cover?](#which-versions-of-the-openapi-specification-does-this-documentation-cover)
-  - [OpenAPI Document Structure](#openapi-document-structure)
-  - [Format and File Structure](#format-and-file-structure)
-  - [Document Schema](#document-schema)
-    - [Info Object](#info-object)
-      - [Contact Object](#contact-object)
-      - [License Object](#license-object)
-      - [The Info Object in Generated SDKs](#the-info-object-in-generated-sdks)
-    - [External Documentation Object](#external-documentation-object)
-      - [External Documentation in Generated SDKs](#external-documentation-in-generated-sdks)
-    - [Servers](#servers)
-      - [Server Object](#server-object)
-      - [Server Variables and Templating](#server-variables-and-templating)
-      - [Server Variable Object](#server-variable-object)
-      - [Servers in Generated SDKs](#servers-in-generated-sdks)
-    - [Security](#security)
-      - [Security Requirement Object](#security-requirement-object)
-      - [Security Scheme Object](#security-scheme-object)
-      - [OAuth2.0 Flow Object](#oauth20-flow-object)
-      - [Example Security Scheme Schema](#example-security-scheme-schema)
-      - [Security Schemes in Generated SDKs](#security-schemes-in-generated-sdks)
-    - [Tags](#tags)
-      - [Tag Object](#tag-object)
-      - [SDK Creation](#sdk-creation)
-        - [The x-speakeasy-group Extension](#the-x-speakeasy-group-extension)
-        - [Multiple Namespaces](#multiple-namespaces)
-        - [Define Multi-Level Namespaces](#define-multi-level-namespaces)
-    - [Paths Object](#paths-object)
-      - [Path Item Object](#path-item-object)
-    - [Webhooks](#webhooks)
-    - [Components Object](#components-object)
-  - [Operation Object](#operation-object)
-    - [Request Body Object](#request-body-object)
-    - [Responses](#responses)
-    - [Response Object](#response-object)
-      - [Links](#links)
-      - [Link Object](#link-object)
-      - [Headers](#headers)
-        - [Header Object](#header-object)
-    - [Callbacks](#callbacks)
-      - [Callback Object](#callback-object)
-    - [Content](#content)
-      - [Media Type Object](#media-type-object)
-      - [Encoding Object](#encoding-object)
-    - [Operation Objects in Generated SDKs](#operation-objects-in-generated-sdks)
-  - [Parameters](#parameters)
-    - [Parameter Object](#parameter-object)
-    - [Parameter Serialization](#parameter-serialization)
-      - [Query Parameters](#query-parameters)
-        - [Primitive Types As Query Parameters](#primitive-types-as-query-parameters)
-        - [Simple Arrays As Query Parameters](#simple-arrays-as-query-parameters)
-        - [Simple Objects As Query Parameters](#simple-objects-as-query-parameters)
-        - [Complex Objects and Arrays As Query Parameters](#complex-objects-and-arrays-as-query-parameters)
-      - [Path Parameters](#path-parameters)
-        - [Primitive Types As Path Parameters](#primitive-types-as-path-parameters)
-        - [Simple Arrays As Path Parameters](#simple-arrays-as-path-parameters)
-        - [Simple Objects As Path Parameters](#simple-objects-as-path-parameters)
-        - [Complex Objects and Arrays As Path Parameters](#complex-objects-and-arrays-as-path-parameters)
-      - [Header Parameters](#header-parameters)
-        - [Primitive Types As Headers](#primitive-types-as-headers)
-        - [Simple Arrays As Headers](#simple-arrays-as-headers)
-        - [Simple Objects As Headers](#simple-objects-as-headers)
-        - [Complex Objects and Arrays As Headers](#complex-objects-and-arrays-as-headers)
-      - [Cookie Parameters](#cookie-parameters)
-        - [Primitive Types As Cookies](#primitive-types-as-cookies)
-        - [Simple Arrays As Cookies](#simple-arrays-as-cookies)
-        - [Simple Objects As Cookies](#simple-objects-as-cookies)
-        - [Complex Objects and Arrays As Cookies](#complex-objects-and-arrays-as-cookies)
-  - [Schema Object](#schema-object)
-    - [Composition and Inheritance](#composition-and-inheritance)
-    - [Discriminator Object](#discriminator-object)
-    - [XML Object](#xml-object)
-    - [Examples](#examples)
-      - [Example Object](#example-object)
-  - [Extensions](#extensions)
-  - [References](#references)
-    - [OpenAPI Reference Object](#openapi-reference-object)
-    - [JSON Schema References](#json-schema-references)
-      - [Absolute References](#absolute-references)
-      - [Relative References](#relative-references)
-    - [Expression](#expression)
-  - [Data Type Formats](#data-type-formats)
-
-## DEVELOPMENT NOTES (REMOVE BEFORE PUBLISHING)
-
-- I believe this should be an open source repo that we can use to showcase the docs and example SDKs generated from our example openapi document. This will allow things to be co-located (we can locate them separately but I think we will lose some coherency with that approach), benefit from community updates and improvements.
-- I am building a `speakeasy` example openapi document as an example document similar to the petstore from swagger. The speakeasy it refers to is a bar, so everything is themed around that. I think this will be a good way to showcase the documentation and SDKs.
-- I imagine the `SDK Generation` sections to actually be some sort of expandable section that can be toggled open and closed. This would allow the user to see the docs related to SDK Generation without it taking up too much space on the page. I also imagine we will potentially show examples in all the supported languages, via tabs or something similar.
-
-### TODOs
-
-- TODO: Go through and update all examples of yaml and generated code once full documentation and example spec is complete.
-- TODO: Ensure we refer to API, Endpoint, etc consistently throughout the documentation.
-- TODO: Determine the best way to link back to the generator? Should we talk directly about it in this documentation, or leave it to links and/or expandable sections that go into more detail?
-- ~~TODO~~DONE: make the difference between OpenAPI references and JSON Schema references clear. I think this is a common point of confusion for people.
-- TODO: do we want to add comments into our examples explaining them more?
-- TODO: in some cases the smart bear docs document different sections of the spec in a lot of detail, almost as "how-to" guides ie. <https://swagger.io/docs/specification/callbacks/> I think we should have the equivelant but should that be done inline in this documentation or as separate linked pages from here? List of potential candidates:
-  - callbacks
-  - webhooks
-  - parameters (have implemented this in a lot of detail in line in this documentation but should we break it out into a separate page?)
-  - components
-  - references
-  - ???
-
-## OPEN QUESTIONS (REMOVE BEFORE PUBLISHING)
-
-- Do we want to be able to link to rows in the tables? If so we can add ids for each field name like so: <https://stackoverflow.com/questions/68983152/how-do-i-create-a-link-to-a-certain-word-in-markdown>
-
 ## Introduction
 
-Whether creating or consuming web services, developers understand the importance of API design. An API that developers enjoy interacting with can turn a SaaS business into a platform.
+API design is important. An API that developers enjoy interacting with turns a SaaS business into a platform. However great design is only as useful if it's documented and consistently represented across every API surface area (docs, SDKs, etc.).
 
-But even if we spend years polishing the perfectly RESTful API, it is unlikely to lead anywhere without clear and accurate documentation, supported by SDKs that delight developer-users.
+Trying to manually create & maintain all your surfaces will inevitably lead to frustration and inconsistencies.
 
-However, the quest of keeping documentation up to date and maintaining usable SDKs in multiple programming languages is beyond the reach of most startups.
+That is where OpenAPI comes in. If you are building a RESTful API, OpenAPI will be (should be) the source of truth that undergirds all your public surfaces (docs, SDKs, etc.).
 
-One way to overcome this bump in the road to growth is to adopt a formal specification for APIs. Instead of creating documentation and multiple SDKs by hand, a formal API specification allows anyone to generate documentation, SDKs, and even server-side API endpoints.
-
-OpenAPI fits the bill, and we'd like to help you understand this powerful tool.
+This documentation will help you understand the OpenAPI Specification.
 
 ### What is OpenAPI and why use it?
 
-When we refer to OpenAPI, we most often mean the **OpenAPI Specification** - a standardized document structure for describing HTTP APIs in a way that humans and computers can understand.
+When we refer to OpenAPI, we mean the **OpenAPI Specification** - a standardized document structure for describing HTTP APIs in a way that humans and computers can understand.
 
-To use OpenAPI, you create a JSON or YAML file that describes your API using the vocabulary provided by the OpenAPI Specification - we'll call this JSON or YAML file an **OpenAPI document**.
+OpenAPI files are written as JSON or YAML, describing your API using a standard vocabulary defined by the Specification - we'll call this JSON or YAML file an **OpenAPI document**.
 
-A valid OpenAPI document can serve as a blueprint when generating documentation and SDKs. An app or library that reads an OpenAPI document to generate SDKs or documentation is called a **generator**.
+A valid OpenAPI document serves as the instruction set for the tooling that generates your documentation and SDKs. We will refer to an app or tool that reads an OpenAPI document to perform an action as an **OpenAPI tool**. Speakeasy is one such tool, a full list can be found [here](https://openapi.tools/).
 
 Here's how these concepts fit together:
 
 ![A diagram illustrating how the different parts of an OpenAPI workflow fit together](./images/openapi-diagram.png)
 
-At the center of the OpenAPI workflow, we have the OpenAPI document - the blueprint for our API, a recipe for creating SDKs, and a source of truth for our documentation.
-
-To create and maintain an OpenAPI document, we need to understand the OpenAPI Specification.
-
-This documentation will help you understand the OpenAPI Specification.
-
 ### How does this documentation differ from the official OpenAPI documentation?
 
-Official documentation for the OpenAPI Specification, while thorough and complete, focuses on formal definition before usability. We aim to provide a gentler and more practical introduction without sacrificing accuracy.
-
-This documentation combines a simpler description of the specification with examples from a working API.
+Official documentation for the OpenAPI Specification, while thorough and complete, focuses on the academic definition before usability. The goal of this documentation is to provide a more practical guide to developers interested in understanding the impact of OpenAPI design on their downstream API surfaces.
 
 We've structured the documentation according to the needs of OpenAPI users of any skill level.
 
@@ -247,9 +122,7 @@ Some common organizational patterns for OpenAPI documents are:
 - A collection of files that contain partial definitions of the API and its components.
   - Some tools support this pattern by allowing multiple files to be provided. Others, such as the Speakeasy Generator, require the individual files to be merged into a single file before being passed to the tool, which can be achieved using the Speakeasy CLI tool. [Click here for more information on the Speakeasy CLI merge tool](https://speakeasyapi.dev/docs/speakeasy-cli/merge/).
 
-## Document Schema
-
-### Info Object
+## Info Object
 
 The document's `info` object contains information about the document, including fields like `title`, `version`, and `description` that help to identify the purpose and owner of the document.
 
@@ -285,7 +158,7 @@ info:
 
 The above order of fields is recommended (but is not required by the OpenAPI specification) as it puts the most important information first and allows the reader to get a quick overview of the document and API.
 
-#### Contact Object
+### Contact Object
 
 Contact information for the maintainer of the API.
 
@@ -296,7 +169,7 @@ Contact information for the maintainer of the API.
 | `email` |         String          | :heavy_minus_sign: | An email address for the contact.                                                                          |
 | `x-*`   | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the contact object that can be used by tooling and vendors. |
 
-#### License Object
+### License Object
 
 The license the API is made available under.
 
@@ -307,7 +180,7 @@ The license the API is made available under.
 | `url`        |         String          | :heavy_minus_sign: | A URL to the license information. Provided only if `identifier` isn't set.                                                                    |
 | `x-*`        | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the license object that can be used by tooling and vendors.                                  |
 
-#### The Info Object in Generated SDKs
+### The Info Object in Generated SDKs
 
 The Speakeasy SDK Generator uses the `info` object to produce code comments and documentation for the generated SDKs. If [external documentation](#external-documentation-object) is also provided at the document level, this will be included in the generated comments, too.
 
@@ -319,7 +192,7 @@ For example:
 type Speakeasy struct {
 ```
 
-### External Documentation Object
+## External Documentation Object
 
 Allows for providing information about external documentation available for the API, Operation, Tag, or Schema.
 
@@ -329,7 +202,7 @@ Allows for providing information about external documentation available for the 
 | `description` |         String          | :heavy_minus_sign: | A description of the external documentation. [CommonMark syntax](https://spec.commonmark.org/) can be used to provide a rich description. |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the external documentation object that can be used by tooling and vendors.                 |
 
-#### External Documentation in Generated SDKs
+### External Documentation in Generated SDKs
 
 The Speakeasy SDK Generator uses the `externalDocs` object to produce code comments and documentation for the generated SDKs. These will be included alongside comments for any of the Methods ([Operations](#operation-object)), Classes or Enums ([Object Schemas](#schema-object)), or SDK ([Tags](#tags)) that reference the `externalDocs` object.
 
@@ -342,7 +215,7 @@ For example:
 type Speakeasy struct {
 ```
 
-### Servers
+## Servers
 
 A list of [Server Objects](#server-object) that either the entire API or a specific path or operation is available on. Servers can be defined at the [Document](#document-structure) level, the [Path](#paths-object) level, or the [Operation](#operation-object) level.
 
@@ -362,7 +235,7 @@ servers:
 
 If a list of servers is provided at the `paths` level, the servers will override any servers provided at the document level. If a list of servers is provided at the `operation` level, the servers will override any servers provided at the `paths` and document levels.
 
-#### Server Object
+### Server Object
 
 A Server Object describes a single server that is available for the API.
 
@@ -469,7 +342,7 @@ paths:
 
 **Note:** The above API can also be achieved using [`oneOf`](#composition-and-inheritance) in a single operation definition, but depending on the use case, this may not be desirable.
 
-#### Server Variables and Templating
+### Server Variables and Templating
 
 Server variables are a map of variable names (string) to [Server Variable Objects](#server-variable-object) that can be used for variable substitution via Templating.
 
@@ -494,7 +367,7 @@ servers:
 
 Any variable delimited by `{}` in the `url` field declares a part of the URL that ***must*** be replaced with a value and references a variable that ***must*** be defined in the `variables` map. It is the API consumer's responsibility to replace these variables (including the delimiters) with values to create a valid URL before making a request to the API. The defined `default` should be used if no other value is provided.
 
-#### Server Variable Object
+### Server Variable Object
 
 A Server Variable Object describes a single variable that is optionally part of the URL in a [Server Object](#server-object). The value of a variable can be any arbitrary string value unless a list of allowed values is provided via the `enum` field.
 
@@ -505,7 +378,7 @@ A Server Variable Object describes a single variable that is optionally part of 
 | `enum`        |     List\<string\>      | :heavy_minus_sign: | A list of allowed string values for the variable.                                                                                                      |
 | `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the Server Variable Object that can be used by tooling and vendors.                                       |
 
-#### Servers in Generated SDKs
+### Servers in Generated SDKs
 
 The Speakeasy SDK Generator generally requires at least one absolute URL to be provided to ensure the out-of-the-box experience is as smooth as possible for developers using the generated SDKs. If not present in the OpenAPI document, an absolute URL can be provided via configuration. [Click here for more details](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/servers/#declare-base-server-url).
 
@@ -734,7 +607,7 @@ s := speakeasy.New(
 )
 ```
 
-### Security
+## Security
 
 The `security` section is a list of [Security Requirement Objects](#security-requirement-object) that apply to all operations in the API (if defined at the [document](#document-structure) level) or to a specific operation (if defined at the [operation](#operation-object) level).
 
@@ -865,7 +738,7 @@ The above example requires both an API Key **AND** basic auth to be provided.
 
 This **AND**/**OR** logic along with optional (`{}`) security can be used in any combination to express complex authorization scenarios.
 
-#### Security Requirement Object
+### Security Requirement Object
 
 A Security Requirement Object defines a map of security scheme names to scopes that are required to access the API. The names ***must*** match the names of [Security Scheme Objects](#security-scheme-object) defined in the [Components Object](#components-object) under the `securitySchemes` field.
 
@@ -873,7 +746,7 @@ A Security Requirement Object defines a map of security scheme names to scopes t
 | ---------------------- | :--------------: | :----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{securitySchemeName}` | List\<string\> | :heavy_minus_sign: | A list of scopes/roles required for the security scheme. If the security scheme type is `oauth2` or `openIdConnect`, this is a list of scope names required by the API consumer to be able to access or use the API. For any other type, this could contain a list of roles or similar required for the API consumer to obtain to authenticate with the API. |
 
-#### Security Scheme Object
+### Security Scheme Object
 
 Security scheme objects are defined in the [Components Object](#components-object) under the `securitySchemes` field. Each security scheme object has a unique key. [Security Requirement Objects](#security-requirement-object) elsewhere in the document reference security scheme objects by their keys. For example:
 
@@ -914,7 +787,7 @@ Below are the fields that are required for each value of `type`. They are all st
 | `openIdConnectUrl: https://...` | `type: openIdConnect` | Used to discover configuration values. The URL must point to a JSON OpenID Connect Discovery document. |
 | `flows:`<br/>&nbsp;&nbsp;`authorizationCode: ...`<br/>&nbsp;&nbsp;`clientCredentials: ...`<br/>&nbsp;&nbsp;`implicit: ...`<br/>&nbsp;&nbsp;`password: ...` | `type: oauth2` | The `flows` object contains four possible authentication flow objects. At least one must be present and you can use all four. The structure of a flow is detailed in the next section. |
 
-#### OAuth2.0 Flow Object
+### OAuth2.0 Flow Object
 
 Below are the required fields comprising a flow object used as a **value** for `flows: ...`.
 
@@ -926,7 +799,7 @@ Below are the required fields comprising a flow object used as a **value** for `
 | `refreshUrl` | All flows | The URL to be used for obtaining refresh tokens, for example, `https://...` | |
 | `x-...` | Extension fields | | |
 
-#### Example Security Scheme Schema
+### Example Security Scheme Schema
 
 Below is an example security schemes object with every possible field besides extensions.
 
@@ -1005,7 +878,7 @@ components:
           refreshUrl: https://test.com/oauth/refresh
 ```
 
-#### Security Schemes in Generated SDKs
+### Security Schemes in Generated SDKs
 
 Speakeasy does not support `mutualTLS`, the HTTP digest security type, and some programming languages and flows for OAuth. For details, please see this [article](https://www.speakeasyapi.dev/docs/customize-sdks/authentication). Using OAuth requires you to [write your own callback function](https://www.speakeasyapi.dev/docs/customize-sdks/authentication#step-2-add-your-callback-function-to-your-sdks).
 
@@ -1157,7 +1030,7 @@ res := s.Drinks.GetDrink(ctx, operations.GetDrinkRequest{Name: "Long Island Ice 
 
 [//]: # "TODO: once we support optional method level security add an example for that here as well"
 
-### Tags
+## Tags
 
 The document-level `tags` field contains a list of [tag](#tag-object) definitions that may be used to categorize or group operations in the API. Tags can be referenced by [operations](#operation-object) via the operations-level `tags` field.
 
@@ -1175,7 +1048,7 @@ tags:
     description: The authentication endpoints.
 ```
 
-#### Tag Object
+### Tag Object
 
 A Tag Object defines a single tag that can be used to categorize or group operations in the API.
 
@@ -1186,7 +1059,7 @@ A Tag Object defines a single tag that can be used to categorize or group operat
 | `externalDocs` | [External Documentation Object](#external-documentation-object) | :heavy_minus_sign: | Additional external documentation for this tag.                                                                             |
 | `x-*`          |                    [Extensions](#extensions)                    | :heavy_minus_sign: | Any number of extension fields can be added to the tag object that can be used by tooling and vendors.                      |
 
-#### SDK Creation
+### SDK Creation
 
 Speakeasy will split the SDKs and documentation it creates based on your tags.
 
@@ -1207,7 +1080,7 @@ The created TypeScript can be called like this:
 await sdk.drinks.listDrinks(type);
 ```
 
-##### The x-speakeasy-group extension
+#### The x-speakeasy-group extension
 
 Add the `x-speakeasy-group` field to an endpoint to tell Speakeasy to ignore the endpoint's tag and group it under the custom group instead.
 
@@ -1257,7 +1130,7 @@ await sdk.drinks.listDrinks(type);
 await sdk.beverages.listDrinks(type);
 ```
 
-##### Define Multi-Level Namespaces
+#### Define Multi-Level Namespaces
 
 You can use tags or the `x-speakeasy-group` extension to define nested namespaces for your operations using `.` notation. There is no limit to the number of levels you can define.
 
@@ -1280,7 +1153,7 @@ await sdk.drinks.wine.champagne.listDrinks(type);
 
 Note that the files `drinks.ts`, `wine.ts`, and `champagne.ts` will be created, but only `champagne.ts` will have operations.
 
-### Paths Object
+## Paths Object
 
 The `paths` object is a map of [Path Item Objects](#path-item-object) that describes the available paths and operations for the API.
 
@@ -1309,7 +1182,7 @@ paths:
 | `/{path}` | [Path Item Object](#path-item-object) | :heavy_minus_sign: | A relative path to an individual endpoint, where the path ***must*** begin with a `/`.                    |
 | `x-*`     |       [Extensions](#extensions)       | :heavy_minus_sign: | Any number of extension fields can be added to the paths object that can be used by tooling and vendors. |
 
-#### Path Item Object
+### Path Item Object
 
 A Path Item Object describes the operations available on a single path. This is generally a map of HTTP methods to [Operation Objects](#operation-object) that describe the operations available.
 
@@ -1390,553 +1263,9 @@ components:
 
 The order of fields above is recommended but is not significant to the order in which the endpoints should be used.
 
-### Webhooks
-
-**(Available in OpenAPI 3.1.x ONLY)** 
-
-Webhooks represent a possible list of incoming requests that form part of the documented API that a consumer can subscribe to.
-
-Webhooks are represented by a map of [Path Item Objects](#path-item-object) or [OpenAPI Reference Objects](#openapi-reference-object) that are keyed by the unique name of the webhook.
-
-For example:
-
-```yaml
-webhooks:
-  stockUpdate:
-    post:
-      summary: Receive stock updates.
-      description: Receive stock updates from the bar, this will be called whenever the stock levels of a drink or ingredient change.
-      tags:
-        - drinks
-        - ingredients
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                drink:
-                  $ref: "#/components/schemas/Drink"
-                ingredient:
-                  $ref: "#/components/schemas/Ingredient"
-      responses:
-        "200":
-          description: The stock update was received successfully.
-        "5XX":
-          $ref: "#/components/responses/APIError"
-        default:
-          $ref: "#/components/responses/UnknownError"
-```
-
-### Components Object
-
-The Components Object is a container for reusable objects that can be referenced across the API. These objects can be referenced using [References](#references), and generally are only valid if referenced by other parts of the API.
-
-| Field             |                                                           Type                                                            |      Required      | Description                                                                                                                                                                                                                                                                                                 |
-| ----------------- | :-----------------------------------------------------------------------------------------------------------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `schemas`         |                                      Map[string, [Schema Object](#schema-object)]*                                       | :heavy_minus_sign: | A map of [Schema Objects](#schema-object) that can be referenced by other parts of the API.<br/><br/>**Note: OpenAPI 3.0.x does support [OpenAPI Reference Objects](#openapi-reference-object) as the value here, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-references) format.** |
-| `securitySchemes` | Map[string, [Security Scheme Object](#security-scheme-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign: | A map of [Security Scheme Objects](#security-scheme-object) that can be referenced by other parts of the API.                                                                                                                                                                                               |
-| `pathItems`       |       Map[string, [Path Item Object](#path-item-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Path Item Objects](#path-item-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
-| `parameters`      |       Map[string, [Parameter Object](#parameter-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Parameter Objects](#parameter-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
-| `requestBodies`   |    Map[string, [Request Body Object](#request-body-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*    | :heavy_minus_sign: | A map of [Request Body Objects](#request-body-object) that can be referenced by other parts of the API.                                                                                                                                                                                                     |
-| `responses`       |        Map[string, [Response Object](#response-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Response Objects](#response-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
-| `headers`         |          Map[string, [Header Object](#header-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*          | :heavy_minus_sign: | A map of [Header Objects](#header-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                 |
-| `examples`        |         Map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*         | :heavy_minus_sign: | A map of [Example Objects](#example-object) that can be referenced by other parts of the API.                                                                                                                                                                                                               |
-| `callbacks`       |        Map[string, [Callback Object](#callback-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
-| `links`           |            Map[string, [Link Object](#link-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*            | :heavy_minus_sign: | A map of [Link Objects](#link-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                     |
-| `x-*`             |                                                 [Extensions](#extensions)                                                 | :heavy_minus_sign: | Any number of extension fields can be added to the Components Object that can be used by tooling and vendors.                                                                                                                                                                                               |
-
-## Operation Object
-
-An operation object describes a single API operation within a path, including all its possible inputs and outputs and the configuration required to make a successful request.
-
-Each operation object corresponds to an HTTP verb, such as `get`, `post`, or `delete`.
-
-Example:
-
-```yaml
-paths:
-  /drinks:
-    get:
-      # The Operation Object
-      operationId: listDrinks
-      summary: Get a list of drinks.
-      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
-      security:
-        - {}
-      tags:
-        - drinks
-      parameters:
-        - name: type
-          in: query
-          description: The type of drink to filter by. If not provided all drinks will be returned.
-          required: false
-          schema:
-            $ref: "#/components/schemas/DrinkType"
-      responses:
-        "200":
-          description: A list of drinks.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Drink"
-```
-
-| Field         |                    Type                     |      Required      | Description                                                                                                                                                                                        |
-| ------------- | :-----------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `operationId` |                  String                   | :heavy_minus_sign: | A unique identifier for the operation, this ***must*** be unique within the document, and is ***case sensitive***. It is ***recommended*** to always define an `operationId`, but is not required. |
-| `deprecated`  |                  Boolean                  | :heavy_minus_sign: | Whether the operation is deprecated or not. Defaults to `false`.                                                                                                                                   |
-| `summary`     |                  String                   | :heavy_minus_sign: | A short summary of what the operation does. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                      |
-| `description` |                  String                   | :heavy_minus_sign: | A detailed description of the operation, what it does, and how to use it. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                          |
-| `servers`     |             [Servers](#servers)             | :heavy_minus_sign: | A list of [Server Objects](#server-object) that override the servers defined at the document and path levels and apply to this operation.                                                          |
-| `security`    |            [Security](#security)            | :heavy_minus_sign: | A list of [Security Requirement Objects](#security-requirement-object) that override the security requirements defined at the document and path levels and apply to this operation.               |
-| `x-*`         |          [Extensions](#extensions)          | :heavy_minus_sign: | Any number of extension fields can be added to the operation object that can be used by tooling and vendors.                                                                                       |
-| `parameters`  |          [Parameters](#parameters)          | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are available to this operation. The parameters defined here merge with any defined at the path level, overriding any duplicates.            |
-| `requestBody` | [Request Body Object](#request-body-object) | :heavy_minus_sign: | The request body for this operation where the [HTTP method supports a request body](https://httpwg.org/specs/rfc7231.html). Otherwise, this field is ignored.                                       |
-| `responses`   |           [Responses](#responses)           | :heavy_check_mark: | A map of [Response Objects](#response-object) that define the possible responses from executing this operation.                                                                                    |
-| `callbacks`   |           [Callbacks](#callbacks)           | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that define possible callbacks that may be executed as a result of this operation.                                                                   |
-
-The above order of fields is recommended for defining the fields in the document to help set the stage for the operation and provide a clear understanding of what it does.
-
-### Request Body Object
-
-The request body is used to describe the body of the request for operations that support a request body.
-
-| Field         |           Type            |      Required      | Description                                                                                                                          |
-| ------------- | :-----------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `description` |         String          | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
-| `content`     |    [Content](#content)    | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that defines the possible media types that can be used for the request body.        |
-| `required`    |         Boolean         | :heavy_minus_sign: | Whether the request body is required. Defaults to `false`.                                                                    |
-| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the Request Body Object that can be used by tooling and vendors.                      |
-
-### Responses
-
-The Responses Object is a map of [Response Objects](#response-object) or [References](#references) to [Response Objects](#response-object) that define the possible responses that can be returned from executing the operation.
-
-The keys in the map represent any known HTTP status codes that the API may return. The HTTP status codes can be defined like below:
-
-- Numeric Status Code - for example, `200`, `404`, or `500`. HTTP status codes are defined in [RFC 9110](https://httpwg.org/specs/rfc9110.html#overview.of.status.codes).
-- Status Code Wildcards - for example, `1XX`, `2XX`, `3XX`, `4XX`, or `5XX`. A wildcard that matches any status code in the range of its significant digit, for example, `2XX` represents status codes `200` to `299` inclusive.
-- `default` - A catch-all identifier for any other status codes not defined in the map.
-
-The map ***must*** contain at least one successful response code.
-
-All values ***must*** be defined as explicit strings (for example,`"200"`) to allow for compatibility between JSON and YAML.
-
-For example:
-
-```yaml
-paths:
-  /drinks:
-    get:
-      operationId: listDrinks
-      summary: Get a list of drinks.
-      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
-      tags:
-        - drinks
-      parameters:
-        - name: type
-          in: query
-          description: The type of drink to filter by. If not provided all drinks will be returned.
-          required: false
-          schema:
-            $ref: "#/components/schemas/DrinkType"
-      responses:
-        "200":
-          description: A list of drinks.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Drink"
-        "5XX":
-          description: An error occurred interacting with the API.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/APIError"
-        default:
-          description: An unknown error occurred interacting with the API.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-```
-
-Any number of [extension](#extensions) fields can be added to the responses object that can be used by tooling and vendors.
-
-### Response Object
-
-The Response Object describes a single response that can be returned from executing an [operation](#operation-object).
-
-| Field         |           Type            |      Required      | Description                                                                                                                                           |
-| ------------- | :-----------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` |         String          | :heavy_check_mark: | A description of the response. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                      |
-| `headers`     |    [Headers](#headers)    | :heavy_minus_sign: | A map of [Header Objects](#header-object) that defines the headers that can be returned from executing this operation.                                 |
-| `content`     |    [Content](#content)    | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that defines the possible media types that can be returned from executing this operation.            |
-| `links`       |      [Links](#links)      | :heavy_minus_sign: | A map of [Link Objects](#link-object) or [References](#references) that define the possible links that can be returned from executing this operation. |
-| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the response object that can be used by tooling and vendors.                                           |
-
-#### Links
-
-The Links object is a map of [Link Objects](#link-object) or [References](#references) to [Link Objects](#link-object) that allows for describing possible API-use scenarios between different operations. For example, if a response returns a `Drink` object, and the `Drink` object has an `ingredients` property that is a list of `Ingredient` objects, then a link can be defined to the `listIngredients` operation showing how the ingredients can be used as an input to the `listIngredients` operation.
-
-For example:
-
-```yaml
-/drink/{name}:
-  get:
-    operationId: getDrink
-      summary: Get a drink.
-      description: Get a drink by name, if authenticated this will include stock levels and product codes otherwise it will only include public information.
-      tags:
-        - drinks
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-    responses:
-      "200":
-        description: A drink.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Drink"
-        links:
-          listIngredients:
-            operationId: listIngredients
-            parameters:
-              ingredients: $response.body#/ingredients
-            description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
-/ingredients:
-    get:
-      operationId: listIngredients
-      summary: Get a list of ingredients.
-      description: Get a list of ingredients, if authenticated this will include stock levels and product codes otherwise it will only include public information.
-      tags:
-        - ingredients
-      parameters:
-        - name: ingredients
-          in: query
-          description: A list of ingredients to filter by. If not provided all ingredients will be returned.
-          required: false
-          style: form
-          explode: false
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        "200":
-          description: A list of ingredients.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Ingredient"
-        "5XX":
-          $ref: "#/components/responses/APIError"
-        default:
-          $ref: "#/components/responses/UnknownError"
-```
-
-#### Link Object
-
-The Link Object represents a possible link that can be followed from the response.
-
-| Field          |                       Type                        |      Required      | Description                                                                                                                                                                                                                                                                                                                                  |
-| -------------- | :-----------------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `operationId`  |                     String                      | :heavy_check_mark: | The `operationId` of an [operation](#operation-object) that exists in the document. Use either this field or the `operationRef` field, not both.                                                                                                                                                                                              |
-| `operationRef` |                     String                      | :heavy_check_mark: | Either a [Relative Reference](#references) or [Absolute Reference](#references) to an [operation](#operation-object) that exists in the document. Use either this field or the `operationId` field, not both.                                                                                                                                 |
-| `description`  |                     String                      | :heavy_minus_sign: | A description of the link and intentions for its use. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                       |
-| `parameters`   | Map[string, any \| [{Expression}](#expression)]* | :heavy_minus_sign: | A map of parameters to pass to the linked operation. The key is the name of the parameter and the value is either a constant value or an [Expression](#expression) that will be evaluated.<br/><br/>The parameter name can also be qualified with the location of the parameter, for example, `path.parameter_name` or `query.parameter_name` |
-| `requestBody`  |       Any \| [{Expression}](#expression)        | :heavy_minus_sign: | A constant value or [Expression](#expression) that will be used as the request body when calling the linked operation.                                                                                                                                                                                                                       |
-| `server`       |          [Server Object](#server-object)          | :heavy_minus_sign: | An optional server to be used by the linked operation.                                                                                                                                                                                                                                                                                       |
-| `x-*`          |             [Extensions](#extensions)             | :heavy_minus_sign: | Any number of extension fields can be added to the link object that can be used by tooling and vendors.                                                                                                                                                                                                                                      |
-
-An example of `OperationRef`:
-
-```yaml
-links:
-  listIngredients:
-    operationRef: "#/paths/~1ingredients/get"
-    parameters:
-      ingredients: $response.body#/ingredients
-
-# or
-
-links:
-  listIngredients:
-    operationRef: "https://speakeasy.bar/#/paths/~1ingredients/get"
-    parameters:
-      ingredients: $response.body#/ingredients
-```
-
-#### Headers
-
-A map of header names to [Header Objects](#header-object) or [References](#references) that define headers in [Response Objects](#response-object) or [Encoding Objects](#encoding-object).
-
-In this simplified example, the server returns three [Header Objects](#header-object) with the names `X-RateLimit-Remaining`, `Last-Modified`, and `Cache-Control`:
-
-```yaml
-paths:
-  /drinks/{productCode}:
-    get:
-      responses:
-        "200"
-          description: A drink.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Drink"
-          headers:
-            X-RateLimit-Remaining:
-              description: The number of requests left for the time window.
-              schema:
-                type: integer
-                example: 99
-            Last-Modified:
-              description: The time at which the information was last modified.
-              schema:
-                type: string
-                format: date-time
-                example: '2024-01-26T18:25:43.511Z'
-            Cache-Control:
-              description: Instructions for caching mechanisms in both requests and responses.
-              schema:
-                type: string
-                example: no-cache
-```
-
-##### Header Object
-
-Describes a single header.
-
-The name of a header is determined by the header's key in a `headers` map.
-
-| Field         | Type                                                   | Required           | Description                                                                                                                                                                                                                                                                                                                                |
-| ------------- | ------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `description` | String                                               | :heavy_minus_sign: | A description of the header. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                                             |
-| `required`    | Boolean                                              | :heavy_minus_sign: | Whether the header is required. Defaults to `false`.                                                                                                                                                                                                                                                                                |
-| `deprecated`  | Boolean                                              | :heavy_minus_sign: | Whether the header is deprecated. Defaults to `false`.                                                                                                                                                                                                                                                                              |
-| `schema`      | [Schema Object](#schema-object)                        | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the header. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI 3.0.x supports [OpenAPI Reference Objects](#openapi-reference-object) here as a value. OpenAPI 3.1.x uses the [JSON Schema Referencing](#json-schema-references) format.** |
-| `content`     | Map[string, [Media Type Object](#media-type-object)] | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the header. This is ***required*** unless `schema` is defined.                                                                                                                                                                 |
-| `x-*`         | [Extensions](#extensions)                              | :heavy_minus_sign: | Any number of extension fields can be added to the header object to be used by tooling and vendors.                                                                                                                                                                                                                                           |
-
-### Callbacks
-
-A map of [Callback Objects](#callback-object) or [References](#references) that define incoming requests that may be triggered by the parent operation and the expected responses to be returned. The key is a unique identifier for the collection of callbacks contained within.
-
-**Note: Callbacks are only valid on operations that also pass the required URL to call the callback on, in either the parameters or the request body of the parent operation. In the event that a request from the API is sent in reaction to calling the parent operation but the callback URL is provided elsewhere, use [webhooks](#webhooks) to document the callback instead (webhooks only available in OpenAPI 3.1.x)**
-
-For example:
-
-```yaml
-  /order:
-    post:
-      operationId: createOrder
-      summary: Create an order.
-      description: Create an order for a drink.
-      tags:
-        - orders
-      parameters:
-        - name: callback_url
-          in: query
-          description: The url to call when the order is updated.
-          required: false
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Order"
-      responses:
-        "200":
-          description: The order was created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
-        "5XX":
-          $ref: "#/components/responses/APIError"
-        default:
-          $ref: "#/components/responses/UnknownError"
-      callbacks:
-        orderUpdate:
-          "{$request.query.callback_url}":
-            post:
-              summary: Receive order updates.
-              description: Receive order updates from the supplier, this will be called whenever the status of an order changes.
-              tags:
-                - orders
-              requestBody:
-                required: true
-                content:
-                  application/json:
-                    schema:
-                      type: object
-                      properties:
-                        order:
-                          $ref: "#/components/schemas/Order"
-              responses:
-                "200":
-                  description: The order update was received successfully.
-                "5XX":
-                  $ref: "#/components/responses/APIError"
-                default:
-                  $ref: "#/components/responses/UnknownError"
-```
-
-#### Callback Object
-
-A map of [Runtime Expressions](#expression) (that represent URLs the callback request is sent to) to a [Path Item Object](#path-item-object) or [Reference](#references) that defines a request to be initiated by the API provider and a potential response to be returned.
-
-The expression when evaluated at runtime will resolve to a URL either represented in the parameters, request body, or response body of the parent operation.
-
-Examples:
-
-`{$request.query.callback_url}` will resolve to the value sent in the `callback_url` query parameter sent in the parent operation.
-
-`{$request.body#/asyncURL}` will resolve to the value of the `asyncURL` property in the request body of the parent operation.
-
-`{$response.body#/success/progressEndpoint}` will resolve to the value of the `progressEndpoint` property within the `success` object in the response body of the parent operation.
-
-Any number of [extension](#extensions) fields can be added to the Callback Object that can be used by tooling and vendors.
-
-### Content
-
-A map of Media Types (including wildcards) to a [Media Type Object](#media-type-object) that describes the content of the request or response as it relates to the media type consumed or produced.
-
-The key in the map is a [media or MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) that determines how the content is encoded. This media type can include wildcards indicating a range of media types it covers. For example, `application/*` would match `application/json`, `application/xml`, and so on, and `*/*` would match any media type. It can be explicitly defined to match only a single media type, for example, `application/json; charset=utf-8`.
-
-Where both a wildcard and a specific media type are defined, the specific media type definition takes precedence.
-
-For example:
-
-```yaml
-content:
-  application/json: # Upload a JSON file
-    schema:
-      $ref: "#/components/schemas/Drink"
-  img/*: # Upload any image format
-    schema:
-      type: string
-      format: binary
-  text/*: # Upload any text-based description of a drink
-    schema:
-      type: string
-  text/csv: # Upload a CSV file (this will take precedence over text/*)
-    schema:
-      $ref: "#/components/schemas/Drink"
-```
-
-#### Media Type Object
-
-A Media Type Object describes the request or response for a media type, with optional examples and extensions.
-
-| Field      | Type                                                                                                      | Required           | Description                                                                                                                                                                                                                                                                                                                    |
-| ---------- | --------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `schema`   | [Schema Object](#schema-object)                                                                           | :heavy_minus_sign: | A schema that describes the request or response content.                                                                                                                                                                                                                                                                       |
-| `example`  | Any                                                                                                     | :heavy_minus_sign: | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive with the `examples` field.                                                                                                                                       |
-| `examples` | Map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)] | :heavy_minus_sign: | Optional examples of the media type. These examples override any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive with the `example` field.                                                                                                                                         |
-| `encoding` | Map[string, [Encoding Object](#encoding-object)]                                                        | :heavy_minus_sign: | An optional map of [Encoding Objects](#encoding-object). Each Encoding Object's key should match one of the properties from the [Schema Object](#schema-object) in the `schema` field. Only applies to [Request Body Objects](#request-body-object) when the media type is `multipart` or `application/x-www-form-urlencoded`. |
-| `x-*`      | [Extensions](#extensions)                                                                                 | :heavy_minus_sign: | Any number of extension fields as required by tooling and vendors.                                                                                                                                                                                                                                                             |
-
-#### Encoding Object
-
-Only applicable to `requestBody` where the media type is `multipart` or `application/x-www-form-urlencoded`. An encoding object describes the encoding of a single property in the request schema.
-
-| Field           | Type                                                                                            | Required           | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| --------------- | ----------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `contentType`   | String                                                                                        | :heavy_minus_sign: | The content type of the field. If the field is an `object`, the default is `application/json`. If the field is an array, the default is based on the inner type. Otherwise, the default is `application/octet-stream`. Valid values are either a media type (for example, `application/json`), a wildcard media type (for example, `image/*`), or a comma-separated list of media types and wildcard media types (for example, `image/png, application/*`).                                             |
-| `headers`       | Map[string, [Header Object](#header-object) \| [Reference Object](#openapi-reference-object)] | :heavy_minus_sign: | Only applies to `multipart` requests. Allows additional headers related to the field. For example, if the client needs to add a `Content-Disposition` for an uploaded file. A `Content-Type` header in this map will be ignored, in favor of the `contentType` field of the encoding object.                                                                                                                                                                                   |
-| `style`         | String                                                                                        | :heavy_minus_sign: | Can take one of the following values: `form`, `spaceDelimited`, `pipeDelimited`, or `deepObject`. Specifies the style of the field's serialization only in requests with media type `multipart/form-data` or `application/x-www-form-urlencoded`. See the description of `style` under [Query Parameters](#query-parameters).                                                                                                                                                      |
-| `explode`       | Boolean                                                                                       | :heavy_minus_sign: | Only applies to requests with media type `multipart/form-data` or `application/x-www-form-urlencoded` and fields with `array` or `object` types. If `style` is `form`, the default is `true`, otherwise the default is `false`.                                                                                                                                                                                                                                                 |
-| `allowReserved` | Boolean                                                                                       | :heavy_minus_sign: | Only applies to requests with media type `application/x-www-form-urlencoded`. Determines whether reserved characters (those allowed in literals but with reserved meanings) are allowed in the parameter's content. The default is `false`. When `true`, it allows reserved characters as defined by [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) to be included without percent-encoding. This can be useful for parameters with content such as URLs. |
-
-```yaml
-paths:
-  /drinks:
-    post:
-      requestbody:
-        content:
-          multipart/form-data:
-            schema:
-              properties:
-                # ... other properties ...
-                photo:
-                  description: A photo of the drink.
-                  type: string
-                  format: binary
-            encoding:
-              photo:
-                contentType: image/jpeg, image/png
-                headers:
-                  Content-Disposition:
-                    description: Specifies the disposition of the file (attachment and file name).
-                    schema:
-                      type: string
-                      default: 'form-data; name="photo"; filename="default.jpg"'
-                allowReserved: false
-                # style: form - not applicable to strings
-                # explode: false - not applicable to strings
-```
-
-### Operation Objects in Generated SDKs
-
-The Speakeasy SDK generator creates a complete self-contained file per operation.
-
-For our Speakeasy Bar example, this modular approach would lead to the following TypeScript files.
-
-```bash
-src/models/operations/
-├── authenticate.ts
-├── createorder.ts
-├── deletedrink.ts
-├── getdrink.ts
-├── index.ts
-├── listdrinks.ts
-├── searchdrinks.ts
-├── subscribetowebhooks.ts
-├── updatedrinkjson.ts
-├── updatedrinkmultipart.ts
-├── updatedrinkraw.ts
-└── updatedrinkstring.ts
-```
-
-Each operation is presented as a function with the `operationId` as the function name. When using tags to structure the SDK, each operation function is bundled in a module named after its tag.
-
-Speakeasy generates the following usage example as part of the TypeScript SDK:
-
-```typescript
-import { SDK } from "openapi";
-
-async function run() {
-  const sdk = new SDK();
-
-  const productCode = "NAC-3F2D1";
-  const operationSecurity = "<YOUR_API_KEY_HERE>";
-  
-  const result = await sdk.drinks.getDrink(operationSecurity, productCode);
-
-  // Handle the result
-  console.log(result)
-}
-
-run();
-```
-
 ## Parameters
+
+
 
 Parameters are used to describe inputs to an operation. Parameters can be defined at the path or operation level and are merged with any duplicates at the operation level, overriding any defined at the path level.
 
@@ -2324,6 +1653,512 @@ parameters:
 
 Would serialize to `Cookie: drink-filter={"type":["cocktail","mocktail"],"strength":[5,10]}`.
 
+## Operation Object
+
+An operation object describes a single API operation within a path, including all its possible inputs and outputs and the configuration required to make a successful request.
+
+Each operation object corresponds to an HTTP verb, such as `get`, `post`, or `delete`.
+
+Example:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      # The Operation Object
+      operationId: listDrinks
+      summary: Get a list of drinks.
+      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      security:
+        - {}
+      tags:
+        - drinks
+      parameters:
+        - name: type
+          in: query
+          description: The type of drink to filter by. If not provided all drinks will be returned.
+          required: false
+          schema:
+            $ref: "#/components/schemas/DrinkType"
+      responses:
+        "200":
+          description: A list of drinks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+```
+
+| Field         |                    Type                     |      Required      | Description                                                                                                                                                                                        |
+| ------------- | :-----------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `operationId` |                  String                   | :heavy_minus_sign: | A unique identifier for the operation, this ***must*** be unique within the document, and is ***case sensitive***. It is ***recommended*** to always define an `operationId`, but is not required. |
+| `deprecated`  |                  Boolean                  | :heavy_minus_sign: | Whether the operation is deprecated or not. Defaults to `false`.                                                                                                                                   |
+| `summary`     |                  String                   | :heavy_minus_sign: | A short summary of what the operation does. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                      |
+| `description` |                  String                   | :heavy_minus_sign: | A detailed description of the operation, what it does, and how to use it. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                          |
+| `servers`     |             [Servers](#servers)             | :heavy_minus_sign: | A list of [Server Objects](#server-object) that override the servers defined at the document and path levels and apply to this operation.                                                          |
+| `security`    |            [Security](#security)            | :heavy_minus_sign: | A list of [Security Requirement Objects](#security-requirement-object) that override the security requirements defined at the document and path levels and apply to this operation.               |
+| `x-*`         |          [Extensions](#extensions)          | :heavy_minus_sign: | Any number of extension fields can be added to the operation object that can be used by tooling and vendors.                                                                                       |
+| `parameters`  |          [Parameters](#parameters)          | :heavy_minus_sign: | A list of [Parameter Objects](#parameter-object) that are available to this operation. The parameters defined here merge with any defined at the path level, overriding any duplicates.            |
+| `requestBody` | [Request Body Object](#request-body-object) | :heavy_minus_sign: | The request body for this operation where the [HTTP method supports a request body](https://httpwg.org/specs/rfc7231.html). Otherwise, this field is ignored.                                       |
+| `responses`   |           [Responses](#responses)           | :heavy_check_mark: | A map of [Response Objects](#response-object) that define the possible responses from executing this operation.                                                                                    |
+| `callbacks`   |           [Callbacks](#callbacks)           | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that define possible callbacks that may be executed as a result of this operation.                                                                   |
+
+The above order of fields is recommended for defining the fields in the document to help set the stage for the operation and provide a clear understanding of what it does.
+
+### Request Body Object
+
+The request body is used to describe the body of the request for operations that support a request body.
+
+| Field         |           Type            |      Required      | Description                                                                                                                          |
+| ------------- | :-----------------------: | :----------------: | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` |         String          | :heavy_minus_sign: | A description of the request body. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description. |
+| `content`     |    [Content](#content)    | :heavy_check_mark: | A map of [Media Type Objects](#media-type-object) that defines the possible media types that can be used for the request body.        |
+| `required`    |         Boolean         | :heavy_minus_sign: | Whether the request body is required. Defaults to `false`.                                                                    |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the Request Body Object that can be used by tooling and vendors.                      |
+
+### Responses
+
+The Responses Object is a map of [Response Objects](#response-object) or [References](#references) to [Response Objects](#response-object) that define the possible responses that can be returned from executing the operation.
+
+The keys in the map represent any known HTTP status codes that the API may return. The HTTP status codes can be defined like below:
+
+- Numeric Status Code - for example, `200`, `404`, or `500`. HTTP status codes are defined in [RFC 9110](https://httpwg.org/specs/rfc9110.html#overview.of.status.codes).
+- Status Code Wildcards - for example, `1XX`, `2XX`, `3XX`, `4XX`, or `5XX`. A wildcard that matches any status code in the range of its significant digit, for example, `2XX` represents status codes `200` to `299` inclusive.
+- `default` - A catch-all identifier for any other status codes not defined in the map.
+
+The map ***must*** contain at least one successful response code.
+
+All values ***must*** be defined as explicit strings (for example,`"200"`) to allow for compatibility between JSON and YAML.
+
+For example:
+
+```yaml
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks.
+      description: Get a list of drinks, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      tags:
+        - drinks
+      parameters:
+        - name: type
+          in: query
+          description: The type of drink to filter by. If not provided all drinks will be returned.
+          required: false
+          schema:
+            $ref: "#/components/schemas/DrinkType"
+      responses:
+        "200":
+          description: A list of drinks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+        "5XX":
+          description: An error occurred interacting with the API.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        default:
+          description: An unknown error occurred interacting with the API.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+```
+
+Any number of [extension](#extensions) fields can be added to the responses object that can be used by tooling and vendors.
+
+### Response Object
+
+The Response Object describes a single response that can be returned from executing an [operation](#operation-object).
+
+| Field         |           Type            |      Required      | Description                                                                                                                                           |
+| ------------- | :-----------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` |         String          | :heavy_check_mark: | A description of the response. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                      |
+| `headers`     |    [Headers](#headers)    | :heavy_minus_sign: | A map of [Header Objects](#header-object) that defines the headers that can be returned from executing this operation.                                 |
+| `content`     |    [Content](#content)    | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that defines the possible media types that can be returned from executing this operation.            |
+| `links`       |      [Links](#links)      | :heavy_minus_sign: | A map of [Link Objects](#link-object) or [References](#references) that define the possible links that can be returned from executing this operation. |
+| `x-*`         | [Extensions](#extensions) | :heavy_minus_sign: | Any number of extension fields can be added to the response object that can be used by tooling and vendors.                                           |
+
+### Content
+
+A map of Media Types (including wildcards) to a [Media Type Object](#media-type-object) that describes the content of the request or response as it relates to the media type consumed or produced.
+
+The key in the map is a [media or MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) that determines how the content is encoded. This media type can include wildcards indicating a range of media types it covers. For example, `application/*` would match `application/json`, `application/xml`, and so on, and `*/*` would match any media type. It can be explicitly defined to match only a single media type, for example, `application/json; charset=utf-8`.
+
+Where both a wildcard and a specific media type are defined, the specific media type definition takes precedence.
+
+For example:
+
+```yaml
+content:
+  application/json: # Upload a JSON file
+    schema:
+      $ref: "#/components/schemas/Drink"
+  img/*: # Upload any image format
+    schema:
+      type: string
+      format: binary
+  text/*: # Upload any text-based description of a drink
+    schema:
+      type: string
+  text/csv: # Upload a CSV file (this will take precedence over text/*)
+    schema:
+      $ref: "#/components/schemas/Drink"
+```
+
+#### Media Type Object
+
+A Media Type Object describes the request or response for a media type, with optional examples and extensions.
+
+| Field      | Type                                                                                                      | Required           | Description                                                                                                                                                                                                                                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `schema`   | [Schema Object](#schema-object)                                                                           | :heavy_minus_sign: | A schema that describes the request or response content.                                                                                                                                                                                                                                                                       |
+| `example`  | Any                                                                                                     | :heavy_minus_sign: | An optional example of the media type. This example overrides any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive with the `examples` field.                                                                                                                                       |
+| `examples` | Map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)] | :heavy_minus_sign: | Optional examples of the media type. These examples override any examples from the [Schema Object](#schema-object) in the `schema` field. Mutually exclusive with the `example` field.                                                                                                                                         |
+| `encoding` | Map[string, [Encoding Object](#encoding-object)]                                                        | :heavy_minus_sign: | An optional map of [Encoding Objects](#encoding-object). Each Encoding Object's key should match one of the properties from the [Schema Object](#schema-object) in the `schema` field. Only applies to [Request Body Objects](#request-body-object) when the media type is `multipart` or `application/x-www-form-urlencoded`. |
+| `x-*`      | [Extensions](#extensions)                                                                                 | :heavy_minus_sign: | Any number of extension fields as required by tooling and vendors.                                                                                                                                                                                                                                                             |
+
+#### Encoding Object
+
+Only applicable to `requestBody` where the media type is `multipart` or `application/x-www-form-urlencoded`. An encoding object describes the encoding of a single property in the request schema.
+
+| Field           | Type                                                                                            | Required           | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --------------- | ----------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `contentType`   | String                                                                                        | :heavy_minus_sign: | The content type of the field. If the field is an `object`, the default is `application/json`. If the field is an array, the default is based on the inner type. Otherwise, the default is `application/octet-stream`. Valid values are either a media type (for example, `application/json`), a wildcard media type (for example, `image/*`), or a comma-separated list of media types and wildcard media types (for example, `image/png, application/*`).                                             |
+| `headers`       | Map[string, [Header Object](#header-object) \| [Reference Object](#openapi-reference-object)] | :heavy_minus_sign: | Only applies to `multipart` requests. Allows additional headers related to the field. For example, if the client needs to add a `Content-Disposition` for an uploaded file. A `Content-Type` header in this map will be ignored, in favor of the `contentType` field of the encoding object.                                                                                                                                                                                   |
+| `style`         | String                                                                                        | :heavy_minus_sign: | Can take one of the following values: `form`, `spaceDelimited`, `pipeDelimited`, or `deepObject`. Specifies the style of the field's serialization only in requests with media type `multipart/form-data` or `application/x-www-form-urlencoded`. See the description of `style` under [Query Parameters](#query-parameters).                                                                                                                                                      |
+| `explode`       | Boolean                                                                                       | :heavy_minus_sign: | Only applies to requests with media type `multipart/form-data` or `application/x-www-form-urlencoded` and fields with `array` or `object` types. If `style` is `form`, the default is `true`, otherwise the default is `false`.                                                                                                                                                                                                                                                 |
+| `allowReserved` | Boolean                                                                                       | :heavy_minus_sign: | Only applies to requests with media type `application/x-www-form-urlencoded`. Determines whether reserved characters (those allowed in literals but with reserved meanings) are allowed in the parameter's content. The default is `false`. When `true`, it allows reserved characters as defined by [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) to be included without percent-encoding. This can be useful for parameters with content such as URLs. |
+
+```yaml
+paths:
+  /drinks:
+    post:
+      requestbody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                # ... other properties ...
+                photo:
+                  description: A photo of the drink.
+                  type: string
+                  format: binary
+            encoding:
+              photo:
+                contentType: image/jpeg, image/png
+                headers:
+                  Content-Disposition:
+                    description: Specifies the disposition of the file (attachment and file name).
+                    schema:
+                      type: string
+                      default: 'form-data; name="photo"; filename="default.jpg"'
+                allowReserved: false
+                # style: form - not applicable to strings
+                # explode: false - not applicable to strings
+```
+
+#### Links
+
+The Links object is a map of [Link Objects](#link-object) or [References](#references) to [Link Objects](#link-object) that allows for describing possible API-use scenarios between different operations. For example, if a response returns a `Drink` object, and the `Drink` object has an `ingredients` property that is a list of `Ingredient` objects, then a link can be defined to the `listIngredients` operation showing how the ingredients can be used as an input to the `listIngredients` operation.
+
+For example:
+
+```yaml
+/drink/{name}:
+  get:
+    operationId: getDrink
+      summary: Get a drink.
+      description: Get a drink by name, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      tags:
+        - drinks
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+    responses:
+      "200":
+        description: A drink.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Drink"
+        links:
+          listIngredients:
+            operationId: listIngredients
+            parameters:
+              ingredients: $response.body#/ingredients
+            description: The list of ingredients returned by the `getDrink` operation can be used as an input to the `listIngredients` operation, to retrieve additional details about the ingredients required to make the drink.
+/ingredients:
+    get:
+      operationId: listIngredients
+      summary: Get a list of ingredients.
+      description: Get a list of ingredients, if authenticated this will include stock levels and product codes otherwise it will only include public information.
+      tags:
+        - ingredients
+      parameters:
+        - name: ingredients
+          in: query
+          description: A list of ingredients to filter by. If not provided all ingredients will be returned.
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: A list of ingredients.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ingredient"
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+```
+
+#### Link Object
+
+The Link Object represents a possible link that can be followed from the response.
+
+| Field          |                       Type                        |      Required      | Description                                                                                                                                                                                                                                                                                                                                  |
+| -------------- | :-----------------------------------------------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `operationId`  |                     String                      | :heavy_check_mark: | The `operationId` of an [operation](#operation-object) that exists in the document. Use either this field or the `operationRef` field, not both.                                                                                                                                                                                              |
+| `operationRef` |                     String                      | :heavy_check_mark: | Either a [Relative Reference](#references) or [Absolute Reference](#references) to an [operation](#operation-object) that exists in the document. Use either this field or the `operationId` field, not both.                                                                                                                                 |
+| `description`  |                     String                      | :heavy_minus_sign: | A description of the link and intentions for its use. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                       |
+| `parameters`   | Map[string, any \| [{Expression}](#expression)]* | :heavy_minus_sign: | A map of parameters to pass to the linked operation. The key is the name of the parameter and the value is either a constant value or an [Expression](#expression) that will be evaluated.<br/><br/>The parameter name can also be qualified with the location of the parameter, for example, `path.parameter_name` or `query.parameter_name` |
+| `requestBody`  |       Any \| [{Expression}](#expression)        | :heavy_minus_sign: | A constant value or [Expression](#expression) that will be used as the request body when calling the linked operation.                                                                                                                                                                                                                       |
+| `server`       |          [Server Object](#server-object)          | :heavy_minus_sign: | An optional server to be used by the linked operation.                                                                                                                                                                                                                                                                                       |
+| `x-*`          |             [Extensions](#extensions)             | :heavy_minus_sign: | Any number of extension fields can be added to the link object that can be used by tooling and vendors.                                                                                                                                                                                                                                      |
+
+An example of `OperationRef`:
+
+```yaml
+links:
+  listIngredients:
+    operationRef: "#/paths/~1ingredients/get"
+    parameters:
+      ingredients: $response.body#/ingredients
+
+# or
+
+links:
+  listIngredients:
+    operationRef: "https://speakeasy.bar/#/paths/~1ingredients/get"
+    parameters:
+      ingredients: $response.body#/ingredients
+```
+
+#### Headers
+
+A map of header names to [Header Objects](#header-object) or [References](#references) that define headers in [Response Objects](#response-object) or [Encoding Objects](#encoding-object).
+
+In this simplified example, the server returns three [Header Objects](#header-object) with the names `X-RateLimit-Remaining`, `Last-Modified`, and `Cache-Control`:
+
+```yaml
+paths:
+  /drinks/{productCode}:
+    get:
+      responses:
+        "200"
+          description: A drink.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Drink"
+          headers:
+            X-RateLimit-Remaining:
+              description: The number of requests left for the time window.
+              schema:
+                type: integer
+                example: 99
+            Last-Modified:
+              description: The time at which the information was last modified.
+              schema:
+                type: string
+                format: date-time
+                example: '2024-01-26T18:25:43.511Z'
+            Cache-Control:
+              description: Instructions for caching mechanisms in both requests and responses.
+              schema:
+                type: string
+                example: no-cache
+```
+
+##### Header Object
+
+Describes a single header.
+
+The name of a header is determined by the header's key in a `headers` map.
+
+| Field         | Type                                                   | Required           | Description                                                                                                                                                                                                                                                                                                                                |
+| ------------- | ------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` | String                                               | :heavy_minus_sign: | A description of the header. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                                                                                                                                             |
+| `required`    | Boolean                                              | :heavy_minus_sign: | Whether the header is required. Defaults to `false`.                                                                                                                                                                                                                                                                                |
+| `deprecated`  | Boolean                                              | :heavy_minus_sign: | Whether the header is deprecated. Defaults to `false`.                                                                                                                                                                                                                                                                              |
+| `schema`      | [Schema Object](#schema-object)                        | :heavy_minus_sign: | A schema or reference to a schema that defines the type of the header. This is ***required*** unless `content` is defined.<br/><br/>**Note: OpenAPI 3.0.x supports [OpenAPI Reference Objects](#openapi-reference-object) here as a value. OpenAPI 3.1.x uses the [JSON Schema Referencing](#json-schema-references) format.** |
+| `content`     | Map[string, [Media Type Object](#media-type-object)] | :heavy_minus_sign: | A map of [Media Type Objects](#media-type-object) that define the possible media types that can be used for the header. This is ***required*** unless `schema` is defined.                                                                                                                                                                 |
+| `x-*`         | [Extensions](#extensions)                              | :heavy_minus_sign: | Any number of extension fields can be added to the header object to be used by tooling and vendors.                                                                                                                                                                                                                                           |
+
+### Callbacks
+
+A map of [Callback Objects](#callback-object) or [References](#references) that define incoming requests that may be triggered by the parent operation and the expected responses to be returned. The key is a unique identifier for the collection of callbacks contained within.
+
+**Note: Callbacks are only valid on operations that also pass the required URL to call the callback on, in either the parameters or the request body of the parent operation. In the event that a request from the API is sent in reaction to calling the parent operation but the callback URL is provided elsewhere, use [webhooks](#webhooks) to document the callback instead (webhooks only available in OpenAPI 3.1.x)**
+
+For example:
+
+```yaml
+  /order:
+    post:
+      operationId: createOrder
+      summary: Create an order.
+      description: Create an order for a drink.
+      tags:
+        - orders
+      parameters:
+        - name: callback_url
+          in: query
+          description: The url to call when the order is updated.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        "200":
+          description: The order was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+      callbacks:
+        orderUpdate:
+          "{$request.query.callback_url}":
+            post:
+              summary: Receive order updates.
+              description: Receive order updates from the supplier, this will be called whenever the status of an order changes.
+              tags:
+                - orders
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        order:
+                          $ref: "#/components/schemas/Order"
+              responses:
+                "200":
+                  description: The order update was received successfully.
+                "5XX":
+                  $ref: "#/components/responses/APIError"
+                default:
+                  $ref: "#/components/responses/UnknownError"
+```
+
+#### Callback Object
+
+A map of [Runtime Expressions](#expression) (that represent URLs the callback request is sent to) to a [Path Item Object](#path-item-object) or [Reference](#references) that defines a request to be initiated by the API provider and a potential response to be returned.
+
+The expression when evaluated at runtime will resolve to a URL either represented in the parameters, request body, or response body of the parent operation.
+
+Examples:
+
+`{$request.query.callback_url}` will resolve to the value sent in the `callback_url` query parameter sent in the parent operation.
+
+`{$request.body#/asyncURL}` will resolve to the value of the `asyncURL` property in the request body of the parent operation.
+
+`{$response.body#/success/progressEndpoint}` will resolve to the value of the `progressEndpoint` property within the `success` object in the response body of the parent operation.
+
+Any number of [extension](#extensions) fields can be added to the Callback Object that can be used by tooling and vendors.
+
+### Operation Objects in Generated SDKs
+
+The Speakeasy SDK generator creates a complete self-contained file per operation.
+
+For our Speakeasy Bar example, this modular approach would lead to the following TypeScript files.
+
+```bash
+src/models/operations/
+├── authenticate.ts
+├── createorder.ts
+├── deletedrink.ts
+├── getdrink.ts
+├── index.ts
+├── listdrinks.ts
+├── searchdrinks.ts
+├── subscribetowebhooks.ts
+├── updatedrinkjson.ts
+├── updatedrinkmultipart.ts
+├── updatedrinkraw.ts
+└── updatedrinkstring.ts
+```
+
+Each operation is presented as a function with the `operationId` as the function name. When using tags to structure the SDK, each operation function is bundled in a module named after its tag.
+
+Speakeasy generates the following usage example as part of the TypeScript SDK:
+
+```typescript
+import { SDK } from "openapi";
+
+async function run() {
+  const sdk = new SDK();
+
+  const productCode = "NAC-3F2D1";
+  const operationSecurity = "<YOUR_API_KEY_HERE>";
+  
+  const result = await sdk.drinks.getDrink(operationSecurity, productCode);
+
+  // Handle the result
+  console.log(result)
+}
+
+run();
+```
+
+## Components Object
+
+The Components Object is a container for reusable objects that can be referenced across the API. These objects can be referenced using [References](#references), and generally are only valid if referenced by other parts of the API.
+
+| Field             |                                                           Type                                                            |      Required      | Description                                                                                                                                                                                                                                                                                                 |
+| ----------------- | :-----------------------------------------------------------------------------------------------------------------------: | :----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `schemas`         |                                      Map[string, [Schema Object](#schema-object)]*                                       | :heavy_minus_sign: | A map of [Schema Objects](#schema-object) that can be referenced by other parts of the API.<br/><br/>**Note: OpenAPI 3.0.x does support [OpenAPI Reference Objects](#openapi-reference-object) as the value here, but `3.1.x` uses the [JSON Schema Referencing](#json-schema-references) format.** |
+| `securitySchemes` | Map[string, [Security Scheme Object](#security-scheme-object) \| [OpenAPI Reference Object](#openapi-reference-object)]* | :heavy_minus_sign: | A map of [Security Scheme Objects](#security-scheme-object) that can be referenced by other parts of the API.                                                                                                                                                                                               |
+| `pathItems`       |       Map[string, [Path Item Object](#path-item-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Path Item Objects](#path-item-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
+| `parameters`      |       Map[string, [Parameter Object](#parameter-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*       | :heavy_minus_sign: | A map of [Parameter Objects](#parameter-object) that can be referenced by other parts of the API.                                                                                                                                                                                                           |
+| `requestBodies`   |    Map[string, [Request Body Object](#request-body-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*    | :heavy_minus_sign: | A map of [Request Body Objects](#request-body-object) that can be referenced by other parts of the API.                                                                                                                                                                                                     |
+| `responses`       |        Map[string, [Response Object](#response-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Response Objects](#response-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
+| `headers`         |          Map[string, [Header Object](#header-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*          | :heavy_minus_sign: | A map of [Header Objects](#header-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                 |
+| `examples`        |         Map[string, [Example Object](#example-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*         | :heavy_minus_sign: | A map of [Example Objects](#example-object) that can be referenced by other parts of the API.                                                                                                                                                                                                               |
+| `callbacks`       |        Map[string, [Callback Object](#callback-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*        | :heavy_minus_sign: | A map of [Callback Objects](#callback-object) that can be referenced by other parts of the API.                                                                                                                                                                                                             |
+| `links`           |            Map[string, [Link Object](#link-object) \| [OpenAPI Reference Object](#openapi-reference-object)]*            | :heavy_minus_sign: | A map of [Link Objects](#link-object) that can be referenced by other parts of the API.                                                                                                                                                                                                                     |
+| `x-*`             |                                                 [Extensions](#extensions)                                                 | :heavy_minus_sign: | Any number of extension fields can be added to the Components Object that can be used by tooling and vendors.                                                                                                                                                                                               |
 ## Schema Object
 
 The Schema Object represents any data type used as input or output in OpenAPI. Data types can be objects, arrays, or primitives such as `string`, `number`, `integer`, and `boolean`.
@@ -2406,6 +2241,42 @@ components:
         - packaged
 ```
 
+### JSON Schema & OpenAPI
+
+OpenAPI 3.0 was not totally compatible with JSON schema. That caused, and continues to cause, issues in tooling support. Fortunately, OpenAPI 3.1 is now a superset of JSON Schema, meaning compatibility with any valid JSon Schema document.
+
+### Data Type Formats
+
+Data type formats in OpenAPI 3.1 provide a standardized way to define the types and formats of data in an API. Below is a list of the standard formats available in OpenAPI:
+
+| Type      | Format            | Description                                                                                   | Example                                  |
+|-----------|-------------------|-----------------------------------------------------------------------------------------------|------------------------------------------|
+| String  | `date-time`       | Date and time together, adhering to RFC 3339.                                                | `2023-02-24T18:25:43.511Z`               |
+| String  | `date`            | A calendar date (full-date) as per RFC 3339.                                                 | `2023-02-24`                             |
+| String  | `time`            | A time of day, with or without time zone information, as per RFC 3339.                       | `18:25:43.511Z`                          |
+| String  | `duration`        | A duration as per ISO 8601.                                                                   | `P3Y6M4DT12H30M5S`                       |
+| String  | `email`           | An email address, conforming to the syntax defined in RFC 5322.                              | `contact@speakeasy.bar`                  |
+| String  | `idn-email`       | An internationalized email address.                                                          | `联络@speakeasy.bar`                     |
+| String  | `hostname`        | A hostname, following the requirements of RFC 1034 and RFC 1123.                             | `speakeasy.bar`                          |
+| String  | `idn-hostname`    | An internationalized hostname.                                                               | `国際化.speakeasy.bar`                   |
+| String  | `ipv4`            | An IPv4 address, adhering to the dot-decimal notation as defined in RFC 2673.                | `192.0.2.1`                              |
+| String  | `ipv6`            | An IPv6 address, as defined in RFC 4291.                                                     | `2001:0db8:85a3:0000:0000:8a2e:0370:7334`|
+| String  | `uri`             | A Uniform Resource Identifier (URI) as per RFC 3986.                                         | `https://speakeasy.bar/menu`            |
+| String  | `uri-reference`   | A URI Reference, which can be a relative or absolute URI, as per RFC 3986.                   | `/menu/drinks`                           |
+| String  | `iri`             | An Internationalized Resource Identifier (IRI) as per RFC 3987.                              | `https://speakeasy.bar/メニュー`         |
+| String  | `iri-reference`   | An IRI Reference, which can be a relative or absolute IRI, as per RFC 3987.                  | `/メニュー/ドリンク`                     |
+| String  | `uri-template`    | A URI Template as per RFC 6570.                                                              | `https://speakeasy.bar/orders/{order}`  |
+| String  | `json-pointer`    | A JSON Pointer as per RFC 6901.                                                              | `/drinks/4`                              |
+| String  | `relative-json-pointer` | A relative JSON Pointer.                                                        | `1/drinks/7`                             |
+| String  | `regex`           | A regular expression, which should be valid according to the ECMA 262 regular expression dialect. | `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$` |
+| Integer | `int32`           | signed 32 bits                         | `2147483647`          |
+| Integer | `int64`           | signed 64 bits (long)            | `9223372036854775807` |
+| Number  | `float`           | A single-precision 32-bit IEEE 754 floating point.                 | `3.4028235E38`        |
+| Number  | `double`          | A double-precision 64-bit IEEE 754 floating point.                 | `1.7976931348623157E308` |
+| String  | `password`        | A hint to UIs to obscure input.                                   | `p@ssw0rd`            |
+
+Tools are not required to implement validation or generation based on these formats and will often use only the most common formats. It is best not to rely on the validation of formats based on generated code, as these values are often used for documentation rather than validation.
+
 ### Composition and Inheritance
 
 OpenAPI allows us to combine object schemas using the keywords `allOf`, `anyOf`, and `oneOf`.
@@ -2435,8 +2306,7 @@ components:
       oneOf:
         - $ref: "#/components/schemas/Vodka"
         - $ref: "#/components/schemas/Gin"
-      allOf:
-        - $ref: "#/components/schemas/Vermouth"
+      - $ref: "#/components/schemas/Vermouth"
     Punch:
       description: A Punch cocktail. Contains any combination of alcohol.
       anyOf:
@@ -2447,7 +2317,7 @@ components:
         - $ref: "#/components/schemas/Gin"
 ```
 
-### Discriminator Object
+#### Discriminator Object
 
 When using `oneOf` to indicate that a request body or response contains exactly one of multiple [Schema Objects](#schema-object), a discriminator object can help the client or server figure out which schema is included in the request or response.
 
@@ -2651,6 +2521,45 @@ components:
             - value: https://example.com/sugarsyrup.jpg
 ```
 
+## Webhooks
+
+**(Available in OpenAPI 3.1.x ONLY)** 
+
+Webhooks represent a possible list of incoming requests that form part of the documented API that a consumer can subscribe to.
+
+Webhooks are represented by a map of [Path Item Objects](#path-item-object) or [OpenAPI Reference Objects](#openapi-reference-object) that are keyed by the unique name of the webhook.
+
+For example:
+
+```yaml
+webhooks:
+  stockUpdate:
+    post:
+      summary: Receive stock updates.
+      description: Receive stock updates from the bar, this will be called whenever the stock levels of a drink or ingredient change.
+      tags:
+        - drinks
+        - ingredients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                drink:
+                  $ref: "#/components/schemas/Drink"
+                ingredient:
+                  $ref: "#/components/schemas/Ingredient"
+      responses:
+        "200":
+          description: The stock update was received successfully.
+        "5XX":
+          $ref: "#/components/responses/APIError"
+        default:
+          $ref: "#/components/responses/UnknownError"
+```
+
 ## Extensions
 
 Extensions allow us to add extra keywords not included in the OpenAPI Specification. This enables tooling such as SDK generators to access vendor-specific functionality directly in an OpenAPI document.
@@ -2810,35 +2719,3 @@ paths:
         parameters: 
           orderId: $request.path.orderId  # Pass orderId from the parent operation
 ```
-
-## Data Type Formats
-
-Data type formats in OpenAPI 3.1 provide a standardized way to define the types and formats of data in an API. Below is a list of the standard formats available in OpenAPI:
-
-| Type      | Format            | Description                                                                                   | Example                                  |
-|-----------|-------------------|-----------------------------------------------------------------------------------------------|------------------------------------------|
-| String  | `date-time`       | Date and time together, adhering to RFC 3339.                                                | `2023-02-24T18:25:43.511Z`               |
-| String  | `date`            | A calendar date (full-date) as per RFC 3339.                                                 | `2023-02-24`                             |
-| String  | `time`            | A time of day, with or without time zone information, as per RFC 3339.                       | `18:25:43.511Z`                          |
-| String  | `duration`        | A duration as per ISO 8601.                                                                   | `P3Y6M4DT12H30M5S`                       |
-| String  | `email`           | An email address, conforming to the syntax defined in RFC 5322.                              | `contact@speakeasy.bar`                  |
-| String  | `idn-email`       | An internationalized email address.                                                          | `联络@speakeasy.bar`                     |
-| String  | `hostname`        | A hostname, following the requirements of RFC 1034 and RFC 1123.                             | `speakeasy.bar`                          |
-| String  | `idn-hostname`    | An internationalized hostname.                                                               | `国際化.speakeasy.bar`                   |
-| String  | `ipv4`            | An IPv4 address, adhering to the dot-decimal notation as defined in RFC 2673.                | `192.0.2.1`                              |
-| String  | `ipv6`            | An IPv6 address, as defined in RFC 4291.                                                     | `2001:0db8:85a3:0000:0000:8a2e:0370:7334`|
-| String  | `uri`             | A Uniform Resource Identifier (URI) as per RFC 3986.                                         | `https://speakeasy.bar/menu`            |
-| String  | `uri-reference`   | A URI Reference, which can be a relative or absolute URI, as per RFC 3986.                   | `/menu/drinks`                           |
-| String  | `iri`             | An Internationalized Resource Identifier (IRI) as per RFC 3987.                              | `https://speakeasy.bar/メニュー`         |
-| String  | `iri-reference`   | An IRI Reference, which can be a relative or absolute IRI, as per RFC 3987.                  | `/メニュー/ドリンク`                     |
-| String  | `uri-template`    | A URI Template as per RFC 6570.                                                              | `https://speakeasy.bar/orders/{order}`  |
-| String  | `json-pointer`    | A JSON Pointer as per RFC 6901.                                                              | `/drinks/4`                              |
-| String  | `relative-json-pointer` | A relative JSON Pointer.                                                        | `1/drinks/7`                             |
-| String  | `regex`           | A regular expression, which should be valid according to the ECMA 262 regular expression dialect. | `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$` |
-| Integer | `int32`           | signed 32 bits                         | `2147483647`          |
-| Integer | `int64`           | signed 64 bits (long)            | `9223372036854775807` |
-| Number  | `float`           | A single-precision 32-bit IEEE 754 floating point.                 | `3.4028235E38`        |
-| Number  | `double`          | A double-precision 64-bit IEEE 754 floating point.                 | `1.7976931348623157E308` |
-| String  | `password`        | A hint to UIs to obscure input.                                   | `p@ssw0rd`            |
-
-Tools are not required to implement validation or generation based on these formats and will often use only the most common formats. It is best not to rely on the validation of formats based on generated code, as these values are often used for documentation rather than validation.
