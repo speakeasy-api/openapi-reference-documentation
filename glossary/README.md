@@ -1,6 +1,6 @@
 # OpenAPI Glossary
 
-TODO: Write short definitions for OpenAPI terms, link to our reference docs. Examples:
+TODO: Write short definitions for OpenAPI terms, link to the reference docs. Examples:
 
 ## OpenAPI specification
 

@@ -14,7 +14,6 @@ Some examples:
 - How to add a list as a path parameter in OpenAPI.
 - Add SDK generation to your CI/CD workflows.
 - Lint and edit documentation strings in your OpenAPI documents.
-- How to generate API documentation using Redoc.
-- How to add Redoc-generated OpenAPI documentation to Docusaurus.
+- How to generate API documentation from OpenAPI.
 - How to validate your OpenAPI document as part of CI/CD.
 - etc.
