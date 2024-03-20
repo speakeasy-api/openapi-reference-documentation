@@ -20,7 +20,7 @@ A valid OpenAPI document serves as the instruction set for the tooling that gene
 
 Here's how these concepts fit together:
 
-![A diagram illustrating how the different parts of an OpenAPI workflow fit together](./images/openapi-diagram.png)
+![A diagram illustrating how the different parts of an OpenAPI workflow fit together](/media/openapi-diagram.png)
 
 ### How does this documentation differ from the official OpenAPI documentation?
 
