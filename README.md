@@ -32,7 +32,7 @@ An example-rich, easy to understand reference for OpenAPI.
 <p align="center">
     <a href="https://github.com/speakeasy-api/openapi-reference-documentation/issues/new?assignees=&labels=bug&projects=&template=bug_report.md">Report Issue</a>
     ·
-    <a href="https://github.com/speakeasy-api/openapi-reference-documentation/issues">Request Feature</a>
+    <a href="https://github.com/speakeasy-api/openapi-reference-documentation/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md">Request Feature</a>
     ·
   <a href="https://join.slack.com/t/speakeasy-dev/shared_invite/zt-1cwb3flxz-lS5SyZxAsF_3NOq5xc8Cjw">Join Our Slack</a>
   
