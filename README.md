@@ -2719,3 +2719,260 @@ paths:
         parameters: 
           orderId: $request.path.orderId  # Pass orderId from the parent operation
 ```
+
+## Overlays
+
+Overlays allow us to modify an existing OpenAPI document without directly editing the original document. An overlay is a separate document that contains instructions for updating the original OpenAPI document.
+
+The [OpenAPI Overlays Specification](https://github.com/OAI/Overlay-Specification) is still under active development, but is already supported by Speakeasy and many other tools.
+
+Overlays are useful for:
+
+- Separating concerns between the original API definition and modifications required by different consumers or use cases.
+- Avoiding direct modification of the original OpenAPI document, which may be managed by a separate team or process.
+- Applying a set of common modifications to multiple OpenAPI documents.
+
+### Overlay Document Structure
+
+An Overlay document is a separate document from the OpenAPI document it modifies. It contains an ordered list of [Action Objects](#action-object) that describe the modifications to be made to the original OpenAPI document.
+
+| Field Name | Type                                | Required           | Description                                                                                                                                                                                      |
+|------------|-------------------------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `overlay`  | String                              | :heavy_check_mark: | The version of the Overlay Specification that the document uses. The value must be a supported [version number](#overlay-specification-versions).                                                |
+| `info`     | [Info Object](#overlay-info-object) | :heavy_check_mark: | Provides metadata about the Overlay document.                                                                                                                                                    |
+| `extends`  | String                              | :heavy_minus_sign: | A URL to the original OpenAPI document this overlay applies to.                                                                                                                                  |
+| `actions`  | [[Action Object](#action-object)]   | :heavy_check_mark: | An ordered list of [Action Objects](#action-object) to be applied to the original OpenAPI document. The list must contain at least one [Action Object](#action-object).                          |
+| `x-*`      | [Extensions](#extensions)           | :heavy_minus_sign: | Any number of extension fields can be added to the Overlay document that can be used by tooling and vendors. When provided at this level, the extensions generally apply to the entire document. |
+
+The `extends` field is optional. If not provided, it is the responsibility of tooling to determine which OpenAPI documents the overlay should be applied to.
+
+#### Overlay Specification Versions
+
+The `overlay` field contains the version number of the Overlay Specification that the document conforms to. Tooling should use this value to interpret the document correctly.
+
+The current version of the Overlay Specification is `1.0.0`, but keep in mind that the specification is still under development.
+
+#### Overlay Info Object
+
+Provides metadata about the Overlay document.
+
+| Field Name | Type   | Required           | Description                                                                          |
+|------------|--------|--------------------|--------------------------------------------------------------------------------------|
+| `title`    | String | :heavy_check_mark: | A human-readable title describing the purpose of the Overlay document.               |
+| `version`  | String | :heavy_check_mark: | A version identifier indicating the version of the Overlay document.                 |
+| `x-*`      | Any    | :heavy_minus_sign: | Any number of extension fields can be added that can be used by tooling and vendors. |
+
+### Action Object
+
+Each Action Object represents at least one change to be made to the original OpenAPI document at the location specified by the `target` field.
+
+| Field Name    | Type    | Required           | Description                                                                                                                                                                                                       |
+|---------------|---------|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `target`      | String  | :heavy_check_mark: | A [JSONPath](https://datatracker.ietf.org/wg/jsonpath/documents/) expression that specifies the location in the original OpenAPI document where the change should be made. See [Action Targets](#action-targets). |
+| `description` | String  | :heavy_minus_sign: | A description of the action. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                    |
+| `update`      | Any     | :heavy_minus_sign: | An object containing the properties and values to be merged with the objects referenced by the `target`. This field has no effect if the `remove` field is `true`.                                                |
+| `remove`      | Boolean | :heavy_minus_sign: | If `true`, the objects referenced by the `target` are removed from the original document. If `false` or not provided, the objects are not removed. This field takes precedence over the `update` field.           |
+| `x-*`         | Any     | :heavy_minus_sign: | Any number of extension fields can be added to the Action Object that can be used by tooling and vendors.                                                                                                         |
+
+#### Action Targets
+
+The `target` field of an [Action Object](#action-object) is a [JSONPath](https://goessner.net/articles/JsonPath/) expression that specifies the locations in the original OpenAPI document where the change should be made.
+
+JSONPath expressions allow you to select and manipulate specific parts of a JSON or YAML document using an intuitive syntax. The expressions are similar to XPath for XML, allowing you to traverse the document tree and select elements based on various criteria.
+
+Here are some examples of JSONPath expressions relevant to OpenAPI documents:
+
+| JSONPath Expression                           | Description                                                            |
+|-----------------------------------------------|------------------------------------------------------------------------|
+| `$.info.title`                                | Selects the `title` field of the `info` object.                        |
+| `$.servers[0].url`                            | Selects the `url` field of the first server in the `servers` array.    |
+| `$.paths['/drinks'].get.parameters`           | Selects the `parameters` of the `get` operation on the `/drinks` path. |
+| `$.paths..parameters[?(@.in=='query')]`       | Selects all query parameters across all paths.                         |
+| `$.paths[?(@..parameters[?(@.in=='query')])]` | Selects all paths that have one or more query parameters.              |
+| `$.components.schemas.Drink`                  | Selects the `Drink` schema from the `components.schemas` object.       |
+
+When selecting the object to target for different types of updates, consider the following:
+
+| Type of Update                                       | Target Object          |
+|------------------------------------------------------|------------------------|
+| Updating a primitive value (string, number, boolean) | The containing object. |
+| Updating an object                                   | The object itself.     |
+| Updating an array                                    | The array itself.      |
+| Adding a new property to an object                   | The object itself.     |
+| Adding a new item to an array                        | The array itself.      |
+| Removing a property from an object                   | The object itself.     |
+| Removing an item from an array                       | The array itself.      |
+
+For example, to update the `description` field of the `info` object, you would target the `info` object itself:
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Update Speakeasy API description
+  version: 1.0.0
+actions:
+  - target: $.info
+    update:
+      description: The Speakeasy Bar API is a secret underground bar that serves drinks to those in the know.
+```
+
+To remove a specific path, such as `/oldDrinks`, from the `paths` object, you would target that path directly:
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Remove deprecated drinks path
+  version: 1.0.0
+actions:
+  - target: $.paths['/oldDrinks']
+    remove: true
+```
+
+### Applying an Overlay
+
+When an overlay is applied, the `update` object is merged with the targeted objects. Any properties present in both the `update` object and the targeted objects will be replaced with the values from the `update` object. New properties from the `update` object will be added to the targeted objects.
+
+The Overlay document is processed in the following order:
+
+1. Tooling locates the original OpenAPI document to modify. This is based on the `extends` field if provided, otherwise determined by the tooling.
+
+2. Each [Action Object](#action-object) is applied to the OpenAPI documents in the order they appear in the `actions` array.
+
+   For each action:
+
+   1. The `target` JSONPath expression is evaluated against the OpenAPI document to locate the objects to modify.
+
+   2. If the `remove` field is `true`, the targeted objects are removed from the OpenAPI document.
+
+   3. If the `remove` field is `false` or not provided, and an `update` object is specified, the `update` object is merged with each of the targeted objects.
+
+### Overlay Examples
+
+Here are some examples of overlays that could be applied to the Speakeasy Bar OpenAPI document:
+
+#### Updating Info and Servers
+
+This example demonstrates updating the `info` and `servers` objects in the original OpenAPI document.
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Update Speakeasy Bar Info and Servers 
+  version: 1.0.0
+actions:
+  - target: $.info
+    update:
+      description: The Speakeasy Bar API is a secret underground bar that serves drinks to those in the know.
+      contact:
+        name: Speakeasy Bar Support
+        email: support@speakeasy.bar
+  - target: $.servers
+    update:  
+      - url: https://staging.speakeasy.bar/v1
+        description: Staging server
+      - url: https://api.speakeasy.bar/v1  
+        description: Production server
+```
+
+#### Adding Tags and Updating Drink Responses
+
+This example demonstrates adding tags to the OpenAPI document and updating response objects for operations related to drinks.
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Add Tags and Update Drink Responses
+  version: 1.0.0
+actions:
+  - target: $.tags
+    update:
+      - name: Drinks
+        description: Operations related to managing drinks
+      - name: Orders  
+        description: Operations related to order processing
+  - target: $.paths['/drinks'].get.responses[200].content['application/json'].schema
+    update:
+      $ref: "#/components/schemas/DrinkList"
+  - target: $.paths['/drinks/{drinkId}'].get.responses[200].content['application/json'].schema 
+    update:
+      $ref: "#/components/schemas/Drink"
+```
+
+#### Adding Query Parameter Tags
+
+This example demonstrates adding a tag to all operations that have query parameters.
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Add Query Parameter Tags
+  version: 1.0.0
+actions:
+  - target: $.paths[?(@..parameters[?(@.in=='query')])].get.tags
+    update:
+      - hasQueryParameters
+  - target: $.paths[?(@..parameters[?(@.in=='query')])].post.tags
+    update:
+      - hasQueryParameters
+  - target: $.paths[?(@..parameters[?(@.in=='query')])].put.tags
+    update:
+      - hasQueryParameters 
+  - target: $.paths[?(@..parameters[?(@.in=='query')])].patch.tags
+    update:
+      - hasQueryParameters
+  - target: $.paths[?(@..parameters[?(@.in=='query')])].delete.tags 
+    update:
+      - hasQueryParameters
+```
+
+#### Removing Deprecated Drink Operations
+
+This example demonstrates removing operations related to drinks that have been marked as deprecated.
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Remove Deprecated Drink Operations
+  version: 1.0.0
+actions:  
+  - target: $.paths['/drinks'].*.deprecated
+    remove: true
+  - target: $.paths['/drinks/{drinkId}'].*.deprecated  
+    remove: true
+```
+
+### Overlays in Generated SDKs
+
+The Speakeasy CLI provides a powerful set of commands for creating, validating, and applying overlays while generating SDKs.
+
+These commands can be combined with the SDK generation commands to customize the input OpenAPI document before generating an SDK.
+
+#### Applying an overlay while generating an SDK
+
+For example, to apply an overlay to the Speakeasy Bar OpenAPI document and then generate a Go SDK:
+
+```bash
+speakeasy overlay apply -o speakeasy-overlay.yaml -s speakeasy-openapi.yaml | speakeasy generate go -o speakeasy-go-sdk
+```
+
+This applies the `speakeasy-overlay.yaml` overlay to `speakeasy-openapi.yaml`, pipes the modified OpenAPI document to the `speakeasy generate` command, and generates a Go SDK in the `speakeasy-go-sdk` directory.
+
+#### Creating a code samples overlay
+
+Speakeasy can generate an overlay that adds code samples to all operations in an existing OpenAPI document, under the well-known `x-codeSamples` extension.
+
+For example, to add TypeScript and Python code samples to the Speakeasy Bar OpenAPI document `speakeasy.yaml`:
+
+```bash
+speakeasy generate codeSamples -s speakeasy.yaml -l typescript,python --out speakeasy-codeSamples.yaml
+```
+
+This command generates an overlay named `speakeasy-codeSamples.yaml` that adds `x-codeSamples` to each operation for TypeScript and Python.
+
+This overlay can then be applied to the original OpenAPI document using `speakeasy overlay apply` to create a new OpenAPI document with code samples:
+
+```bash
+speakeasy overlay apply -o speakeasy-codeSamples.yaml -s speakeasy.yaml --out speakeasy-withSamples.yaml
+```
+
+The resulting `speakeasy-withSamples.yaml` will be the original Speakeasy Bar OpenAPI document with `x-codeSamples` added to each operation.
