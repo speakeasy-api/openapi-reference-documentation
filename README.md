@@ -2780,16 +2780,19 @@ The `target` field of an [Action Object](#action-object) is a [JSONPath](https:/
 
 JSONPath expressions allow you to select and manipulate specific parts of a JSON or YAML document using an intuitive syntax. The expressions are similar to XPath for XML, allowing you to traverse the document tree and select elements based on various criteria.
 
+JSONPath is [implemented differently](https://cburgmer.github.io/json-path-comparison/) across tooling languages and among individual tools. Speakeasy uses [vmware-labs/yaml-jsonpath](https://github.com/vmware-labs/yaml-jsonpath) to parse JSONPath.
+
 Here are some examples of JSONPath expressions relevant to OpenAPI documents:
 
-| JSONPath Expression                           | Description                                                            |
-|-----------------------------------------------|------------------------------------------------------------------------|
-| `$.info.title`                                | Selects the `title` field of the `info` object.                        |
-| `$.servers[0].url`                            | Selects the `url` field of the first server in the `servers` array.    |
-| `$.paths['/drinks'].get.parameters`           | Selects the `parameters` of the `get` operation on the `/drinks` path. |
-| `$.paths..parameters[?(@.in=='query')]`       | Selects all query parameters across all paths.                         |
-| `$.paths[?(@..parameters[?(@.in=='query')])]` | Selects all paths that have one or more query parameters.              |
-| `$.components.schemas.Drink`                  | Selects the `Drink` schema from the `components.schemas` object.       |
+| JSONPath Expression                                                                        | Description                                                                 |
+|--------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| `$.info.title`                                                                             | Selects the `title` field of the `info` object.                             |
+| `$.servers[0].url`                                                                         | Selects the `url` field of the first server in the `servers` array.         |
+| `$.paths['/drinks'].get.parameters`                                                        | Selects the `parameters` of the `get` operation on the `/drinks` path.      |
+| `$.paths..parameters[?(@.in=='query')]`                                                    | Selects all query parameters across all paths.                              |
+| `$.paths.*[?(@..parameters.*[?(@.in=='query')])]`                                          | Selects all operations that have one or more query parameters.              |
+| `$.paths.*[?(@..parameters.*[?(@.in=='query')])]['post','get','put','path','delete'].tags` | Selects tags of specific operations that have one or more query parameters. |
+| `$.components.schemas.Drink`                                                               | Selects the `Drink` schema from the `components.schemas` object.            |
 
 When selecting the object to target for different types of updates, consider the following:
 
@@ -2908,19 +2911,7 @@ info:
   title: Add Query Parameter Tags
   version: 1.0.0
 actions:
-  - target: $.paths[?(@..parameters[?(@.in=='query')])].get.tags
-    update:
-      - hasQueryParameters
-  - target: $.paths[?(@..parameters[?(@.in=='query')])].post.tags
-    update:
-      - hasQueryParameters
-  - target: $.paths[?(@..parameters[?(@.in=='query')])].put.tags
-    update:
-      - hasQueryParameters 
-  - target: $.paths[?(@..parameters[?(@.in=='query')])].patch.tags
-    update:
-      - hasQueryParameters
-  - target: $.paths[?(@..parameters[?(@.in=='query')])].delete.tags 
+  - target: $.paths.*[?(@..parameters.*[?(@.in=='query')])]['post','get','put','path','delete'].tags
     update:
       - hasQueryParameters
 ```
