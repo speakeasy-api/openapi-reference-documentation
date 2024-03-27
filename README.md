@@ -13,7 +13,7 @@
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" style="width: 100px; height: 28px;" /></a>
   <a href="https://github.com/speakeasy-api/openapi-reference-documentation/issues">
-    <img src="https://img.shields.io/github/issues/speakeasyapi/openapi-reference-documentation?style=for-the-badge" style="width: 100px; height: 28px;" /></a>
+    <img src="https://img.shields.io/github/issues/speakeasy-api/openapi-reference-documentation?style=for-the-badge" style="width: 100px; height: 28px;" /></a>
 </div>
 
 <br />
