@@ -1,0 +1,4 @@
+{
+  "polymorphism": "OneOf, AllOf, AnyOf",
+  "xml": "XML"
+}

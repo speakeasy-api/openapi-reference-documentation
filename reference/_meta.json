@@ -1,0 +1,17 @@
+{
+  "index": {
+    "title": "Intro to OpenAPI"
+  },
+  "info": "Info",
+  "servers": "Servers",
+  "security": "Security",
+  "tags": "Tags",
+  "paths": "Paths",
+  "webhooks": "Webhooks",
+  "schemas": "Schemas",
+  "components": "Components",
+  "examples": "Examples",
+  "references": "References $ref",
+  "extensions": "Extensions",
+  "external-documentation": "External Documentation"
+}

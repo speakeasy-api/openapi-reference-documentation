@@ -1,0 +1,153 @@
+---
+title: OpenAPI Reference
+description: Documentation of the OpenAPI Specification
+---
+# OpenAPI Reference
+import { Callout } from '~/components'
+
+<Callout title="Contribute!" variant="success">
+Hi! 👋 This documentation is Open source. If you have any feedback, suggestions, or want to contribute, check out our [GitHub repo](https://github.com/speakeasy-api/openapi-reference-documentation).
+</Callout>
+
+import { QuickLinks } from "~/features/openapi";
+
+<QuickLinks
+  aiSearchLabel="Ask AI"
+  quickLinks={[
+    {
+      href: "openapi/paths/operations/requests",
+      icon: {
+        alt: "Requests Icon",
+        src: "/media/openapi/requests-icon.png",
+      },
+      label: "Requests",
+    },
+    {
+      href: "openapi/paths/operations/responses",
+       icon: {
+        alt: "Responses Icon",
+        src: "/media/openapi/responses-icon.png",
+      },
+      label: "Responses",
+    },
+    {
+      href: "openapi/schemas",
+       icon: {
+        alt: "Schemas Icon",
+        src: "/media/openapi/schemas-icon.png",
+      },
+      label: "Schemas",
+    },
+  ]}
+  title="Quicklinks"
+/>
+
+## Introduction
+
+API design is important. An API that developers enjoy interacting with turns a SaaS business into a platform. However great design is only as useful if it's documented and consistently represented across every API surface area (docs, SDKs, etc.).
+
+Trying to manually create & maintain all your surfaces will inevitably lead to frustration and inconsistencies.
+
+That is where OpenAPI comes in. If you are building a RESTful API, OpenAPI will be (should be) the source of truth that undergirds all your public surfaces (docs, SDKs, etc.).
+
+This documentation will help you understand the OpenAPI Specification.
+
+### What is OpenAPI and why use it?
+
+When we refer to OpenAPI, we mean the **OpenAPI Specification** - a standardized document structure for describing HTTP APIs in a way that humans and computers can understand.
+
+OpenAPI files are written as JSON or YAML, describing your API using a standard vocabulary defined by the Specification - we'll call this JSON or YAML file an **OpenAPI document**.
+
+A valid OpenAPI document serves as the instruction set for the tooling that generates your documentation and SDKs. We will refer to an app or tool that reads an OpenAPI document to perform an action as an **OpenAPI tool**. Speakeasy is one such tool, a full list can be found [here](https://openapi.tools/).
+
+Here's how these concepts fit together:
+
+![A diagram illustrating how the different parts of an OpenAPI workflow fit together](/media/openapi-diagram.png)
+
+**How does this documentation differ from the official OpenAPI documentation?**
+
+Official documentation for the OpenAPI Specification, while thorough and complete, focuses on the academic definition before usability. The goal of this documentation is to provide a more practical guide to developers interested in understanding the impact of OpenAPI design on their downstream API surfaces.
+
+We've structured the documentation according to the needs of OpenAPI users of any skill level.
+
+**Which versions of the OpenAPI Specification does this documentation cover?**
+
+This documentation will cover versions `3.0.x` and `3.1.x` of the OpenAPI specification. Where there is an important difference between the two versions, we will call it out specifically, otherwise the documentation will apply to both versions.
+
+## OpenAPI Document Structure
+
+An OpenAPI document is made up of several different sections, each of which is described in detail below.
+
+Example:
+
+```yaml
+openapi: 3.1.0
+info:
+  title: The Speakeasy Bar
+  version: 1.0.0
+servers:
+  - url: https://speakeasy.bar
+    description: The production server
+security:
+  - apiKey: []
+paths:
+  /drinks:
+    get:
+      operationId: listDrinks
+      summary: Get a list of drinks
+      responses:
+        "200":
+          description: A list of drinks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Drink"
+components:
+  schemas:
+    Drink:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: Authorization
+      in: header
+```
+
+| Field               |                              Type                               | Required | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------- | :-------------------------------------------------------------: | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `openapi`           |                             String                              |    ✅    | The version of the OpenAPI Specification that the document conforms to, should be one of the [supported versions](https://github.com/OAI/OpenAPI-Specification/tree/main/versions).<br /><br />**Note:** Speakeasy tooling currently only supports versions `3.0.x` and `3.1.x` of the OpenAPI Specification.                                                                                                                                                                                                      |
+| `jsonSchemaDialect` |                             String                              |          | **(Available in OpenAPI 3.1.x ONLY)**<br />The version of the JSON Schema specification the document conforms to (if not provided by the `$schema` field in a [Schema Object](/openapi/schemas), in the form of a URI to one of the [supported versions](https://json-schema.org/specification-links.html#published-drafts).<br /><br /> **Note:** Currently **not** supported by Speakeasy tooling.                                                                                                                |
+| `info`              |                   [Info Object](/openapi/info)                   |    ✅    | Contains information about the document including fields like `title`, `version`, and `description` that help to identify the purpose and owner of the document.                                                                                                                                                                                                                                                                                                                                                   |
+| `externalDocs`      | [External Documentation Object](/openapi/external-documentation) |          | Optional documentation about the API available externally.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `x-*`               |                    [Extensions](/openapi/extensions)                    |          | Any number of extension fields can be added to the document (for example, [`x-speakeasy-name-overrides`](https://speakeasyapi.dev/docs/using-speakeasy/create-client-sdks/customize-sdks/methods/#change-method-names) that allows the default generated method names of operations to be overridden) that can be used by tooling and vendors to add additional metadata and functionality to the OpenAPI Specification. When provided at the global level, the extensions generally apply to the entire document. |
+| `servers`           |                       [Servers](/openapi/servers)                       |          | Contains an optional list of servers the API is available on. If not provided, the default URL is assumed to be `/`, a path relative to where the OpenAPI document is hosted.                                                                                                                                                                                                                                                                                                                                      |
+| `security`          |                      [Security](/openapi/security)                      |          | Contains an optional list of security requirements that apply to all operations in the API. If not provided, the default security requirements are assumed to be `[]`, an empty array.                                                                                                                                                                                                                                                                                                                             |
+| `tags`              |                          [Tags](/openapi/tags)                          |          | Contains an optional list of tags that are generally used to group or categorize a set of [Operations](/openapi/operation).                                                                                                                                                                                                                                                                                                                                                                                         |
+| `paths`             |                  [Paths Object](/openapi/paths)                  |          | Contains the paths and operations available within the API.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `webhooks`          |                      [Webhooks](/openapi/webhooks)                      |          | **(Available in OpenAPI 3.1.x ONLY)**<br />Contains an optional list of incoming webhooks that the API consumer can subscribe to.                                                                                                                                                                                                                                                                                                                                                                                  |
+| `components`        |             [Components Object](/openapi/components)             |          | Contains an optional list of reusable components that can be referenced from other parts of the document.                                                                                                                                                                                                                                                                                                                                                                                                          |
+
+The above order of fields is recommended (but is not required by the OpenAPI Specification) as it allows the stage to be set in terms of calling out key information like details about the API, where it is available, what security is required to access it, and then flows into defining the available endpoints before getting into the details of the components that make up the API.
+
+## Format and File Structure
+
+An OpenAPI document is a JSON or YAML file that contains either an entire API definition or a partial definition of an API and/or its components. All field names in the specification are case-sensitive unless otherwise specified.
+
+A document can be split into multiple files, and the files can be in different formats. For example, you can have a JSON file that contains the API definition and a YAML file that contains the components, or a collection of files that contain partial definitions of the API and its components.
+
+Generally, the main API definition file is called `openapi.json` or `openapi.yaml`, and the component files are called `components.json` or `components.yaml`, though this is not a requirement.
+
+Some common organizational patterns for OpenAPI documents are:
+
+- A single file that contains the entire API definition.
+- A main file that contains the API definition and a components file that contains the components.
+  - This is normally achieved by using the `$ref` keyword to reference the components file from the main file. [Click here for more information on references](/openapi/references).
+- A collection of files that contain partial definitions of the API and its components.
+  - Some tools support this pattern by allowing multiple files to be provided. Others, such as the Speakeasy Generator, require the individual files to be merged into a single file before being passed to the tool, which can be achieved using the Speakeasy CLI tool. [Click here for more information on the Speakeasy CLI merge tool](https://speakeasyapi.dev/docs/speakeasy-cli/merge/).
