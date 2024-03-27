@@ -2724,7 +2724,7 @@ paths:
 
 Overlays allow us to modify an existing OpenAPI document without directly editing the original document. An overlay is a separate document that contains instructions for updating the original OpenAPI document.
 
-The [OpenAPI Overlays Specification](https://github.com/OAI/Overlay-Specification) is still under active development, but is already supported by Speakeasy and many other tools.
+The [OpenAPI Overlay Specification](https://github.com/OAI/Overlay-Specification) is still under active development, but is already supported by Speakeasy and many other tools.
 
 Overlays are useful for:
 
@@ -2768,7 +2768,7 @@ Each Action Object represents at least one change to be made to the original Ope
 
 | Field Name    | Type    | Required           | Description                                                                                                                                                                                                       |
 |---------------|---------|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `target`      | String  | :heavy_check_mark: | A [JSONPath](https://datatracker.ietf.org/wg/jsonpath/documents/) expression that specifies the location in the original OpenAPI document where the change should be made. See [Action Targets](#action-targets). |
+| `target`      | String  | :heavy_check_mark: | A [JSON Path](https://datatracker.ietf.org/wg/jsonpath/documents/) expression that specifies the location in the original OpenAPI document where the change should be made. See [Action Targets](#action-targets). |
 | `description` | String  | :heavy_minus_sign: | A description of the action. This may contain [CommonMark syntax](https://spec.commonmark.org/) to provide a rich description.                                                                                    |
 | `update`      | Any     | :heavy_minus_sign: | An object containing the properties and values to be merged with the objects referenced by the `target`. This field has no effect if the `remove` field is `true`.                                                |
 | `remove`      | Boolean | :heavy_minus_sign: | If `true`, the objects referenced by the `target` are removed from the original document. If `false` or not provided, the objects are not removed. This field takes precedence over the `update` field.           |
@@ -2776,15 +2776,15 @@ Each Action Object represents at least one change to be made to the original Ope
 
 #### Action Targets
 
-The `target` field of an [Action Object](#action-object) is a [JSONPath](https://goessner.net/articles/JsonPath/) expression that specifies the locations in the original OpenAPI document where the change should be made.
+The `target` field of an [Action Object](#action-object) is a [JSON Path](https://goessner.net/articles/JsonPath/) expression that specifies the locations in the original OpenAPI document where the change should be made.
 
-JSONPath expressions allow you to select and manipulate specific parts of a JSON or YAML document using an intuitive syntax. The expressions are similar to XPath for XML, allowing you to traverse the document tree and select elements based on various criteria.
+JSON Path expressions allow you to select and manipulate specific parts of a JSON or YAML document using an intuitive syntax. The expressions are similar to XPath for XML, allowing you to traverse the document tree and select elements based on various criteria.
 
-JSONPath is [implemented differently](https://cburgmer.github.io/json-path-comparison/) across tooling languages and among individual tools. Speakeasy uses [vmware-labs/yaml-jsonpath](https://github.com/vmware-labs/yaml-jsonpath) to parse JSONPath.
+JSON Path is [implemented differently](https://cburgmer.github.io/json-path-comparison/) across tooling languages and among individual tools. Speakeasy uses [VMware Labs YAML JSONPath](https://github.com/vmware-labs/yaml-jsonpath) to parse JSON Path.
 
-Here are some examples of JSONPath expressions relevant to OpenAPI documents:
+Here are some examples of JSON Path expressions relevant to OpenAPI documents:
 
-| JSONPath Expression                                                                        | Description                                                                 |
+| JSON Path Expression                                                                        | Description                                                                 |
 |--------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
 | `$.info.title`                                                                             | Selects the `title` field of the `info` object.                             |
 | `$.servers[0].url`                                                                         | Selects the `url` field of the first server in the `servers` array.         |
@@ -2798,13 +2798,13 @@ When selecting the object to target for different types of updates, consider the
 
 | Type of Update                                       | Target Object          |
 |------------------------------------------------------|------------------------|
-| Updating a primitive value (string, number, boolean) | The containing object. |
-| Updating an object                                   | The object itself.     |
-| Updating an array                                    | The array itself.      |
-| Adding a new property to an object                   | The object itself.     |
-| Adding a new item to an array                        | The array itself.      |
-| Removing a property from an object                   | The object itself.     |
-| Removing an item from an array                       | The array itself.      |
+| Updating a primitive value (string, number, boolean) | The containing object |
+| Updating an object                                   | The object itself    |
+| Updating an array                                    | The array itself      |
+| Adding a new property to an object                   | The object itself     |
+| Adding a new item to an array                        | The array itself      |
+| Removing a property from an object                   | The object itself     |
+| Removing an item from an array                       | The array itself      |
 
 For example, to update the `description` field of the `info` object, you would target the `info` object itself:
 
@@ -2847,7 +2847,7 @@ The Overlay document is processed in the following order:
 
    2. If the `remove` field is `true`, the targeted objects are removed from the OpenAPI document.
 
-   3. If the `remove` field is `false` or not provided, and an `update` object is specified, the `update` object is merged with each of the targeted objects.
+   3. If the `remove` field is `false` or not provided and an `update` object is specified, the `update` object is merged with each of the targeted objects.
 
 ### Overlay Examples
 
@@ -2938,7 +2938,7 @@ The Speakeasy CLI provides a powerful set of commands for creating, validating, 
 
 These commands can be combined with the SDK generation commands to customize the input OpenAPI document before generating an SDK.
 
-#### Applying an overlay while generating an SDK
+#### Applying an Overlay While Generating an SDK
 
 For example, to apply an overlay to the Speakeasy Bar OpenAPI document and then generate a Go SDK:
 
@@ -2948,7 +2948,7 @@ speakeasy overlay apply -o speakeasy-overlay.yaml -s speakeasy-openapi.yaml | sp
 
 This applies the `speakeasy-overlay.yaml` overlay to `speakeasy-openapi.yaml`, pipes the modified OpenAPI document to the `speakeasy generate` command, and generates a Go SDK in the `speakeasy-go-sdk` directory.
 
-#### Creating a code samples overlay
+#### Creating a Code Samples Overlay
 
 Speakeasy can generate an overlay that adds code samples to all operations in an existing OpenAPI document, under the well-known `x-codeSamples` extension.
 
