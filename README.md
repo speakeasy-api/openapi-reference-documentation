@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./images/logos/openapi-dark.svg">
-    <img alt="Daytona logo" src="./images/logos/openapi-light.svg" width="90%">
+    <img alt="OpenAPI logo" src="./images/logos/openapi-light.svg" width="90%">
   </picture>
 </div>
 
