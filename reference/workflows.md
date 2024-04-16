@@ -4,7 +4,7 @@ The OpenAPI Workflows Specification is a proposed addition to the OpenAPI Specif
 
 A workflows description is a separate document that references your OpenAPI document and describes how to combine operations from your OpenAPI document into step-by-step sequences.
 
-The [OpenAPI Workflows Specification](https://github.com/OAI/sig-workflows/blob/main/versions/1.0.0.md) is still under active development, and is therefore not considered stable. The information on this page is subject to change.
+The [OpenAPI Workflows Specification](https://github.com/OAI/sig-workflows/blob/main/versions/1.0.0.md) is still under active development and is therefore not considered stable. The information on this page is subject to change.
 
 Workflows are useful for:
 
@@ -16,7 +16,7 @@ Workflows are useful for:
 
 ## Workflows Description Structure
 
-A Workflows Description is a JSON or YAML document that follows the structure defined by the Workflows Specification.
+A workflows description is a JSON or YAML document that follows the structure defined by the Workflows Specification.
 
 `workflowsSpec`
 
@@ -215,7 +215,7 @@ components:
 |------------|----------------------------| ----------|
 | `info`     | [Info Object](#info-object) | ✅         |
 
-Provides metadata about the Workflows description.
+Provides metadata about the workflows description.
 
 ```yaml workflows.yaml
 info:
@@ -235,7 +235,7 @@ info:
 |---------------------|--------------------------------------------------|----------|
 | `sourceDescriptions` | [[Source Description Object](#source-description-object)] | ✅        |
 
-An array of [Source Description Objects](#source-description-object) defining the OpenAPI or other documents containing the operations referenced by the workflows. The array must contain at least one source.
+An array of [source description objects](#source-description-object) defining the OpenAPI or other documents containing the operations referenced by the workflows. The array must contain at least one source.
 
 ```yaml workflows.yaml
 sourceDescriptions:
@@ -255,7 +255,7 @@ sourceDescriptions:
 |------------|-------------------------------|----------|
 | `workflows` | [[Workflow Object](#workflow-object)] | ✅        |
 
-An array of [Workflow Objects](#workflow-object) defining the workflows. The array must contain at least one workflow.
+An array of [workflow objects](#workflow-object) defining the workflows. The array must contain at least one workflow.
 
 ```yaml workflows.yaml
 workflows:
@@ -406,21 +406,21 @@ This table shows all fields at the root of the OpenAPI Workflows Specification:
 | Field Name          | Type                                                       | Required | Description                                                                                                                                                                      |
 |---------------------|------------------------------------------------------------| ----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `workflowsSpec`     | String                                                     | ✅         | The version of the Workflows Specification that the document uses. The value must be a supported [version number](#workflows-specification-versions).                            |
-| `info`              | [Info Object](#info-object)                                | ✅         | Provides metadata about the Workflows description.                                                                                                                               |
-| `sourceDescriptions` | [[Source Description Object](#source-description-object)] | ✅         | An array of [Source Description Objects](#source-description-object) defining the OpenAPI or other documents containing the operations referenced by the workflows. The array must contain at least one source. |
-| `workflows`         | [[Workflow Object](#workflow-object)]                      | ✅         | An array of [Workflow Objects](#workflow-object) defining the workflows. The array must contain at least one workflow.                                                                                        |
-| `components`        | [Components Object](#components-object)                    |  | An element to hold reusable schemas for the Workflow, for example, inputs and parameters.                                                                                                                            |
-| `x-*`               | [Extensions](#specification-extensions)                                  |  | Any number of extension fields can be added to the Workflows document that can be used by tooling and vendors. When provided at this level, the extensions generally apply to the entire document.                                                                                                                                                          |
+| `info`              | [Info Object](#info-object)                                | ✅         | Provides metadata about the workflows description.                                                                                                                               |
+| `sourceDescriptions` | [[Source Description Object](#source-description-object)] | ✅         | An array of [source description objects](#source-description-object) defining the OpenAPI or other documents containing the operations referenced by the workflows. The array must contain at least one source. |
+| `workflows`         | [[Workflow Object](#workflow-object)]                      | ✅         | An array of [workflow objects](#workflow-object) defining the workflows. The array must contain at least one workflow.                                                                                        |
+| `components`        | [Components Object](#components-object)                    |  | An element to hold reusable schemas for the workflow, for example, inputs and parameters.                                                                                                                            |
+| `x-*`               | [Extensions](#specification-extensions)                                  |  | Any number of extension fields can be added to the workflows document that can be used by tooling and vendors. When provided at this level, the extensions generally apply to the entire document.                                                                                                                                                          |
 
 ## Workflows Specification Versions
 
 The `workflowsSpec` field contains the version number of the Workflows Specification that the document conforms to. Tooling should use this value to interpret the document correctly.
 
-The current version of the Workflows Specification is `1.0.0-prerelease`, but keep in mind that the specification is still under development.
+The current version of the Workflows Specification is 1.0.0-prerelease, but keep in mind that the specification is still under development.
 
 ## Info Object
 
-Provides metadata about the Workflows description.
+Provides metadata about the workflows description.
 
 | Field Name | Type   | Required | Description                                                                          |
 |------------|--------|----------|--------------------------------------------------------------------------------------|
@@ -449,9 +449,9 @@ A source description points to an OpenAPI document containing the operations ref
 | Field Name | Type   | Required | Description                                                                                                                                                                                                                                                                  |
 |------------|--------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `name`     | String | ✅        | A name for the source document, used to reference it from other parts of the workflows description. The name must be unique within the `sourceDescriptions` array and may only contain alphanumeric characters, underscores, and dashes.                                                                                                            |
-| `url`      | String | ✅        | The URL of the source document. This identifier must conform to [RFC3986 section 4.1](https://datatracker.ietf.org/doc/html/rfc3986#section-4.1) for absolute URLs, or [section 4.2](https://datatracker.ietf.org/doc/html/rfc3986#section-4.2) for relative URIs.                                                                                                                                                                                 |
+| `url`      | String | ✅        | The URL of the source document. This identifier must conform to [RFC 3986 section 4.1](https://datatracker.ietf.org/doc/html/rfc3986#section-4.1) for absolute URLs or [section 4.2](https://datatracker.ietf.org/doc/html/rfc3986#section-4.2) for relative URIs.                                                                                                                                                                                 |
 | `type`     | String |          | The type of the source document. Supported values are `openapi`, indicating an OpenAPI document, or `workflowsSpec` indicating another workflows description. Additional values may be supported in future versions of the specification.                                       |
-| `x-*`      | [Extensions](#specification-extensions)    |          | Any number of extension fields can be added to the Source Description Object that can be used by tooling and vendors.                                                                                                                                                       |
+| `x-*`      | [Extensions](#specification-extensions)    |          | Any number of extension fields can be added to the source description object that can be used by tooling and vendors.                                                                                                                                                       |
 
 Below is an example of two source description objects in a workflows description document:
 
@@ -476,12 +476,12 @@ A workflow object defines a sequence of operations.
 | `description` | String |  | A longer description of the workflow. [CommonMark syntax](https://spec.commonmark.org/) may be used for rich text representation.                                                                                       |
 | `inputs`      | [JSON Schema](https://json-schema.org/) |  | A schema defining the input parameters for the workflow.                                                                                                                                                                |
 | `dependsOn` | [String] |  | An array of workflow IDs that this workflow depends on. The workflows in the array must be executed before this workflow.                                                                                               |
-| `steps`       | [[Step Object](#step-object)] | ✅        | An ordered array of [Step Objects](#step-object) defining the steps of the workflow. The array must contain at least one step.                                                                                                   |
-| `successActions` | [[Success Action Object](#success-action-object)] |  | An array of [Success Action Objects](#success-action-object) specifying actions to take for each step of this workflow that completes successfully. Individual steps may override the workflow object's success actions.                                                                                                                        |
-| `failureActions` | [[Failure Action Object](#failure-action-object)] |  | An array of [Failure Action Objects](#failure-action-object) specifying actions to take for each step of this workflow that fails. Individual steps may override the workflow object's failure actions.                                                                                                                        |
+| `steps`       | [[Step Object](#step-object)] | ✅        | An ordered array of [step objects](#step-object) defining the steps of the workflow. The array must contain at least one step.                                                                                                   |
+| `successActions` | [[Success Action Object](#success-action-object)] |  | An array of [success action objects](#success-action-object) specifying actions to take for each step of this workflow that completes successfully. Individual steps may override the workflow object's success actions.                                                                                                                        |
+| `failureActions` | [[Failure Action Object](#failure-action-object)] |  | An array of [failure action objects](#failure-action-object) specifying actions to take for each step of this workflow that fails. Individual steps may override the workflow object's failure actions.                                                                                                                        |
 | `outputs`     | Map[`string`, \{[Runtime Expression](#runtime-expressions)}] |  | A map of output values produced by the workflow. The keys are the names of the outputs, and the values are [runtime expressions](#runtime-expressions) that extract the output values from the results of the workflow steps. |
 | `parameters` | [[Parameter Object](#parameter-object)\|[Reusable Parameter Object](#reusable-parameter-object)] |  | An array of parameters applicable to all steps in this workflow. Individual steps may override the workflow object's parameters.                                                                                         |
-| `x-*`         | [Extensions](#specification-extensions)    |  | Any number of extension fields can be added to the Workflow Object that can be used by tooling and vendors.                                                                                                             |
+| `x-*`         | [Extensions](#specification-extensions)    |  | Any number of extension fields can be added to the workflow object that can be used by tooling and vendors.                                                                                                             |
 
 Below is an example of a workflow object:
 
@@ -540,11 +540,11 @@ A step object defines a single operation to perform as part of a workflow.
 | `workflowId` | String |          | The ID of a workflow in this document to execute as a sub-workflow. This field is mutually exclusive with `operationId` and `operationPath`.                                                                            |
 | `parameters` | [[Parameter Object](#parameter-object)\|[Reusable Parameter Object](#reusable-parameter-object)] |  | An array of parameters to pass to the operation for this step. Overrides any parameters defined at the workflow level.                 |
 | `requestBody` | [Request Body Object](#request-body-object) |  | The request body to send for the operation.                                                                                                                                                                             |
-| `successCriteria` | [[Criterion Object](#criterion-object)] |  | An array of criteria for determining if the step succeeded. All criteria must be met for the step to be considered successful. Individual criteria are defined using [Criterion Objects](#criterion-object).             |
-| `onSuccess` | [[Success Action Object](#success-action-object)\|[Reusable Object](#reusable-object)] |  | An array of actions to take if the step succeeds. Overrides any success actions defined at the workflow level. Individual actions are defined using [Success Action Objects](#success-action-object).                   |
-| `onFailure` | [[Failure Action Object](#failure-action-object)\|[Reusable Object](#reusable-object)] |  | An array of actions to take if the step fails. Overrides any failure actions defined at the workflow level. Individual actions are defined using [Failure Action Objects](#failure-action-object).                       |
+| `successCriteria` | [[Criterion Object](#criterion-object)] |  | An array of criteria for determining if the step succeeded. All criteria must be met for the step to be considered successful. Individual criteria are defined using [criterion objects](#criterion-object).             |
+| `onSuccess` | [[Success Action Object](#success-action-object)\|[Reusable Object](#reusable-object)] |  | An array of actions to take if the step succeeds. Overrides any success actions defined at the workflow level. Individual actions are defined using [success action objects](#success-action-object).                   |
+| `onFailure` | [[Failure Action Object](#failure-action-object)\|[Reusable Object](#reusable-object)] |  | An array of actions to take if the step fails. Overrides any failure actions defined at the workflow level. Individual actions are defined using [failure action objects](#failure-action-object).                       |
 | `outputs` | Map[`string`, \{[Runtime Expression](#runtime-expressions)}] |  | A map of output values produced by the step. The keys are the names of the outputs, and the values are [runtime expressions](#runtime-expressions) that extract the output values from the result of the operation.       |
-| `x-*`      | [Extensions](#specification-extensions) |  | Any number of extension fields can be added to the Step Object that can be used by tooling and vendors.                                                                                                               |
+| `x-*`      | [Extensions](#specification-extensions) |  | Any number of extension fields can be added to the step object that can be used by tooling and vendors.                                                                                                               |
 
 Below is an example of step objects in a workflows description document:
 
@@ -582,7 +582,7 @@ A parameter object defines a single parameter to pass to an operation in a workf
 | `name`     | String | ✅        | The name of the parameter.                                                                                                                                                                                                                                                                                                   |
 | `in`       | String | ✅        | The location of the parameter. Possible values are `path`, `query`, `header`, `cookie`. Required for parameters passed to an operation. Must be omitted for parameters passed to a workflow, where the parameter is always passed in the workflow's `inputs` object. See [Parameter Location](#parameter-location).                                                                                                                                                                           |
 | `value`    | Any\|\{[Runtime Expression](#runtime-expressions)}    |          | The value of the parameter. Can be a literal value, or a [runtime expression](#runtime-expressions) that will be evaluated and passed to the operation or workflow.
-| `x-*`      | [Extensions](#specification-extensions)     |  | Any number of extension fields can be added to the Parameter Object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                                                                                                                               |
+| `x-*`      | [Extensions](#specification-extensions)     |  | Any number of extension fields can be added to the parameter object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                                                                                                                               |
 
 ### Parameter Location
 
@@ -625,7 +625,7 @@ A success action object defines an action to take when a workflow step succeeds.
 | `stepId`    | String |          | The `stepId` of the step to execute next if `type` is `goto`. Mutually exclusive with `workflowId`.                                                                                                                                                                                                                                                                                      |
 | `workflowId` | String |          | The `workflowId` of the workflow to execute if `type` is `goto`. Mutually exclusive with `stepId`.                                                                                                                                                                                                                                                                                      |
 | `criteria`  | [[Criterion Object](#criterion-object)] |  | An array of criteria that determine whether the action should be executed. All criteria must be met for the action to execute. If not provided, the action will always execute.                                                                                                                                                                                                          |
-| `x-*`       | [Extensions](#specification-extensions)     |          | Any number of extension fields can be added to the Success Action Object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                         |
+| `x-*`       | [Extensions](#specification-extensions)     |          | Any number of extension fields can be added to the success action object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                         |
 
 Below is an example of a success action object:
 
@@ -650,9 +650,9 @@ A failure action object defines an action to take when a workflow step fails.
 | `stepId`    | String |          | The `stepId` of the step to execute next if `type` is `goto`. Mutually exclusive with `workflowId`.                                                                                                                                                                                                                                                                                      |
 | `workflowId` | String |          | The `workflowId` of the workflow to execute if `type` is `goto`. Mutually exclusive with `stepId`.                                                                                                                                                                                                                                                                                      |
 | `retryAfter` | Number |          | The number of seconds to wait before retrying the failed step if `type` is `retry`. Must be a non-negative integer. The specification is ambiguous about whether this field also applies when `type` is `goto`.                                                                                                                                                                                                                                                                     |
-| `retryLimit` | Integer |         | The maximum number of times to retry the failed step if `type` is `retry`. Must be a non-negative integer. If not provided, the step will be retried indefinitely until it succeeds or the workflow is cancelled.                                                                                                                                                                      |
+| `retryLimit` | Integer |         | The maximum number of times to retry the failed step if `type` is `retry`. Must be a non-negative integer. If not provided, the step will be retried indefinitely until it succeeds or the workflow is canceled.                                                                                                                                                                      |
 | `criteria`  | [[Criterion Object](#criterion-object)] |  | An array of criteria that determine whether the action should be executed. All criteria must be met for the action to execute.                                                                                                                                                                                                          |
-| `x-*`       | [Extensions](#specification-extensions)     |          | Any number of extension fields can be added to the Failure Action Object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                         |
+| `x-*`       | [Extensions](#specification-extensions)     |          | Any number of extension fields can be added to the failure action object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                         |
 
 Below is an example of a failure action object:
 
@@ -673,10 +673,10 @@ The `components` object holds reusable objects that can be referenced from other
 | Field Name | Type | Description |
 |------------|------|-------------|
 | `inputs` | Map[`string`, `JSON Schema`] | An object containing reusable [JSON Schemas](https://json-schema.org/) that can be referenced from workflow `inputs`. |
-| `parameters` | Map[`string`, [Parameter Object](#parameter-object)] | An object containing reusable [Parameter Objects](#parameter-object). |
-| `successActions` | Map[`string`, [Success Action Object](#success-action-object)] | An object containing reusable [Success Action Objects](#success-action-object). |
-| `failureActions` | Map[`string`, [Failure Action Object](#failure-action-object)] | An object containing reusable [Failure Action Objects](#failure-action-object). |
-| `x-*` | [Extensions](#specification-extensions) | Any number of extension fields can be added to the Components Object that can be used by tooling and vendors. |
+| `parameters` | Map[`string`, [Parameter Object](#parameter-object)] | An object containing reusable [parameter objects](#parameter-object). |
+| `successActions` | Map[`string`, [Success Action Object](#success-action-object)] | An object containing reusable [success action objects](#success-action-object). |
+| `failureActions` | Map[`string`, [Failure Action Object](#failure-action-object)] | An object containing reusable [failure action objects](#failure-action-object). |
+| `x-*` | [Extensions](#specification-extensions) | Any number of extension fields can be added to the components object that can be used by tooling and vendors. |
 
 The keys in the `components` object may only contain alphanumeric characters, underscores, and dashes.
 
@@ -735,7 +735,7 @@ A reusable object allows you to reference objects like success actions and failu
 |------------|--------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `name`     | \{[Runtime Expression](#runtime-expressions)} | ✅        | A [runtime expression](#runtime-expressions) used to reference the desired object from the `components` object. |
 
-**Note:** To reference parameters, use the [Reusable Parameter Object](#reusable-parameter-object). To reference inputs, use standard JSON Schema referencing with the `$ref` keyword.
+**Note:** To reference parameters, use the [reusable parameter object](#reusable-parameter-object). To reference inputs, use standard JSON Schema referencing with the `$ref` keyword.
 
 ### Reusable Object Example
 
@@ -745,7 +745,7 @@ A reusable object allows you to reference objects like success actions and failu
 
 ## Criterion Object
 
-A criterion object is used to specify assertions in the `successCriteria` field of a [Step Object](#step-object), or the `criteria` field of a [Success Action Object](#success-action-object) or [Failure Action Object](#failure-action-object).
+A criterion object is used to specify assertions in the `successCriteria` field of a [step object](#step-object), or the `criteria` field of a [success action object](#success-action-object) or [failure action object](#failure-action-object).
 
 Criterion objects support three types of assertions:
 - `simple` - Basic comparisons using literals, operators, and [runtime expressions](#runtime-expressions). This is the default if no `type` is specified.
@@ -765,7 +765,7 @@ Literals are constant values that can be used in `simple` conditions. The follow
 
 ### Operators
 
-`simple` conditions support the following operators:
+Simple conditions support the following operators:
 
 | Operator | Description |
 |----------|-------------|
@@ -782,16 +782,16 @@ Literals are constant values that can be used in `simple` conditions. The follow
 | `[]` | Array index (0-based) |
 | `.` | Property dereference |
 
-String comparisons are case insensitive.
+String comparisons are case-insensitive.
 
 A criterion object consists of the following fields:
 
 | Field Name  | Type | Required | Description |
 |-------------|------|----------|-------------|
 | `context` | \{[Runtime Expression](#runtime-expressions)} | | A [runtime expression](#runtime-expressions) that defines the context for `regex` and `JSONPath` conditions. Must be provided if `type` is specified. |
-| `condition` | `string` | ✅ | The assertion to evaluate. For `simple` conditions, combines literals, operators and runtime expressions. For `regex` and `JSONPath` conditions, provides the expression to evaluate against the `context`. |
-| `type` | `string` | | The type of assertion. Allowed values are `simple`, `regex` or `JSONPath`. Defaults to `simple` if not provided. |
-| `x-*` | [Extensions](#specification-extensions) | | Any number of extension fields can be added to the Criterion Object that can be used by tooling and vendors. |
+| `condition` | `string` | ✅ | The assertion to evaluate. For `simple` conditions, combines literals, operators, and runtime expressions. For `regex` and `JSONPath` conditions, provides the expression to evaluate against the `context`. |
+| `type` | `string` | | The type of assertion. Allowed values are `simple`, `regex`, or `JSONPath`. Defaults to `simple` if not provided. |
+| `x-*` | [Extensions](#specification-extensions) | | Any number of extension fields can be added to the criterion object that can be used by tooling and vendors. |
 
 ### Criterion Object Examples
 
@@ -845,8 +845,8 @@ The request body object describes the payload and `Content-Type` to send with th
 |------------|--------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `contentType` | String | | The `Content-Type` header for the request payload. If omitted, defaults to the `Content-Type` of the referenced operation. |
 | `payload` | Any | | The literal payload value to send in the request body. Can contain [runtime expressions](#runtime-expressions) which will be evaluated before sending the request. This field is mutually exclusive with `pointers`. |
-| `pointers` | [[Payload Pointer Object](#payload-pointer-object)] | | An array of [Payload Pointer Objects](#payload-pointer-object) specifying values to insert into specific locations in the payload. This field is mutually exclusive with `payload`. |
-| `x-*` | [Extensions](#specification-extensions) | | Any number of extension fields can be added to the Request Body Object that can be used by tooling and vendors. |
+| `pointers` | [[Payload Pointer Object](#payload-pointer-object)] | | An array of [payload pointer objects](#payload-pointer-object) specifying values to insert into specific locations in the payload. This field is mutually exclusive with `payload`. |
+| `x-*` | [Extensions](#specification-extensions) | | Any number of extension fields can be added to the request body object that can be used by tooling and vendors. |
 
 ### Request Body Object Examples
 
@@ -919,7 +919,7 @@ A payload pointer object specifies a location within the request payload and the
 |------------|--------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `target`   | String | ✅        | A [JSON Pointer](https://tools.ietf.org/html/rfc6901) or [XPath](https://www.w3.org/TR/xpath-31/#id-expressions) expression that identifies the location in the payload to insert the `value`. For JSON payloads, use JSON Pointer. For XML payloads, use XPath.  |
 | `value`    | Any    | ✅        | The value to insert at the specified `target` location. Can be a literal or a [runtime expression](#runtime-expressions) that will be evaluated before sending the request.                                                                                                                                                                                                                                                                                                  |
-| `x-*`      | [Extensions](#specification-extensions)    |          | Any number of extension fields can be added to the Payload Pointer Object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                         |
+| `x-*`      | [Extensions](#specification-extensions)    |          | Any number of extension fields can be added to the payload pointer object that can be used by tooling and vendors.                                                                                                                                                                                                                                                                         |
 
 ### Payload Pointer Object Examples
 
@@ -974,7 +974,7 @@ The syntax for runtime expressions is `{expression}`, where `expression` is one 
 
 ## Specification Extensions
 
-The workflows specification allows custom properties to be added at certain points using specification extensions.
+The Workflows Specification allows custom properties to be added at certain points using specification extensions.
 
 Extension properties are always prefixed by `"x-"` and can have any valid JSON value.
 
@@ -987,7 +987,7 @@ x-vendor-parameter:
   channelId: abc
 ```
 
-The extensions defined by the workflows specification are:
+The extensions defined by the Workflows Specification are:
 
 | Context | Description |
 |---------|-------------|
@@ -1007,4 +1007,4 @@ The extensions defined by the workflows specification are:
 
 The specification extension key formats `^x-oai-` and `^x-oas-` are reserved for extensions defined by the [OpenAPI Initiative](https://www.openapis.org/).
 
-Extension properties can be used to add additional features, metadata or configuration options to the workflows description that are not directly supported by the current version of the specification. However, additional tooling may be required to process custom extensions.
+Extension properties can be used to add additional features, metadata, or configuration options to the workflows description that are not directly supported by the current version of the specification. However, additional tooling may be required to process custom extensions.
