@@ -18,7 +18,6 @@ Workflows are useful for:
 
 A workflows description is a JSON or YAML document that follows the structure defined by the Workflows Specification.
 
-
 `workflowsSpec`
 
 | Field Name | Type   | Required |
