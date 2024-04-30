@@ -1,5 +1,4 @@
 {
-  "security-schemes": "Security Schemes",
   "security-api-key": "API Key Security",
   "security-basic": "Basic Security",
   "security-bearer": "Bearer Security",

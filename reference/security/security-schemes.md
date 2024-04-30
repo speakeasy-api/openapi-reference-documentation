@@ -1,6 +1,8 @@
-# Security Scheme Object
+# Security Scheme Objects in OpenAPI
 
-Security scheme objects are defined in the [Components Object](/openapi/components) under the `securitySchemes` field. Each security scheme object has a unique key. [Security Requirement Objects](/openapi/security#security-requirement-object) elsewhere in the document reference security scheme objects by their keys. For example:
+Security scheme objects are defined in the [Components Object](../components.md) under the `securitySchemes` field. Each security scheme object has a unique key. [Security Requirement Objects](../security.md#security-requirement-object) elsewhere in the document reference security scheme objects by their keys.
+
+The following example requires a basic authentication scheme to access the `/drinks` endpoint:
 
 ```yaml
 paths:
@@ -17,27 +19,19 @@ components:
 
 The `type` field is the overall category of authentication. The value of `type` determines the other fields the security object needs.
 
-Below are the string fields that do not depend on `type` and can be used in any security scheme.
+To decide which authentication type to choose, see our article [OpenAPI Tips - How to Handle Auth](https://www.speakeasyapi.dev/post/openapi-tips-auth).
 
-| Field         | Required | Description                                                                                                                                                                    |
-| ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`        | ✅       | The type of the security scheme. <br/><br/>Allowed values: `apiKey`, `http`, `mutualTLS`, `oauth2`, or `openIdConnect`. <br/><br/>`mutualTLS` is for OpenAPI version 3.1 only. |
-| `description` |          | Human-readable information. [CommonMark syntax](https://spec.commonmark.org/) may be used.                                                                                     |
-| `x-...`       |          | Extension fields                                                                                                                                                               |
+## Supported Authentication Types
 
-To decide which authentication type to choose, please review this [article](https://www.speakeasyapi.dev/post/openapi-tips-auth).
+The following authentication types are supported in the OpenAPI Specification:
 
-Below are the fields that are required for each value of `type`. They are all strings, except for the OAuth flows, which are discussed in the next section.
-
-| Field                                                                                                                                                      | Applies to                        | Description                                                                                                                                                                                                                         |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `in:` (`query`, `header`, or `cookie`)                                                                                                                     | `type: apiKey`                    | The location of the API key in the request.                                                                                                                                                                                         |
-| `name:`                                                                                                                                                    | `type: apiKey`                    | The name of the key parameter in the location.                                                                                                                                                                                      |
-| `scheme:` (`basic`, `bearer`, or `digest`)                                                                                                                 | `type: http`                      | The name of the HTTP authorization scheme to be used in the Authorization header. [More values](https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml) are theoretically allowed, but not supported in practice. |
-| `bearerFormat:`                                                                                                                                            | `type: http`<br/>`scheme: bearer` | A hint to the client to identify how the bearer token is formatted. Bearer tokens are usually generated by an authorization server, so this information is primarily for documentation purposes.                                    |
-| \_                                                                                                                                                         | `type: mutualTLS`                 | No extra fields are required. Mutual TLS means the server will ask the client for a public security certificate after the server has sent its certificate.                                                                          |
-| `openIdConnectUrl: https://...`                                                                                                                            | `type: openIdConnect`             | Used to discover configuration values. The URL must point to a JSON OpenID Connect Discovery document.                                                                                                                              |
-| `flows:`<br/>&nbsp;&nbsp;`authorizationCode: ...`<br/>&nbsp;&nbsp;`clientCredentials: ...`<br/>&nbsp;&nbsp;`implicit: ...`<br/>&nbsp;&nbsp;`password: ...` | `type: oauth2`                    | The `flows` object contains four possible authentication flow objects. At least one must be present and you can use all four. The structure of a flow is detailed in the next section.                                              |
+- [API Key](./security-schemes/security-api-key.md)
+- [Basic HTTP](./security-schemes/security-basic.md)
+- [Bearer Token](./security-schemes/security-bearer.md)
+- [OAuth 2.0](./security-schemes/security-oauth2.md)
+- [OpenID Connect](./security-schemes/security-openid.md)
+- Digest
+- Mutual TLS
 
 ## Example Security Scheme Schema
 
