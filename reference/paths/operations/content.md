@@ -221,6 +221,12 @@ content:
           description: A photo of the drink.
           type: string
           format: binary
+        recipe:
+          description: The recipe for the drink.
+          type: string
+        name:
+          description: The name of the drink.
+          type: string
     encoding:
       photo:
         contentType: image/jpeg, image/png
@@ -231,16 +237,35 @@ content:
               type: string
               default: 'form-data; name="photo"; filename="default.jpg"'
         allowReserved: false
+      recipe:
+        contentType: text/plain
+        headers:
+          Content-Disposition:
+            description: Specifies the disposition of the file (attachment and file name).
+            schema:
+              type: string
+              default: 'form-data; name="recipe"; filename="default.txt"'
+        allowReserved: false
+      name:
+        contentType: text/plain
+        headers:
+          Content-Disposition:
+            description: Specifies the disposition of the field.
+            schema:
+              type: string
+              default: 'form-data; name="name"'
+        allowReserved: false
 ```
 
-In this example, the server expects a form data request with a photo of the drink. The `encoding` field provides additional information about the photo, such as the content type, headers, and whether reserved characters are allowed.
+In this example, the server expects a form data request with a photo of the drink, the recipe for the drink, and the name of the drink. The `encoding` field provides additional information about each part, such as the content type, headers, and whether reserved characters are allowed.
 
-The curl command below sends a request to the server with a photo file in the body:
+The curl command below sends a request to the server with a photo file, a recipe file, and the name of the drink in the body:
 
 ```bash
 curl -X POST "https://api.example.com/drinks" \
-     -H "Content-Type: multipart/form-data" \
-     -F "photo=@photo.jpg;type=image/jpeg"
+     -F "photo=@photo.jpg;type=image/jpeg" \
+     -F "recipe=@recipe.txt;type=text/plain" \
+     -F "name=Mocktail"
 ```
 
 ## OpenAPI Content Best Practices
