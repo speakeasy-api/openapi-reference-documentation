@@ -1,4 +1,3 @@
-
 # OpenAPI Workflows
 
 The OpenAPI Workflows Specification is a proposed addition to the OpenAPI Specification that allows you to define sequences of operations for your API.
@@ -19,7 +18,6 @@ Workflows are useful for:
 
 A workflows description is a JSON or YAML document that follows the structure defined by the Workflows Specification.
 
-
 `workflowsSpec`
 
 | Field Name | Type   | Required |
@@ -28,22 +26,8 @@ A workflows description is a JSON or YAML document that follows the structure de
 
 The version of the Workflows Specification that the document uses. The value must be a supported [version number](#workflows-specification-versions).
 
-```yaml workflows.yaml focus=1
+```yaml workflows.yaml
 workflowsSpec: 1.0.0-prerelease
-
-```
-
-
-
-`info`
-
-| Field Name | Type                        | Required |
-|------------|----------------------------| ----------|
-| `info`     | [Info Object](#info-object) | ✅         |
-
-Provides metadata about the workflows description.
-
-```yaml workflows.yaml focus=2:8
 info:
   title: Speakeasy Bar Workflows
   summary: Workflows for managing the Speakeasy Bar API
@@ -51,19 +35,6 @@ info:
     This document defines workflows for managing the [Speakeasy Bar API](https://bar.example.com), including
     creating new drinks, managing inventory, and processing orders.
   version: 4.6.3
-```
-
-
-
-`sourceDescriptions`
-
-| Field Name          | Type                                             | Required |
-|---------------------|--------------------------------------------------|----------|
-| `sourceDescriptions` | [[Source Description Object](#source-description-object)] | ✅        |
-
-An array of [source description objects](#source-description-object) defining the OpenAPI or other documents containing the operations referenced by the workflows. The array must contain at least one source.
-
-```yaml workflows.yaml focus=9:15
 sourceDescriptions:
   - name: speakeasyBar
     url: https://bar.example.com/openapi.yaml
@@ -71,18 +42,6 @@ sourceDescriptions:
   - name: printsAndBeeps
     url: https://output.example.com/workflows.yaml
     type: workflowsSpec
-```
-
-
-`workflows`
-
-| Field Name | Type                          | Required |
-|------------|-------------------------------|----------|
-| `workflows` | [[Workflow Object](#workflow-object)] | ✅        |
-
-An array of [workflow objects](#workflow-object) defining the workflows. The array must contain at least one workflow.
-
-```yaml workflows.yaml focus=16:156
 workflows:
   - workflowId: createDrink
     summary: Create a new drink in the bar's menu
@@ -224,9 +183,223 @@ workflows:
           - name: productCode
             in: query
             value: $inputs.productCode
-
+components:
+  inputs:
+    authenticate:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+  parameters:
+    authorization:
+      name: Authorization
+      in: header
+      value: $authenticate.outputs.token
+    username:
+      name: username
+      in: body
+      value: $inputs.username
+    password:
+      name: password
+      in: body
+      value: $inputs.password
 ```
 
+---
+
+`info`
+
+| Field Name | Type                        | Required |
+|------------|----------------------------| ----------|
+| `info`     | [Info Object](#info-object) | ✅         |
+
+Provides metadata about the workflows description.
+
+```yaml workflows.yaml
+info:
+  title: Speakeasy Bar Workflows
+  summary: Workflows for managing the Speakeasy Bar API
+  description: >
+    This document defines workflows for managing the [Speakeasy Bar API](https://bar.example.com), including
+    creating new drinks, managing inventory, and processing orders.
+  version: 4.6.3
+```
+
+---
+
+`sourceDescriptions`
+
+| Field Name          | Type                                             | Required |
+|---------------------|--------------------------------------------------|----------|
+| `sourceDescriptions` | [[Source Description Object](#source-description-object)] | ✅        |
+
+An array of [source description objects](#source-description-object) defining the OpenAPI or other documents containing the operations referenced by the workflows. The array must contain at least one source.
+
+```yaml workflows.yaml
+sourceDescriptions:
+  - name: speakeasyBar
+    url: https://bar.example.com/openapi.yaml
+    type: openapi
+  - name: printsAndBeeps
+    url: https://output.example.com/workflows.yaml
+    type: workflowsSpec
+```
+
+---
+
+`workflows`
+
+| Field Name | Type                          | Required |
+|------------|-------------------------------|----------|
+| `workflows` | [[Workflow Object](#workflow-object)] | ✅        |
+
+An array of [workflow objects](#workflow-object) defining the workflows. The array must contain at least one workflow.
+
+```yaml workflows.yaml
+workflows:
+  - workflowId: createDrink
+    summary: Create a new drink in the bar's menu
+    inputs:
+      allOf:
+        - $ref: '#/components/inputs/authenticate'
+        - type: object
+          properties:
+            drink_name:
+              type: string
+            drink_type:
+              type: string
+            drink_price_usd_cent:
+              type: integer
+            ingredients:
+              type: array
+              items:
+                type: string
+    steps:
+      - stepId: authenticate
+        operationId: authenticate
+        parameters:
+          - name: $components.parameters.username
+          - name: $components.parameters.password
+      - stepId: createDrink
+        operationId: createDrink
+        parameters:
+          - name: $components.parameters.authorization
+          - name: name
+            in: query
+            value: $inputs.drink_name
+          - name: type
+            in: query
+            value: $inputs.drink_type
+          - name: price
+            in: query
+            value: $inputs.drink_price_usd_cent
+          - name: ingredients
+            in: query
+            value: $inputs.ingredients
+  - workflowId: makeDrink
+    summary: Order a drink and check the order status
+    inputs:
+      - name: orderType
+        description: The type of order
+        type: string
+        required: true
+      - name: productCode
+        description: The product code of the drink
+        type: string
+        required: true
+      - name: quantity
+        description: The quantity of the drink
+        type: integer
+        required: true
+    steps:
+      - stepId: orderDrink
+        operationId: createOrder
+        parameters:
+          - name: orderType
+            in: body
+            value: $inputs.orderType
+          - name: productCode
+            in: body
+            value: $inputs.productCode
+          - name: quantity
+            in: body
+            value: $inputs.quantity
+      - stepId: checkStatus
+        operationId: getOrder
+        parameters:
+          - name: orderNumber
+            in: path
+            value: $orderDrink.orderNumber
+        successCriteria:
+          - type: simple
+            condition: $checkStatus.status == 'completed'
+        onSuccess:
+          - name: printReceipt
+            type: goto
+            workflowId: $sourceDescriptions.printsAndBeeps.printReceipt
+            criteria:
+              - type: simple
+                condition: $checkStatus.status == 'completed'
+        onFailure:
+          - name: beepLoudly
+            type: goto
+            workflowId: $sourceDescriptions.printsAndBeeps.beepLoudly
+            criteria:
+              - type: simple
+                condition: $checkStatus.status == 'failed'
+  - workflowId: addIngredient
+    summary: Add a new ingredient to the bar's inventory
+    inputs:
+      - name: username
+        description: The username of the manager
+        type: string
+        required: true
+      - name: password
+        description: The password of the manager
+        type: string
+        required: true
+      - name: ingredient_name
+        description: The name of the ingredient
+        type: string
+        required: true
+      - name: ingredient_type
+        description: The type of the ingredient
+        type: string
+        required: true
+      - name: ingredient_stock
+        description: The stock of the ingredient
+        type: integer
+        required: true
+      - name: productCode
+        description: The product code of the ingredient
+        type: string
+        required: true
+    steps:
+      - stepId: authenticate
+        operationId: authenticate
+        parameters:
+          - name: $components.parameters.username
+            value: admin
+          - name: $components.parameters.password
+      - stepId: addIngredient
+        operationId: createIngredient
+        parameters:
+          - name: $components.parameters.authorization
+          - name: name
+            in: query
+            value: $inputs.ingredient_name
+          - name: type
+            in: query
+            value: $inputs.ingredient_type
+          - name: stock
+            in: query
+            value: $inputs.ingredient_stock
+          - name: productCode
+            in: query
+            value: $inputs.productCode
+```
 
 This table shows all fields at the root of the OpenAPI Workflows Specification:
 
@@ -267,7 +440,6 @@ info:
     This document defines workflows for managing the [Speakeasy Bar API](https://bar.example.com), including
     creating new drinks, managing inventory, and processing orders.
   version: 4.6.3
-
 ```
 
 ## Source Description Object
@@ -291,7 +463,6 @@ sourceDescriptions:
   - name: printsAndBeeps
     url: https://output.example.com/workflows.yaml
     type: workflowsSpec
-
 ```
 
 ## Workflow Object
@@ -354,7 +525,6 @@ Below is an example of a workflow object:
         - name: ingredients
           in: query
           value: $inputs.ingredients
-
 ```
 
 ## Step Object
@@ -401,7 +571,6 @@ steps:
       - name: ingredients
         in: query
         value: $inputs.ingredients
-
 ```
 
 ## Parameter Object
@@ -443,7 +612,6 @@ parameters:
   - name: ingredients
     in: query
     value: $inputs.ingredients
-
 ```
 
 ## Success Action Object
@@ -469,7 +637,6 @@ onSuccess:
     criteria:
       - type: simple
         condition: $checkStatus.status == 'completed'
-
 ```
 
 ## Failure Action Object
@@ -497,7 +664,6 @@ onFailure:
     criteria:
       - type: simple
         condition: $checkStatus.status == 'failed'
-
 ```
 
 ## Components Object
@@ -539,7 +705,6 @@ components:
       name: password
       in: body
       value: $inputs.password
-
 ```
 
 The components defined in a workflows description are scoped to that document. Components defined in one workflows description cannot be referenced from another workflows description.
@@ -560,7 +725,6 @@ Reusable parameter objects cannot be extended with additional fields. Any additi
 ```yaml workflows.yaml
 - name: $components.parameters.username
   value: admin
-
 ```
 
 ## Reusable Object
@@ -577,7 +741,6 @@ A reusable object allows you to reference objects like success actions and failu
 
 ```yaml workflows.yaml
 - name: $components.parameters.password
-
 ```
 
 ## Criterion Object
@@ -811,7 +974,7 @@ The syntax for runtime expressions is `{expression}`, where `expression` is one 
 
 ## Specification Extensions
 
-The Workflows Specification allows custom properties to be added at certain points using specification extensions.
+The workflows specification allows custom properties to be added at certain points using specification extensions.
 
 Extension properties are always prefixed by `"x-"` and can have any valid JSON value.
 
@@ -824,7 +987,7 @@ x-vendor-parameter:
   channelId: abc
 ```
 
-The extensions defined by the Workflows Specification are:
+The extensions defined by the workflows specification are:
 
 | Context | Description |
 |---------|-------------|
