@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components'
+
 # Content and Media Types in OpenAPI
 
 In OpenAPI 3.1, the `content` keyword indicates the media types required in request bodies or returned by responses. Media types are often referred to as content types or MIME types, but we'll use media types in this document.
@@ -20,11 +22,11 @@ Each key in the map is a [media or MIME type](https://developer.mozilla.org/en-U
 
 The value associated with each key is a [Media Type Object](#media-type-object) that describes the structure and other relevant details for its corresponding media type.
 
-Media type keys can include wildcards indicating a range of media types they cover. For example, `application/*` would match `application/json`, `application/xml`, and so on, and `*/*` would match any media type. It can be explicitly defined to match only a single media type, for example, `application/json; charset=utf-8`.
+Media type keys can include wildcards indicating a range of media types they cover. For example, `application/*` would match `application/json`, `application/xml`, and so on. It can be explicitly defined to match only a single media type, for example, `application/json; charset=utf-8`.
 
-
+<Callout type="warning" emoji="⚠️">
 **Avoid wildcard media types where possible:** While using wildcards in defining content types is convenient, it might lead to ambiguous results if the client and server do not handle the same range of media types. Use specific media types where possible to avoid ambiguity.
-
+</Callout>
 
 Where both a wildcard and a specific media type are defined, the specific media type definition takes precedence.
 

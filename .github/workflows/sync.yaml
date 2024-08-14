@@ -1,0 +1,27 @@
+
+name: Sync
+
+on:
+#   push:
+#     branches:
+#       - main
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy files to another repository
+        uses: nkoppel/push-files-to-another-repository@v1.1.3
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-files: 'reference'
+          destination-repository: 'speakeasy-registry'
+          destination-username: 'speakeasy-api'
+          destination-branch: 'main'
+          destination-directory: 'web/packages/marketing-site/src/pages/openapi'
+          commit-email: bot@speakeasyapi.dev
+          commit-message: Sync OpenAPI Reference Documentation
+  

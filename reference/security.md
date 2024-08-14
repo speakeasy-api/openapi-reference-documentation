@@ -1,6 +1,6 @@
 # Security
 
-When designing an API, it is important to consider the security requirements for accessing the API. OpenAPI 3.1 provides a way to define security requirements at both the document and operation levels.
+When designing an API, it is important to consider the security requirements for accessing the API. OpenAPI 3.1 provides a way to define security requirements at both the document and operation levels. 
 
 Security requirements are defined as a list of [Security Requirement Objects](/openapi/security#security-requirement-object) in the `security` section. Each object in the list represents a set of security requirements that must be satisfied to access the API.
 

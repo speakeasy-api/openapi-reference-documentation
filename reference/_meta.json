@@ -1,6 +1,10 @@
 {
   "index": {
-    "title": "Intro to OpenAPI"
+    "title": "Intro to OpenAPI",
+    "theme": {
+      "layout": "full",
+      "toc": false
+    }
   },
   "info": "Info",
   "servers": "Servers",
@@ -13,5 +17,19 @@
   "examples": "Examples",
   "references": "References $ref",
   "extensions": "Extensions",
-  "external-documentation": "External Documentation"
+  "external-documentation": "External Documentation",
+  "overlays": {
+    "title": "OpenAPI Overlays",
+    "theme": {
+      "layout": "full",
+      "toc": false
+    }
+  },
+  "arazzo": {
+    "title": "Arazzo: OpenAPI Workflows",
+    "theme": {
+      "layout": "full",
+      "toc": false
+    }
+  }
 }

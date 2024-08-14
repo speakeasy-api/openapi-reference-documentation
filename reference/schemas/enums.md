@@ -236,6 +236,62 @@ paths:
                 const: Here is your beverage
 ```
 
+## Nullable Enums
+
+### OpenAPI 3.0
+
+In OpenAPI 3.0 you can use the `nullable` keyword to specify `null` as an accpeted value in an enum. Below is an example where a client can order a drink with one of three cup sizes, or no cup siz specified at all:
+
+```yaml focus=6
+components:
+  schemas:
+    CupSize:
+      description: Size of the cup to order, represented by a numeric code with a corresponding label.
+      type: string
+      nullable: true
+      enum:
+        - SMALL
+        - MEDIUM
+        - LARGE
+```
+
+### OpenAPI 3.1
+
+OpenAPI 3.1 was intended to more closely align with the JSON Schema standard, and as such, the way to specify nullable types is different from 3.0. Instead of using the `nullable` attribute, OpenAPI 3.1 uses JSON Schema's approach of using an array of types including the `null` type. Here's the same example adapted for OpenAPI 3.1:
+
+```yaml focus=5,10
+components:
+  schemas:
+    CupSize:
+      description: Size of the cup to order, represented by a numeric code with a corresponding label.
+      type: [string, null]
+      enum:
+        - SMALL
+        - MEDIUM
+        - LARGE
+        - null
+```
+
+## Open Enums
+
+Traditionally enums are closed, meaning that only the values listed in the enum are allowed. By contrast, open enums allow additional values beyond those explicitly defined in the spec. Open Enums can be useful in cases where your API is evolving to support new use cases. In that scenario, you may want to allow clients to send additional values that are not yet defined where their usage is on the frontier of your API's capabilities.
+
+OpenAPI 3.x currently does not natively support the description open enums directly. However, check to see if your tooling supports `x-` extension attributes. For example, [the Speakeasy extension `x-speakeasy-unknown-values`](/docs/customize-sdks/enums#open-vs-closed-enums) allows you to define an enum with additional values beyond those listed.
+
+``` yaml focus=6
+components:
+  schemas:
+    CupSize:
+      description: Size of the cup to order, represented by a numeric code with a corresponding label.
+      type: [string, null]
+      x-speakeasy-unknown-values: allow
+      enum:
+        - SMALL
+        - MEDIUM
+        - LARGE
+        - null
+```
+
 ## Examples
 
 Below is an example from the `components` of an API for ordering drinks showing all the different data types you can use with `enum`:

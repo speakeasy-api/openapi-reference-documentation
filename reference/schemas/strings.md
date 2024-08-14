@@ -6,13 +6,13 @@ Of the primitive types (ignoring the **object** type) , the **string** type is t
 
 The string type via the OpenAPI Specification officially supports the below formats:
 
-| Type | Format | Explanation | Example |
-| --- | --- | --- | --- |
-| string | date | An [RFC3339](https://www.rfc-editor.org/rfc/rfc3339#section-5.6) formatted date string | “2022-01-30” |
-| string | date-time | An [RFC3339](https://www.rfc-editor.org/rfc/rfc3339#section-5.6) formatted date-time string | “2019-10-12T07:20:50.52Z” |
-| string | password | Provides a hint that the string may contain sensitive information. | “mySecretWord1234” |
-| string | byte | Any integer number. | “U3BlYWtlYXN5IG1ha2VzIHdvcmtpbmcgd2l0aCBBUElzIGZ1biE=” |
-| string | binary | Binary data, used to represent the contents of a file. | “01010101110001” |
+| Type   | Format    | Explanation                                                                                 | Example                                                |
+| ------ | --------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| string | date      | An [RFC3339](https://www.rfc-editor.org/rfc/rfc3339#section-5.6) formatted date string      | “2022-01-30”                                           |
+| string | date-time | An [RFC3339](https://www.rfc-editor.org/rfc/rfc3339#section-5.6) formatted date-time string | “2019-10-12T07:20:50.52Z”                              |
+| string | password  | Provides a hint that the string may contain sensitive information.                          | “mySecretWord1234”                                     |
+| string | byte      | Base-64 encoded data.                                                                       | “U3BlYWtlYXN5IG1ha2VzIHdvcmtpbmcgd2l0aCBBUElzIGZ1biE=” |
+| string | binary    | Binary data, used to represent the contents of a file.                                      | “01010101110001”                                       |
 
 The **format** attribute can also be used to describe a number of other formats the string might represent but outside the official list above, those formats might not be supported by tooling that works with the OpenAPI Spec, meaning that they would be provided more as hints to end-users of the API:
 
@@ -58,6 +58,6 @@ Example of a string defined with a regex pattern:
 ```yaml
 # A string that must match the specified pattern
 schema:
-    type: string
-    pattern: ^[a-zA-Z0-9_]*$
+  type: string
+  pattern: ^[a-zA-Z0-9_]*$
 ```
